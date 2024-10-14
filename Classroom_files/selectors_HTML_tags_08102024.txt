@@ -1,0 +1,130 @@
+Good morning !!!!!
+
+We understand basic tags exist in DOM 
+Document object model 
+
+which is giving a facility to interact with UI components exist in webpage.
+
+	
+by using these tags we can easily locate UI components with in the page. 
+
+then you can perform actions and assertions . 
+
+Important notes : 
+
+All HTML elements can have attributes
+The href attribute of <a> specifies the URL of the page the link goes to
+The src attribute of <img> specifies the path to the image to be displayed
+The width and height attributes of <img> provide size information for images
+The alt attribute of <img> provides an alternate text for an image
+The style attribute is used to add styles to an element, such as color, font, size, and more
+The lang attribute of the <html> tag declares the language of the Web page
+The title attribute defines some extra information about an element
+
+Style Imp points : 
+Use the style attribute for styling HTML elements
+Use background-color for background color
+Use color for text colors
+Use font-family for text fonts
+Use font-size for text sizes
+Use text-align for text alignment
+
+formatting : 
+<b> - Bold text
+<strong> - Important text
+<i> - Italic text
+<em> - Emphasized text
+<mark> - Marked text
+<small> - Smaller text
+<del> - Deleted text
+<ins> - Inserted text
+<sub> - Subscript text
+<sup> - Superscript text
+
+CSS: 
+Use the HTML style attribute for inline styling
+Use the HTML <style> element to define internal CSS
+Use the HTML <link> element to refer to an external CSS file
+Use the HTML <head> element to store <style> and <link> elements
+Use the CSS color property for text colors
+Use the CSS font-family property for text fonts
+Use the CSS font-size property for text sizes
+Use the CSS border property for borders
+Use the CSS padding property for space inside the border
+Use the CSS margin property for space outside the border
+
+Target attribute: 
+
+The target attribute specifies where to open the linked document.
+
+The target attribute can have one of the following values:
+
+_self - Default. Opens the document in the same window/tab as it was clicked
+_blank - Opens the document in a new window or tab
+
+
+cypress only handles current browser tab and not able to handles new tabs created by your application.
+to do so we need to change "target"attribute from -blank to self or empty =>  through cypress code
+
+
+Automate the web table : 
+
+table is the tagname 
+tr  => table row 
+td  => table tada 
+tbody => table body 
+th=  table heading 
+
+<div>	Defines a section in a document (block-level)
+
+An HTML iframe is used to display a web page within a web page.
+
+
+The HTML <iframe> tag specifies an inline frame.
+
+An inline frame is used to embed another document within the current HTML document.
+
+Syntax
+<iframe src="url" title="description"></iframe>
+
+The HTML <form> element is used to create an HTML form for user input:
+==================================================================
+
+CSS Selectors : 
+
+a. Simple selectors (select elements based on name, id, class)
+=====================
+The CSS id Selector:
+=====================
+The id selector uses the id attribute of an HTML element to select a specific element.
+
+The id of an element is unique within a page, so the id selector is used to select one unique element!
+
+To select an element with a specific id, write a hash (#) character, followed by the id of the element.
+
+id="myHeader => CSS ID selector is #myHeader 
+classname="myClass"=>.myClass
+element= <p> =>p
+element.classname= p.myClass locate all the ptags with classname myClass.
+
+
+CSS Combinators
+A combinator is something that explains the relationship between the selectors.
+
+A CSS selector can contain more than one simple selector. Between the simple selectors, we can include a combinator.
+
+There are four different combinators in CSS:
+
+descendant selector (space)
+child selector (>)=> nth:child 
+adjacent sibling selector (+)
+general sibling selector (~)
+
+
+nth child and attribute selector : 
+
+
+
+
+
+

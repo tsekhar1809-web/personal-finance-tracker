@@ -1,0 +1,118 @@
+Good Morning !!!!!
+
+We are trying to setup cypress in your localcomputer with the help of npm 
+node package manger  => nodejs 
+1. nodejs download and install 
+2. VSCODE download and install 
+3. open the terminal in VSCODE and run the below 
+npm install cypress --save-dev 
+
+4. npm init   => initializing the project
+
+package.json  => npm install 
+
+5. npx cypress open  => to launch cypress test runner 
+npx node package executor 
+
+6. we can launch cypress launch pad 
+7. supply the project folder to setup cypress in that folder 
+8. Select type of Test E2E 
+9. First time you can have a screen to copy the respective configurations in your folder. 
+cypress.config.js in root folder 
+cypress >> e2e >> your spec files => .cy.js 
+cypress>> support >> commands.js 
+cypress >> support >> e2e.js 
+cypress >> fixtures >> example.json 
+
+10. Select the browser  => 
+     all installed browser (supported by cypress) will be displayed 
+
+11. finally you will be redirected to cypress Test runner 
+
+a. Specs Tab => it is a place folder to play the spec 
+spec is nothing but cypress test suite 
+.cy.js 
+
+cypress >> e2e folder 
+
+New spec => To create a new template test case 
+
+Scafold examples  =>  to play with all UI options with in the Specs tab 
+
+after words you can customise this test with your URLS and commands
+
+cy.visit() // to browse the URL 
+cy.visit('https://example.cypress.io')
+cy.get('selector')
+
+selector : 
+
+manual tester : Login test case 
+
+1. Browse the Login URL for example website 
+cy.visit('example website')
+2. Enter the valid Username and password 
+to identify username field we need to take the help of selector . 
+Locator 
+selector 
+these locators or selectors will help automation tool to find where exactly this UI component is available 
+
+cypress will identify on which UI component I need to perform the action through selector. 
+
+CSS selectors. 
+
+1. tagname 
+2. classname
+3. Id 
+4. attribute name 
+
+cypress playground / inspector  => selector along with cypress commands 
+
+cy.visit() 
+cy.get('selector')
+
+
+
+
+
+
+
+
+
+
+
+3. Click on Login button 
+
+expected result : Login should be successful 
+
+
+
+1. Browse the Login URL for example website 
+2. Enter the invalid Username and password 
+3. Click on Login button 
+
+expected result : Login should be failed with warning message 
+ 
+
+
+
+
+
+
+
+
+
+
+
+b.Debug  
+c. Run 
+
+these two tabs are reserved for cypress cloud integration 
+
+d. Settings tab => 
+1. project settings 
+2. device settings 
+3. cloud settings
+
+
+

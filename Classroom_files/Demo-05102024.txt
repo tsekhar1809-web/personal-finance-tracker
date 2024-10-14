@@ -1,0 +1,232 @@
+Good Morning !!!!!
+=====================================================================
+Ram prasad 
+17 years - Software testing and delivery experience 
+Manual testing 
+Mobile apps testing 
+firmware testing 
+mobile devices testing 
+mobile OS testing 
+IOT testing 
+Renorex , Wet , watin  automation tools 
+Cypress [Web apps +  api automation ] 
+Jmter for performance testing 
+=====================================================================
+What is cypress ?
+====================================================================
+Cypress is modern web automation tool , supports chrome , firefox , electron and edge  => chromium browsers and experimental support for webkit 
+[safari browser] => apple devices we use safari 
+
+easy to automate web apps  compare to the selenium or tools which are using selenium in the backend . 
+
+easy to configure/install and start writing automation testcases in minutes. 
+
+excellent documentation to support your learning curve. 
+====================================================================
+What is the different between manual testing and automation testing ? 
+As we are here to learn cypress automation tool, we need to understand what is automation testing ?
+Suppose If you do have 2000 test cases as part of regression testing ?
+
+Regression testing : Whenever there is a change or update or improvement with in the application we need to make sure there is no impact of this implementation on existing features or already tested feature.
+to do so we need to conduct testing on all impacted areas of the application for the above code changes as part of improvements/updates. 
+
+2000 Regression test case that means , if there any change in the exist code there is need of executing 2000 tests to make sure there is no impact on already released features.
+
+to do we need to 10 testers for 2 weeks. 
+but there is no that much time to execute regression suite , then can we ignore this regression ? 
+
+how to execute 2000 regression tests in 2 days of time ? 
+
+less time more outcome and less resources I do not want to allocate manual testers to do that job. 
+
+We need to introduce automation tool to solve the above problem.
+
+Smoke testing -  conduct highlevel testing on imp feature on every new build to accept the build or reject.
+ensuring the stability of build to conduct further testing 
+
+we are transferring manual Burdon on a tool.
+
+Manual testing : we need to examine the application with testers knowledge and naked eye. 
+testers are using their knowledge to make sure is this working fine or not. he only experience with his naked eye.
+
+You are paid resource for your work. 
+
+we need to automate the testers knowledge and experience with the help of any automation tool.
+
+As tool is not an intelligent , we need to train the tool to do your work.  
+
+how train the tool 
+
+1. where is UI component  => example where we can find username in the web application , an automation tester need to train your automation tool to do this activity 
+we can call it as locate the element by using locators or selectors. 
+
+locators in selenium  => 
+
+2. What kind of action we are able to perform on this located component 
+textbox  =>  type the text 
+clear the text 
+slowly type the text
+quickly type the text 
+using back space remove the text 
+
+3. What kind validations or checks we need to perform on this Located or selected UI component . 
+
+Expected result == Actual result  => if it is true then test pass 
+expected result != actual result  =>  test fail 
+automatically tool will create a defect based on your training 
+
+example : typed text should be present on the Username textbox 
+this field name is Username textbox or not 
+
+generate the reports, howmany tests are pass /fail / pending to execute or hold . 
+
+
+rerun 2000 test cases without having any new testers , we can run and experience the test report . 
+
+we do invest time in converting the manual tests into automation tests.
+
+this is nothing but train the tool to do your work - one time activity.
+
+run and experience the results -  without any bias => get the report in your inbox. 
+=====================================================================
+when to automate ?
+
+Regression suite and smoke suite we are re running for every build and every release. 
+
+whenever we do execute test cases very frequently - same tests - then those test cases qualified for automation. 
+
+we do have a test case where it is changing very frequently . this feature is not qualified for automation. 
+
+a. repeatedly we need to execute those tests -  smoke and regression 
+b. there should not be any human intervention related activities
+captcha and otps 
+
+10% features do not ready for automation - 
+
+either we frequently changing the behavior of the feature because of the competitive ness
+or human intervention on this feature 
+
+
+Note:  Eventhough we do automate application tests , we can never ignore manual testing. 
+=====================================================================
+
+how to automate web applications by using cypress? 
+a. select the element 
+b. perform action on the element 
+c. Do check your expected result is matched with the actual result 
+====================================================================
+
+how to install cypress in your local computer ? 
+
+prerequisites : 
+
+1. nodejs we need to download and install in your local  computer 
+a. download the LTS version of nodejs 
+https://nodejs.org/en
+b.  double click on the downloaded exe file to install the nodejs in your local computer 
+c. once installation is done . lets check version of the nodejs 
+node -v 
+========================
+open the command prompt 
+
+C:\Users\PC>node -v
+v20.18.0
+
+C:\Users\PC>
+=====================
+
+2. VSCode - an IDE (integrated development environment) to write code for cypress automation. 
+a. Download the Vscode - https://code.visualstudio.com/Download
+b. Install the VScode -  double click on the Exe
+
+once installation is done - to use VScode - 
+https://code.visualstudio.com/docs/getstarted/introvideos
+==================================================================
+Open the VScode and launch the terminal in the project folder 
+1. Open the visual studio code 
+2. create a project folder 
+3. open the project folder with in the VScode 
+
+Installation: 
+1. npm install cypress --save-dev
+
+Installation reference :
+PS C:\cypress_work\cypress_demo_050102024> npm install cypress --save-dev
+
+up to date, audited 174 packages in 1s
+
+39 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+PS C:\cypress_work\cypress_demo_050102024> 
+
+2. npm init : 
+init => initialization of the project 
+
+give a name to the project 
+do add information about  the project 
+
+outcome of init is nothing but a package.json file 
+
+As cypress developed by using JS (java script) hence we need to download the nodejs to run the cypress as a prerequisite 
+
+package.json  => it is storing all the dependencies to run your application 
+
+
+3. npx cypress open 
+https://www.npmjs.com/package/cypress
+
+npm => node package managers  => installation is from npm 
+npm install any package name  => 
+
+npx => node package executor  => execute the packages with npx
+=====================================================================
+
+how to write your first test in cypress ? 
+
+In cypress test runner we do have facility to create the new spec.
+spec means your automation tests 
+
+template testcase for cypress:
+describe('template spec', () => { // test suite in cypress 
+
+  it('passes', () => { // Test case 
+
+    cy.visit('https://example.cypress.io')
+  })
+
+it('passes', () => { // Test case 
+
+    cy.visit('https://example.cypress.io')
+  })
+})
+
+
+Different flavors in cypress ?
+cypress app is open source => you can use and play with cypres code  free of cost 
+
+cypress cloud is commercial tool => purchase the license . 
+
+allurereports   => 
+
+
+a. Cypress basic automation 
+b. cypress advance automation -  custom keyword/fixtures/readfiles/write files/iframes/ shadow doms /POM 
+
+c. Cypresscloud with parallel execution with circleCI
+d. BDD frame work - cucumber integration 
+e. Allurereports 
+f. api testing  => cy.request()/cy.intercept() 
+g. integrate MSSQL server to connect to databse and write basic queries in your project. data validation. 
+
+qtramprasad@gmail.com 
+ramprasad@ramansoft.com
+
+
+
+
+=====================================================================
+
+
+

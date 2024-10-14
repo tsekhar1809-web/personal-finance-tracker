@@ -1,0 +1,141 @@
+Good morning !!!!!
+
+Recap : 
+
+We understand how to transform  manual test cases into cypress specs.
+
+1. We need to write the manual test case
+2. Record the spec with the help of cypress studio 
+a. Adding a new step to the existing testcase it() block 
+b. Adding a new testcase to the existing test suite describe() block 
+
+3. To setup the studio in your cypress we need to enabled experimentalStudio:true, in the cypress.config.js file 
+
+then only you can see Add test option at describe() => torch icon to add a test
+or add a step option at it() => torch icon to add condition 
+
+studio commands  => we can do only basic operations 
+and assertions 
+====================================================================
+Cypress automation consist of 3 steps 
+====================================================================
+step#1 Select the element or locate the element by using CSS selectors 
+=====================================================================
+a.ID selector  = #id with in your cy.get('#id')
+b.classname selector =.classname with in your cy.get('.classname')
+c. tag name selector =tagname with in your cy.get('tagname')
+d. attribute selector= [attributename="value"] with in your cy.get('[data-cy="123"]')
+
+data-cy is for uniquely identify the object for testing
+data-test=
+data-test-Id =
+
+As of now we are not able to write our own selector 
+=> playground option to detect the selector or cypress command 
+=> studio commands as an option to record cypress command
+=====================================================================
+Step#2
+Add an action to the spec  => Based on selected UI component 
+=====================================================================
+very UI component will their own specific actions those actions  automate with the help of  cypress provided action methods 
+
+Textbox  => focus/type/clear
+button/link => click() /rightclick()/ double click
+Dropdown => select('value')
+checkbox => check()/uncheck() 
+
+we adding as a chaining command to the located or selected UI element 
+"." is used to chain the action command to the selected or locatedUI component 
+====================================================================
+example: 
+cy.get('#id').type('ramprasad')
+cy.get('.classname').type('ramprasad')
+cy.get('input').type('password')
+cy.get('input').clear()
+cy.get('[data-test="value"]').select('india')
+=====================================================================
+Step#3  add Assertions 
+=====================================================================
+
+Check or validate the expected result for the above action need to chained with the help assertion statement. 
+
+Selector statement chained with assertions 
+
+Assertions are taken care by should method. 
+
+should method added as a chaining command to the selector or locator 
+
+cy.get('#id').should('be.visible') //is this UI component is visible on the page 
+cy.get('.classname').should('be.enabled')// is this UI component is enabled to  perform an action or not 
+cy.get('tagname').should('have.value','value to be tested')// is this UI component having the value as per the given expected value or not 
+cy.get('[data-cy="value"]').should('have.attr','href','URL')//supplied URL exactly matches with URL exist in the application this test pass 
+====================================================================
+for one UIelement you can add as many as a possible assertions 
+cy.get()
+.should() 
+.should()
+.should()
+.should()
+.should()
+=====================================================================
+
+ Best Practice: Use data-* attributes to provide context to your selectors and isolate them from CSS or JS changes.
+====================================================================
+
+HTML Code for example to identify the selectors 
+
+
+<button
+  id="main"
+  class="btn btn-large classname"
+  name="submission"
+  role="button"
+  data-cy="submit"
+>
+  Submit
+</button>
+
+example selectors to locate the element in cypress 
+
+1. cy.get('button') //tagname //worst choice 
+2. cy.get('.btn') //classname1 // Bad. Coupled to styling. Highly subject to change.
+3. cy.get('.btn-large') //classname2//Bad. Coupled to styling. Highly subject to change.
+4. cy.get('.btn.btn-large') //classname+classname //Bad. Coupled to styling. Highly subject to change.
+5. cy.get('#main') //ID selector //Better. But still coupled to styling or JS event listeners.
+6. cy.get('[id="main"]') //attribute selector 
+
+7. cy.get('[class="btn btn-large classname"]') //attribute selector 
+8. cy.get('[name="submission"]') //attribute selector 
+//Coupled to the name attribute which has HTML semantics.
+
+9. cy.get('[role="button"]')//attribute selector 
+//Coupled to the name attribute which has HTML semantics.
+
+
+
+10. cy.get('[data-cy="submit"]') //data attribute selector 
+//Best. Isolated from all changes.
+
+
+every HTML component displayed with open tag and close tag 
+<tagname> .....</tagname>
+<button>....</button>
+<input>....</input>
+<select>....</select>
+
+
+//Assignment #1 
+===================================================================
+<select style="display: none;">
+  <optgroup label="Fruits">
+    <option value="banana">Banana</option>
+    <option value="apple">Apple</option>
+  </optgroup>
+
+  <optgroup></optgroup>
+</select>
+
+Locate the ui element by using above HTML code 
+and add assertion
+=====================================================================
+

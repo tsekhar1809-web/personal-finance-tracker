@@ -1,0 +1,115 @@
+Good Morning !!!!!
+
+We are trying to understand how to locate the elements by using CSS selectors and HTML elements
+
+simple or basic selectors 
+combinator selectors 
+nth child selectors 
+attribute selectors 
+
+===============================
+What are Pseudo-Elements?
+===============================
+A CSS pseudo-element is used to style specified parts of an element.
+
+For example, it can be used to:
+
+select the first letter, or line, of an element
+
+
+select specified child element whenever more children are available 
+
+
+The syntax of pseudo-elements:
+==========================
+selector::pseudo-class/element
+==========================
+
+:first-child	
+p:first-child	Selects every <p> elements that is the first child of its parent
+
+:last-child
+p:last-child	Selects every <p> elements that is the last child of its parent
+
+:link	
+a:link	Selects all unvisited links
+=========================================================
+nth child concept in selecting the elements in cypress:
+==========================================================
+:nth-child(n)
+
+P:nth-child(2)	Selects every <p> element that is the second child of its parent
+
+ element:nth-child(3) => selects the 3rd child 
+    element:nth-child(10) => selects the 10th child 
+selector:nth-child(10) 
+
+============================================================
+CSS [attribute="value"] Selector
+============================================================
+1. attribute="value"
+[attribute]
+
+The [attribute="value"] selector is used to select elements with a specified attribute and value.
+
+2. The [attribute~="value"] selector is used to select elements with an attribute value containing a specified word.
+
+
+The example [title~="flower"] =>
+ will match elements with title="flower", title="summer flower", and title="flower new", but not title="my-flower" or title="flowers".
+
+3. The [attribute|="value"] selector is used to select elements with the specified attribute, whose value can be exactly the specified value, or the specified value followed by a hyphen (-).
+
+Note: The value has to be a whole word, either alone, like class="top", or followed by a hyphen( - ), like class="top-text".
+
+4. The [attribute^="value"] selector is used to select elements with the specified attribute, whose value starts with the specified value.
+
+The following [class^="top"] => selects all elements with a class attribute value that starts with "top":
+
+5. The [attribute$="value"] selector is used to select elements whose attribute value ends with a specified value.
+
+The following [class$="test"] selects all elements with a class attribute value that ends with "test":
+
+Note: The value does not have to be a whole word!  
+
+6. The [attribute*="value"] selector is used to select elements whose attribute value contains a specified value.
+
+The following [class*="te"] => selects all elements with a class attribute value that contains "te":
+
+Note: The value does not have to be a whole word! 
+====================================================================
+nth-child()
+attribute
+attribute="value"
+attribute*="value"
+attribute~="value"
+attribute|="value"
+attribute^="value"
+attribute$="value"
+===================================================================
+Selectors => comeback to cypress + developer options to traceout the right ui component for testing 
+==================================================================
+studio commands 
+playground 
+you can create own cypress commands by using selectors 
+
+cy.get('selector') //locate the element
+=============================================================
+supply below statement to  detect your cypress commands in VScode
+
+///<reference types="cypress"/>
+
+ cy.get('tbody>tr').eq(0)    // Yield first 'tr' in 'tbody'
+    cy.get('ul>li').eq('4')     // Yield fifth 'li' in 'ul'
+    cy.get('li').eq(-2) // Yields second from last 'li' element
+    cy.get('li').eq(-1) // Yields first from last 'li' element
+
+
+Yields 
+.eq() yields the new DOM element it found.
+.eq() is a query, and it is safe to chain further commands.
+
+
+eq() is used to traceout the correct element in the list of results .
+
+ a number indicating the index to find the element at within an array of elements. A negative number counts index from the end of the list.

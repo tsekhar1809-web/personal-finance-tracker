@@ -1,0 +1,92 @@
+Good Morning !!!!!
+
+Recap: We understand different selectors and we started using different css selectors to automate our example.cypress.io website.
+
+id selector  => #id 
+classname selector  =>.classname
+atribute="value" => [attribute="value"] => ~/|/^/$ 
+tag name  = tagname  => p/input
+
+combinator  => space/>/+/~
+
+nth-child(1)
+=============================================================
+cypress automation : 
+
+Query commands  => 
+cy.get('selector')//locate the element 
+
+cy.visit('URL') //browse the URL 
+cy.contains('text')//search for the provided text with in the page 
+===================================================================
+whenever we do have more than one element comes as outcome of your selector in that situation we can use cypress in built eq()
+
+list of UI components resulting for the provided selector will be captured into array . 
+
+so based on array index {0} we can filter right component in the webpage
+
+eq(0)//first element in the array => first UI component from the list of results 
+eq(3)//4th element from the list 
+eq(-1)//last element from the list 
+eq(-2) // last but one from the list 
+eq(-5)//5 results displayed in the list  => first element 
+reference link :  Imp interview question
+https://docs.cypress.io/api/commands/eq
+===================================================================
+1. Today we would like to automate one manual test case into automation 
+2. Querying commands in the cypress 
+cy.get()/cy.contains()
+
+====================================================================
+
+Manual test case to verify the methods mentioned in example.cypress.io 
+
+1. Browse the URL  "https://example.cypess.io"
+cy.visit('https://example.cypress.io')
+2. click on the "commands" dropdown
+Locate the commands UI component with selector and perform an action 
+cy.get('.dropdown-toggle').click()
+
+3. select the option "Querying" and click on it 
+cy.contains('Querying').click()
+Expected result 1: Customer should be able to see the Page heading as "Querying"
+cy.get('h1').should('have.text','Querying')
+Expected Result2: Customer should be able to see the Page information as "Examples of querying for DOM elements in Cypress, for a full reference of commands, go to docs.cypress.io and read Selecting Elements: Best Practices Guide"
+
+cy.get('p').should('have.text','Examples of querying for DOM elements in Cypress, for a full reference of commands, go to docs.cypress.io and read Selecting Elements: Best Practices Guide')
+
+Expected Result 3: should  have method text "cy.get()"
+cy.get('#get').should('have.text','cy.get()')
+
+
+Expected Result 4: should have method text "cy.contains()"
+cy.get('[href="https://on.cypress.io/contains"]').should('have.text','cy.contains()')
+
+Expected Result 5: should have method text ".within()"
+cy.contains('.within()').should('have.text','.within()')
+
+expected Result 6: should have method text "cy.root()"
+
+cy.get('h4>#root').should('have.text','cy.root()')
+expected result 7: should have method  text  "Best Practices: Selecting elements"
+cy.get('h4 #best-practices').should('have.text','Best Practices: Selecting elements')
+
+expected result 8: should have the button with text "Button"
+cy.get('.query-btn.btn.btn-primary').should('have.text','Button')
+
+==============================================================
+cy.get('selector') // to locate the element by using the selector 
+cy.contains('text') //to locate the element by using the text supplied
+cy.get('selector').within(function(){
+//only with in the provided selector we can operate these steps 
+cy.root() //it will not go to global root => HTML // it points to the root of the provided selector 
+
+})
+
+
+Note: 
+cy.root() yields the root DOM element.//html
+
+The root element yielded is <html> by default. However, when calling .root() from a .within() command, the root element will point to the element you are "within".
+
+cy.root() is a query, and it is safe to chain further commands.

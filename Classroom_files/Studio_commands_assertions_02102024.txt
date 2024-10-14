@@ -1,0 +1,140 @@
+Good morning !!!!!
+
+Recap : 
+
+Installation commands => 
+1. Install nodejs
+2. install  Vscode 
+3. open terminal in VScode and paste below command 
+npm install cypress --save-dev
+4. npm init 
+5. npx cypress open 
+
+you will be able to launch the cypress test runner on your computer.
+===================================================================
+Using play ground to write basic test automation steps .
+
+to do so . 
+
+1. write manual test first and then do automation. 
+
+describe('name of the suite', ()=>{
+
+it('name of test case1',()=>{
+// write your test steps for the test case#1
+cy.visit('https://example.cypress.io')
+})
+
+it('name of test case2',()=>{
+// write your test steps for the test case#2
+
+cy.visit('https://example.cypress.io')
+})
+it('name of test case3',()=>{
+// write your test steps for the test case#3
+cy.visit('https://example.cypress.io')
+
+})
+
+
+})
+==================================================================
+
+How to use Developer tools to inspect the UI element with in the web page. 
+
+Chrome developer tools :
+
+https://developer.chrome.com/docs/devtools/overview
+
+There are many ways to open DevTools, because different users want quick access to different parts of the DevTools UI.
+
+To work with the DOM or CSS, right-click an element on the page and select Inspect to jump into the Elements panel. Or press Command+Option+C (Mac) or Control+Shift+C (Windows, Linux, ChromeOS).
+To see logged messages or run JavaScript, press Command+Option+J (Mac) or Control+Shift+J (Windows, Linux, ChromeOS) to jump straight into the Console panel.
+
+firefox developer tools : 
+https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/What_are_browser_developer_tools
+
+Play ground having two options to select the commands 
+
+1. cy.get() //to locate the elements with the help of supplied CSS selectors 
+a. classname  = .classname
+b. ID = #id
+c. tag name = tagname 
+d. attributename="value" = [attribute="value"]
+
+cy.get('selector of UI component').actions or assertions on yielded subject. 
+should
+
+
+2. cy.contains() // also used to detect or identify the element on webpage  but it will search through text you supplied. 
+
+cy.contains('Hello') // where ever we do have Hello text your cypress will go there and try to perform actions and assertions on that UI component.
+
+
+Two outcomes we can capture from the play ground.
+
+1. Copy the resulting command to clipboard , you can paste in VScode test spec 
+
+2. Copy to console. 
+F12/inspect to open the developer tools 
+click on console 
+
+in the console you can see the command we identifies through the Playground for the selected UI component 
+and no of element we identified
+
+what is the object your identified through the playground command.
+
+
+example content in console:
+
+Command:
+cy.get('.home-list > :nth-child(15) >[href="/commands/storage"]')   
+Elements:  1
+Yielded:   <a href=​"/​commands/​storage">​Storage​</a>​
+=====================================================================
+Studio commands: 
+
+how to setup studio commands in your cypress test runner.
+
+1. With in your Test runner lets navigate to settings tab >> Project settings 
+there you can see experiementalStudio option to records the basic actions and assertions.
+
+
+Studio
+experimentalStudio
+Generate and save commands directly to your test suite by interacting with your app as an end user would.
+
+2. This project settings options are exist in cypress.config.js 
+
+experimentalStudio:true,
+
+
+Cypress automation involved in 3 steps
+
+1. Locate the element  // use selectors and get method or contains 
+2. Perform an action // click()/type()/select/check/uncheck
+3. Add an assertion to check are we in right place or page or component //should(be.visible)
+should('have.text','yourinput')
+//contain
+//have.value 
+//have.attr => we can play 
+href
+class
+etc...
+
+Playground services and studio command
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,142 @@
+Good morning !!!!!
+
+We understand - 
+1. Setup Cypress in your computer 
+2. Test runner  UI - Specs/Settings 
+3. Write your tests using Cypress Play ground 
+4. Write your tests using cypress studio commands 
+
+a. Test runner  >> settings  >> project settings  >> studio option 
+
+experimentalStudio:true,  copy this statement into cypress.config.js 
+
+cypress.config.js file 
+
+e2e section in this section what ever you enable accordingly your cypress will work. 
+
+5. We do understand cypress automation consists of 3 steps: 
+
+a. Locate or select the element which we are suppose to automate 
+
+try to identify the UI component where exactly it present in the website 
+
+b. perform suitable action  => as per your test 
+
+Textbox  => type() /clear() 
+type means entering the data into the textbox 
+clear () = removing the data which already exist 
+
+Checkbox  =>  check() /uncheck() 
+radiobutton => click() 
+drodpdown => select('option')
+links => click 
+rightclick()
+leftclick()
+doubleclick() dblclick()
+
+c. Add an assertion to check the expected result mentioned in the test case 
+.should(be.visible) => should be visible 
+cy.get('selector for textbox').should(be.enabled)=> textbox should be enabled to enter the data
+
+.should('have.text','Cypress') , should have the text Cypress 
+cy.get('select the username textbox').should('have.value','myusername'), username textbox should display myusername
+
+cy.get('locator').should('have.attr', 'href','https://example.cypress.io')
+
+
+whenever we are suppose to test more conditions in one testcase 
+
+Textbox should be visible and enable 
+
+cy.get('locator for textbox').should(be.visible)
+cy.get('locator for textbox').should(be.enabled)
+
+cypress is supporting chaining commands 
+
+cy.get('locator for textbox')//locate the element 
+.type() //action to be performed by your cypress
+//on this yielded subject we are performing below assertions 
+.should(be.visible) //assertion1
+.and(be.enabled) //assertion2
+.and('have.text','cypress')//assertion 3
+.and('have.class','classname')//assertion4
+.and('have.attr', 'href', 'url')//assertion5 
+
+if you want to add actions that is also possible with . 
+==============================================
+locate - action - assertion 
+==============================================
+Locate by using below commands 
+================================================================
+cy.visit() // to browse the website 
+=================================================================
+cy.get() //locate the element by taking the input from CSS selectors 
+cy.contains() //locate the text supplied to the contains commands with in the web page. 
+===================================================================== 
+Actions :
+
+click() to perform mouse click operation 
+type() enter the text through cypress 
+clear() clear the text through cypress 
+check() 
+uncheck()
+select() 
+=====================================================================
+Assertions : 
+
+Should 
+and
+be.visible 
+be.enabled
+have.text //exact match
+have.value
+contain //match
+have.attr
+=========
+expect()
+=========
+====================================================================
+Reuse studio commands to perform all these things 
+====================================================================
+Test case #1: Querying page heading should be Querying 
+
+1. Browse the website "https://example.cypress.io/"
+2. Click on the Commands dropdown and select Querying option 
+3. in the resulting page we need to check the Page heading should be "Querying"
+
+Testcase#2 : Querying page displaying the cy.get() method 
+
+1. Browse the website "https://example.cypress.io/"
+2. Click on the Commands dropdown and select Querying option 
+3. In the resulting page cy.get() method should be present 
+4. cy.get() method shoud contain Button with the label Button
+
+
+
+Testcase#3 : Querying page is displaying the cy.contains() method 
+
+1. Browse the website "https://example.cypress.io/"
+2. Click on the Commands dropdown and select Querying option 
+3. In the resulting page cy.contains() method should be present 
+4. SaveForm button shoud be present 
+
+Testcase#4 : Querying page displaying the cy.within() method 
+
+1. Browse the website "https://example.cypress.io/"
+2. Click on the Commands dropdown and select Querying option 
+3. In the resulting page cy.within() method should be present 
+4. within selection should contain name txtbox , email and password 
+
+Testcase#5 : Querying page displaying the cy.root() method 
+
+1. Browse the website "https://example.cypress.io/"
+2. Click on the Commands dropdown and select Querying option 
+3. In the resulting page cy.root() method should be present
+4 Cy.root should have the information about One
+Two
+Buckle my shoe
+
+
+to  get more insight towards  studio commands lets go through this link.
+
+https://docs.cypress.io/guides/references/cypress-studio

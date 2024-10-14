@@ -1,0 +1,15 @@
+1. HTML + CSS + JS  => before Tuesday 
+2. You guys need to go through Agile scrum frame work with the help of JIRA 
+3. Have you create atlasian academy account  
+
+today JIRA assignment : 
+
+Add attachments to an issue
+
+View an issue’s history
+
+Link issues to other issues and additional content
+
+Move an issue
+
+Delete an issue

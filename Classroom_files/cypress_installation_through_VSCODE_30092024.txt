@@ -1,0 +1,155 @@
+Good Morning !!!!!
+
+Recap: 
+
+1. how to setup your cypress without having any installation through 
+Direct Download option . 
+
+a. Download zip file ,extract 
+b. Run the cypress application 
+c. Select a Folder to copy the  necessary files from cypress side 
+d. all configuration will be set 
+e. Select E2E testing 
+f. select browser 
+g. Test  runner for cypress 
+   1. Specs  2. runs  3. debug  4. settings 
+h. Navigate to specs tab and try to create a new spec and run the spec 
+
+one Passing test and failing test 
+====================================================================
+new spec with multiple tests 
+
+describe('MY first test suite', () => {
+  it('My first test ', () => {
+    cy.visit('https://amazon.in')
+  })
+
+ it('My seocnd test ', () => {
+    cy.visit('https://amazon.in')
+  })
+ it('My third test ', () => {
+    cy.visit('https://amazon.in')
+  })
+ it('My fourth test ', () => {
+    cy.visit('https://amazon.in')
+  })
+})
+===================================================================
+Today we are setting up the cypress in local computer through npm install
+===================================================================
+Pre requisites :  
+
+1. nodeJS => download and install nodejs as part of your cypress installation 
+
+why do we need to install nodejs =>cypress developed in java script hence to run java script application nodejs is required to run those application.
+a. downloaded nodejs  
+b. installed into the computer 
+c. set the path in environmental variables.
+
+2. Check the node version installed in your computer is compatible with the cypress supported version number. 
+
+node -v
+
+reference URL :https://docs.cypress.io/guides/getting-started/installing-cypress
+
+3. Setup the IDE VSCode ( visual studio Code) , free to use. 
+
+a. download the VScode https://code.visualstudio.com/Download
+b. install the VScode 
+c. Go through the intro videos to make your self comfortable with VSCODE IDE
+https://code.visualstudio.com/docs/getstarted/userinterface
+
+Open IDE 
+
+================================================================
+Setup cypress in your local computer
+Create a Project folder => 
+
+1.Open VSCODE IDE 
+2. Supply newly created folder to VSCODE through open Folder option 
+3. Open the terminal => command prompt with in the IDE
+4. Run the installation command n the terminal 
+"npm install cypress --save-dev"
+this step will take couple of min based on your internet speed.
+
+Reference Terminal content:
+
+PS C:\cypress_work\cypressdemo-28092024\Cypress_instalaltion_npm> npm install cypress --save-dev
+
+up to date, audited 174 packages in 1s
+
+39 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+PS C:\cypress_work\cypressdemo-28092024\Cypress_instalaltion_npm> 
+
+5. in the terminal  initiate the project through npm init
+
+=> it is setup basic settings like 
+
+name 
+repo 
+author 
+
+Package.json is an outcome of this 
+
+Note:
+================================================================== 
+Use `npm install <pkg>` afterwards to install a package and
+save it as a dependency in the package.json file.
+====================================================================
+npx cypress open 
+
+after performing open statement , cypress will check do we have configuration files => if yes move to the browser selection screen
+if no configuration file detected in the folder =>
+
+"Configuration files
+We added the following files to your project:" 
+
+1. cypress.config.js
+2. cypress\support\e2e.js
+3. cypress\support\commands.js
+4. cypress\fixtures\example.json
+
+==========================================
+Choose a browser
+
+here we can see all installed browsers. 
+a. install chrome /firefox / edge 
+
+cypress by default having the browser Electron
+==============================================
+
+Select a Spec or create a Spec  through create spec option in Test runner 
+
+Run the spec 
+================================================
+Recap: 
+
+1. Downlaod and install VSCode 
+2. Downlaod and install nodejs LTS version 
+3. Check the node version => node -v 
+4. open the terminal in the VScode project folder 
+5. npm install cypress --save-dev
+6. npm init  => to create package.json file 
+7. npx cypress open => launching the cypress test runner in your computer 
+8. Create  a new spec or  copy the scaffold examples to practice test run 
+=================================================
+Tasks to be performed : 
+a. Install the cypress 
+b. Launch the cypress by using npx cypress open 
+c. play with specs tab UI options 
+================================================
+
+
+
+
+
+
+
+
+
+
+
+

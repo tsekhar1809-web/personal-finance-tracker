@@ -1,0 +1,123 @@
+Good Morning !!!!!
+
+Recap : 
+
+We are trying to automate manual testcase  with the help of cy.get() method => selectors 
+
+querying commands in cypress 
+cy.get()
+cy.contains()
+.within() // within selected element we can do operate child element selections, actions and assertions 
+cy.root()
+it('',function(){
+cy.get('.classname').within(function(){//forms 
+scope of the within is between{}
+cy.root()// handles root element of .classname
+
+})
+
+cy.root() //represents html as a default root element 
+})
+
+================================================================
+
+Traversal commands and assertions 
+
+========
+Children
+========
+children
+Get the children of each DOM element within a set of DOM elements.
+
+The querying behavior of this command matches exactly how .children() works in jQuery.
+
+
+syntax:
+
+.children()
+.children(selector)
+.children(options)
+.children(selector, options)
+
+Usage:
+cy.get('nav').children() // Yield children of nav
+
+Yeilds:
+
+Yields 
+.children() yields the new DOM element(s) it found.
+.children() is a query, and it is safe to chain further commands.
+
+
+Children() chained with assertions 
+
+cy.get('.left-nav>.nav').children().should('have.length', 8)
+//it list down the all children belongs to .left-nav>.nav selector 
+
+cy.get('.left-nav>.nav').children('.active').should('have.length', 1)
+//list down the children with .active class .
+
+Setup local HTTP-server to play with cypress :
+
+1. Open VSCODE in your project folder 
+2. open the terminal 
+3. run the command "npm install http-server"
+4. Once installed you can able to see dependency in the package.json file 
+
+example:
+
+ "dependencies": {
+    "http-server": "^14.1.1"
+  }
+
+5. lets start the server 
+in the terminal run the command "http-server"
+
+example output: 
+ Available on:
+  http://192.168.29.238:8081
+  http://127.0.0.1:8081
+Hit CTRL-C to stop the server
+
+======================
+xit() // this test is excluded from test execution 
+it.only() //only this test case executed in the run
+=========================
+find and filter()
+
+cy.get('.article').find('footer') // Yield 'footer' within '.article'
+
+cy.get('td').filter('.users') // Yield all el's with class '.users'
+
+Filter the current subject to the elements with the class 'active'
+
+
+// yields [<li class="first"></li>, <li class="second"></li>]
+cy.get('#parent').find('li')
+
+Tasks to be completed before Monday lecture:
+
+1. Create a GitHub account 
+2. Read the documentation for querying commands
+get command : https://docs.cypress.io/api/commands/get
+contains command : https://docs.cypress.io/api/commands/contains
+within : 
+root 
+3. Read the documentation for traversal commands:
+children()
+parent()
+parents()
+closest()
+find() //very important 
+filter()
+
+4. lets go through the selectors spread sheet shared with you. 
+basic selectors
+combinators selectors 
+attribute selectors 
+
+5. xit() and it.only()
+
+6. set up the http-server in your local VSCODE
+
+
