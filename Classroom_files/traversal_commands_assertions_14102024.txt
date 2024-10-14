@@ -1,0 +1,49 @@
+Good Morning !!!!!
+
+We will start the session in couple of minutes 
+
+Mean while please check your emails  and follow the instruction provided by GitHub request email.
+
+Shared an invite to the repository batch-6 
+
+Please do access the repo and setup in your local computer.
+
+2. Download the GitHub desktop and share your batch-6 repo URL to GitHub desktop 
+
+3. clone the repo 
+
+
+
+Steps to setup repo:
+
+1. Download and install the GitHub desktop
+2. Login to GitHub desktop
+3. In the file menu >> Clone repository >> URL 
+
+Paste the repo URL "https://github.com/cypresstraining/batch6.git"
+4. supply the empty folder where you want to clone 
+5. click on Clone button to initiate the clone process 
+6. once cloning is done 
+7. you can open the code with the help of "Open with visual studio code "
+8. In the VSCode open the terminal 
+9. npm install 
+10. npx cypress open 
+11. Select E2E testing , Select browser and able to see cypress test runner 
+12. Run your traversal commands spec .
+===========================================================
+match is used to match the results with given result.
+
+in the group of result mentioned result should exist.
+
+have.text => should have the text as it is 
+contain=> part of the text should be available 
+have.class =>  provided class name should exist in the selected UI component 
+have.length =>length  of the result array . howmany results we do have for this selection 
+have.value => is this UI component is having the value as per the mentioned value in the assertion. 
+===========================================================
+
+
+
+
+
+
