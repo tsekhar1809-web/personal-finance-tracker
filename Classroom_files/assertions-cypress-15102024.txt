@@ -1,0 +1,141 @@
+GoodMorning !!!!!
+
+Recap: 
+
+1. We understand how to locate the element by using different CSS selectors 
+
+querying commands 
+cy.get()
+cy.contains()
+cy.get().within()
+cy.root()
+
+2. We need to traversal between the different UI components .
+as a extra option to find out the right element 
+
+this is a extra helping hand to select the right UI component 
+=================================================================
+.children()
+.closest()
+.parent()
+.parents()
+.siblings()
+.prev()
+.next()
+.not()
+.prevAll()
+.nextAll()
+.nextUntill()
+.prevUntill()
+.first()
+.last()
+==============================
+filter the results of selector
+===============================
+.filter()
+.find()=> to select the respective descendent elements
+================================================================
+3. Whether we selected the right UI element or not ? 
+
+to perform this validation we need to add assertions.
+
+that means what ever you want to verify supply that in the form of cypress command 
+
+before action to be performed or after action performed you can add assertions. 
+
+Basic assertions : 
+1.match:
+ is used to match the results with given result.
+
+in the group of result mentioned result should exist.
+
+2.have.text => should have the text as it is 
+3.contain=> part of the text should be available 
+4.have.class =>  provided class name should exist in the selected UI component 
+5.have.length =>length  of the result array . howmany results we do have for this selection 
+6.have.value => is this UI component is having the value as per the mentioned value in the assertion.
+=====================================================================
+Visibility assertions :
+be.visible
+not.be.visible 
+be.enabled 
+be.disbled
+not.be.enabled 
+not.be.disbaled 
+greater than 
+lessthan 
+equal
+=====================================================================
+GitHub
+
+commit  => pushing the changes into the server 
+updating the changes to the server repository 
+=> Push the code to the GitHub repo
+
+
+some one updated the code exist in GitHub repo-
+
+that means your local system not having the latest code exist in the server . 
+pull the code into local =>
+
+conflict :  current GitHub repo file and your file having some differences , please resolve those differences. 
+
+Stash :  restore or discard => 
+====================================================================
+example assertions for your reference:
+
+// assert the element's text content is exactly the given text
+cy.get('[data-testid="user-name"]').should('have.text', 'Joe Smith')
+// assert the element's text includes the given substring
+cy.get('[data-testid="address"]').should('include.text', 'Atlanta')
+// retry until this span does not contain 'click me'
+cy.get('a').parent('span.help').should('not.contain', 'click me')
+// the element's text should start with "Hello"
+cy.get('[data-testid="greeting"]')
+  .invoke('text')
+  .should('match', /^Hello/)
+// use cy.contains to find an element with its text
+// matching the given regular expression
+cy.contains('[data-testid="greeting"]', /^Hello/)
+
+
+Implicit assertions in cypress:
+
+Core Concept
+With Cypress, you don't have to write explicit assertions to have a useful test. Without a single expect() or .should(), a few lines of Cypress can ensure thousands of lines of code are working properly across the client and server.
+
+This is because many commands have built in Implicit Assertions which offer you a high level of confidence that your application is working as expected.
+
+Implicit Assertions
+Many commands have default, built-in assertions, or rather have requirements that may cause it to fail without needing an explicit assertion you've added.
+
+For instance:
+cy.visit() expects the page to send text/html content with a 200 status code.
+cy.request() expects the remote server to exist and provide a response.
+cy.contains() expects the element with content to eventually exist in the DOM.
+cy.get() expects the element to eventually exist in the DOM.
+.find() also expects the element to eventually exist in the DOM.
+.type() expects the element to eventually be in a typeable state.
+.click() expects the element to eventually be in an actionable state.
+.its() expects to eventually find a property on the current subject.
+
+
+Reversing the implicit assertion:
+Core Concept
+If you want to disable the default existence assertion, you can add .should('not.exist') to any DOM command.
+
+
+chai assertions :  should(to.be.true) and()
+mocha assertions: 
+expect(your subject).to.be.true
+
+//click()
+//right click()
+//dbl click 
+check/uncheck
+baseUrl: 
+
+
+
+
+
