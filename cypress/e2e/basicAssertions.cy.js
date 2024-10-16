@@ -37,12 +37,12 @@ describe('Basic assertions',function(){
       //if you want to test the respetive file classname we have to  use have.class
       .and('have.class','form-control action-email')
      //cy.visit('https://example.cypress.io/commands/assertions')
-     expect(true).to.be.true
-     const o = { foo: 'bar' }
-     expect(o).to.equal(o)
-     expect(o).to.deep.equal({ foo: 'bar' })
+     //expect(true).to.be.true
+     //const o = { foo: 'bar' }
+    // expect(o).to.equal(o)
+    // expect(o).to.deep.equal({ foo: 'bar' })
      // matching text using regular expression
-     expect('FooBar').to.match(/bar$/i)
+     //expect('FooBar').to.match(/bar$/i)
       })
 
 

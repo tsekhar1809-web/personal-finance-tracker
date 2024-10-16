@@ -1,0 +1,119 @@
+Good Morning !!!!!
+
+Recap : 
+
+We understand how to locate the element by using selectors and traversal commands 
+
+we need to perform an action or we need to add an assertion.
+
+Button => click()/double click() 
+textbox => type()
+checkbox /radio button => check/uncheck()
+dropdown = select the particular value 
+link => click()
+=====================================================================
+We do have implicit assertions => where our cypress commands is having inbuilt assertion. that means cypress command it self handling the verification or assertion.
+cy.visit()/cy.get()/cy.contains()/find => 
+
+
+explicit assertions:  you have to supply the assertion manually . 
+
+you are supplying the expected value and checking that is the same value exist with in the located element
+
+visibility assertions 
+action related assertions => before action what is the condition
+after action what is the condition 
+
+property related assertions 
+class name 
+have.class
+have.value 
+have.property  href   URL 
+====================================================================
+today we are going to discuss on Actions with assertions
+=====================================================================
+We can try to automate UI components 
+a. select the component // cy.get()/contains()/ find/ traversal commands  => selectors
+b. perform an action  => actions 
+c. assertion to check the action is correctly performed or not => 
+should/and 
+===================================================================
+
+1. Browse the URL "https://example.cypress.io"
+2. click on commands dropdown and select Actions 
+3. in the actions page verify page heading and introduction paragraph 
+4. Check do we have Email address text is available and it holding email textbox with type facility to enter ramprasad@ramanasoft.com 
+5. verify email  textbox should contain ramprasad@ramanasoft.com 
+================================================================
+
+hooks in cypress:
+
+beforeEach(()=>{
+//write your test steps which we need to execute as a pre requisite for every test 
+//opening website and perform basic operations as a prerequisite.
+// in manual testing how we are configuring the pre requsiites the sameway we do it for cypress automation with beforeEach()
+
+this code will execute before every it() block and then it block code execution continues
+
+})
+
+before focus():
+
+<div class="form-group">
+                <label for="password1">Password</label>
+                <input type="password" class="form-control action-focus" id="password1" placeholder="Password">
+              </div>
+
+after focus():
+<div class="form-group">
+                <label for="password1" style="color: orange;">Password</label>
+                <input type="password" class="form-control action-focus focus" id="password1" placeholder="Password">
+              </div>
+
+
+blur() is exactly opposite to focus()
+
+before blur():
+
+<div class="form-group">
+                <label for="fullName1">Full Name</label>
+                <input type="text" class="form-control action-blur" id="fullName1" placeholder="Enter your name">
+              </div>
+
+after blur()
+<div class="form-group">
+                <label for="fullName1" style="color: red;">Full Name</label>
+                <input type="text" class="form-control action-blur error" id="fullName1" placeholder="Enter your name">
+              </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
