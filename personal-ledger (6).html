@@ -1,0 +1,1041 @@
+<!-- Personal Ledger — FY tracker prototype -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+  #ledger-root {
+    --ink:#16233F; --paper:#EDEEDF; --rule:#C9CBB4; --green:#2F4F3E;
+    --gold:#9A6D1F; --rust:#8C3A2E; --muted:#5B5748; --paper-2:#E4E5D2;
+    --income-c:#1F7A4D; --expense-c:#C1432B; --profit-c:#2B5FA8;
+    font-family:'IBM Plex Sans', sans-serif; color:var(--ink);
+    background:var(--paper); padding:28px 20px 60px; max-width:980px; margin:0 auto;
+    line-height:1.45;
+  }
+  #ledger-root * { box-sizing:border-box; }
+  #ledger-root h1,#ledger-root h2,#ledger-root h3 { font-family:'Source Serif 4', serif; margin:0; font-weight:600; }
+  #ledger-root .num { font-family:'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+  #ledger-root .muted { color:var(--muted); font-size:13px; }
+
+  .hero { border-bottom:2px solid var(--ink); padding-bottom:18px; margin-bottom:22px; display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap; }
+  .hero .fy-tag { font-size:13px; letter-spacing:.02em; color:var(--green); font-family:'IBM Plex Mono',monospace; }
+  .hero h1 { font-size:26px; margin-top:4px; }
+  .hero .profit-figure { text-align:right; }
+  .hero .profit-figure .amt { font-size:36px; font-weight:600; }
+  .hero .profit-figure .lbl { font-size:12px; color:var(--muted); }
+  .pos { color:var(--green); } .neg { color:var(--rust); }
+
+  .month-rail { display:flex; gap:2px; overflow-x:auto; margin-bottom:22px; border-bottom:1px solid var(--rule); }
+  .month-tab { padding:9px 16px; font-family:'IBM Plex Mono',monospace; font-size:13px; cursor:pointer; white-space:nowrap; border-bottom:3px solid transparent; color:var(--muted); }
+  .month-tab.active { color:var(--ink); border-bottom-color:var(--gold); font-weight:600; }
+  .month-tab.locked { color:#9a988a; cursor:not-allowed; }
+  .month-tab .lock { font-size:10px; }
+
+  .grid { display:grid; grid-template-columns:1.5fr 1fr; gap:32px; align-items:start; }
+  @media (max-width:720px){ .grid{ grid-template-columns:1fr; } }
+
+  .panel { margin-bottom:28px; }
+  .panel h2 { font-size:15px; text-transform:none; letter-spacing:.01em; border-bottom:1px solid var(--rule); padding-bottom:8px; margin-bottom:14px; }
+
+  .txn-form { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .txn-form .full { grid-column:1 / -1; }
+  .txn-form label { font-size:11px; color:var(--muted); display:block; margin-bottom:3px; }
+  .txn-form input, .txn-form select { width:100%; padding:7px 8px; border:1px solid var(--rule); background:#fff; font-family:'IBM Plex Sans',sans-serif; font-size:13px; border-radius:2px; }
+  .txn-form .type-toggle { display:flex; gap:6px; }
+  .type-btn { flex:1; padding:7px; border:1px solid var(--rule); background:#fff; cursor:pointer; font-size:12px; border-radius:2px; }
+  .type-btn.income.sel { background:var(--green); color:#fff; border-color:var(--green); }
+  .type-btn.expense.sel { background:var(--rust); color:#fff; border-color:var(--rust); }
+  .add-btn { grid-column:1/-1; padding:9px; background:var(--ink); color:#fff; border:none; cursor:pointer; font-size:13px; font-family:'IBM Plex Sans',sans-serif; border-radius:2px; }
+  .add-btn:hover { background:var(--green); }
+
+  .txn-row { display:grid; grid-template-columns:70px 1fr 90px 26px; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid var(--rule); font-size:13px; }
+  .txn-row .cat { color:var(--muted); font-size:12px; }
+  .txn-row .amt { text-align:right; font-weight:500; }
+  .txn-row .del { cursor:pointer; color:var(--muted); text-align:center; }
+  .txn-row .del:hover { color:var(--rust); }
+  .empty-note { padding:20px 0; color:var(--muted); font-size:13px; text-align:center; border-bottom:1px solid var(--rule); }
+
+  .month-totals { display:flex; justify-content:space-between; padding:12px 0 0; font-size:13px; }
+  .month-totals .val { font-weight:600; }
+
+  .bar-row { display:grid; grid-template-columns:60px 1fr 60px; align-items:center; gap:8px; margin-bottom:6px; font-size:12px; }
+  .bar-track { height:14px; background:var(--paper-2); position:relative; border-radius:2px; overflow:hidden; }
+  .bar-fill { height:100%; }
+
+  .dashboard-panel { background:#fff; border:1px solid var(--rule); border-radius:6px; padding:20px 22px; margin-bottom:26px; }
+  .dashboard-panel h2 { font-size:16px; }
+
+  .chart-filters { display:flex; gap:14px; margin-bottom:16px; flex-wrap:wrap; align-items:flex-end; }
+  .chart-filters label { font-size:11px; color:var(--muted); display:block; margin-bottom:3px; text-transform:uppercase; letter-spacing:.04em; }
+  .chart-filters select { padding:7px 10px; border:1px solid var(--rule); background:#fff; font-size:13px; border-radius:3px; font-family:'IBM Plex Mono',monospace; }
+
+  .summary-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+  @media (max-width:640px){ .summary-cards{ grid-template-columns:1fr; } }
+  .summary-card { border:1px solid var(--rule); border-left:5px solid; border-radius:4px; padding:12px 14px; background:var(--paper); }
+  .summary-card.income { border-left-color:var(--income-c); }
+  .summary-card.expense { border-left-color:var(--expense-c); }
+  .summary-card.profit { border-left-color:var(--profit-c); }
+  .summary-card .sc-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:5px; }
+  .summary-card .sc-amt { font-size:20px; font-weight:600; }
+  .summary-card.income .sc-amt { color:var(--income-c); }
+  .summary-card.expense .sc-amt { color:var(--expense-c); }
+
+  .chart-legend { display:flex; gap:20px; margin-bottom:12px; font-size:13px; color:var(--ink); font-weight:500; }
+  .chart-legend .swatch { display:inline-block; width:13px; height:13px; border-radius:3px; margin-right:6px; vertical-align:-2px; }
+
+  .chart-wrap { background:var(--paper); border:1px solid var(--rule); border-radius:4px; padding:14px 8px 4px; overflow-x:auto; }
+
+  .locked-note { padding:24px 0; text-align:center; color:var(--muted); font-size:13px; }
+
+  .forecast-controls { display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
+  .forecast-controls input[type=range] { flex:1; min-width:120px; }
+  .forecast-out { display:flex; justify-content:space-between; padding:10px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); margin-bottom:14px; }
+  .forecast-out .amt { font-size:20px; font-weight:600; }
+
+  .suggestion { border-left:3px solid var(--gold); padding:10px 12px; margin-bottom:10px; background:#fff; font-size:13px; }
+  .suggestion .head { font-weight:600; margin-bottom:3px; }
+  .disclaimer { font-size:11px; color:var(--muted); border-top:1px dashed var(--rule); padding-top:10px; margin-top:6px; }
+
+  .export-btn { font-family:'IBM Plex Mono',monospace; font-size:12px; border:1px solid var(--ink); background:transparent; color:var(--ink); padding:6px 12px; cursor:pointer; border-radius:2px; }
+  .export-btn:hover { background:var(--ink); color:#fff; }
+  .hero-actions { display:flex; gap:8px; align-items:center; }
+
+  #lock-overlay { position:fixed; inset:0; background:var(--paper, #EDEEDF); z-index:9999; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Sans',sans-serif; }
+  #lock-overlay .box { background:#fff; border:1px solid #C9CBB4; padding:32px; width:320px; max-width:90vw; text-align:center; max-height:85vh; overflow-y:auto; }
+  #lock-overlay h2 { font-family:'Source Serif 4',serif; margin:0 0 6px; color:#16233F; }
+  #lock-overlay p { font-size:12px; color:#5B5748; margin:0 0 16px; }
+  #lock-overlay input { width:100%; padding:10px; font-size:20px; letter-spacing:6px; text-align:center; border:1px solid #C9CBB4; margin-bottom:12px; border-radius:2px; font-family:'IBM Plex Mono',monospace; }
+  #lock-overlay button { width:100%; padding:10px; background:#16233F; color:#fff; border:none; cursor:pointer; border-radius:2px; font-size:13px; }
+  #lock-overlay .err { color:#8C3A2E; font-size:12px; min-height:16px; margin-top:8px; }
+  #lock-overlay .hidden { display:none; }
+  #lock-overlay .auth-screen.hidden { display:none; }
+  #lock-overlay .auth-screen { text-align:left; }
+  #lock-overlay .auth-screen h2, #lock-overlay .auth-screen p { text-align:center; }
+  #lock-overlay .auth-link { margin-top:12px; font-size:12px; color:#2F4F3E; cursor:pointer; text-decoration:underline; text-align:center; }
+  #lock-overlay .demo-note { font-size:11px; background:#F3E7C9; color:#7A5B12; padding:8px 10px; border-radius:4px; margin-bottom:12px; text-align:left; }
+  #lock-overlay .field-label { font-size:11px; color:#5B5748; display:block; margin:10px 0 3px; text-align:left; }
+  #lock-overlay .box.wide { width:340px; }
+
+  .goal-inputs { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  .goal-inputs label { font-size:11px; color:var(--muted); display:block; margin-bottom:3px; }
+  .goal-inputs input { width:100%; padding:7px 8px; border:1px solid var(--rule); background:#fff; font-size:13px; border-radius:2px; font-family:'IBM Plex Mono',monospace; }
+  .goal-inputs .full { grid-column:1/-1; }
+
+  .status-badge { display:inline-block; padding:6px 14px; border-radius:14px; font-size:13px; font-weight:600; margin-bottom:14px; }
+  .status-green { background:#DCE9DE; color:#1F4A2C; }
+  .status-yellow { background:#F3E7C9; color:#7A5B12; }
+  .status-orange { background:#F1DAC7; color:#8A4A1E; }
+  .status-red { background:#F0D3CE; color:#8C3A2E; }
+
+  .rtable { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px; }
+  .rtable th { text-align:left; border-bottom:1px solid var(--ink); padding:6px 8px; font-family:'IBM Plex Mono',monospace; font-weight:600; }
+  .rtable td { padding:6px 8px; border-bottom:1px solid var(--rule); }
+  .rtable td.num, .rtable th.num { text-align:right; font-family:'IBM Plex Mono',monospace; }
+
+
+</style>
+
+<div id="lock-overlay">
+  <div class="box">
+    <div id="screen-signup-email" class="auth-screen">
+      <h2>Create your account</h2>
+      <p>Enter your email — we'll send a one-time code to verify it.</p>
+      <input type="email" id="signup-email-input" placeholder="you@example.com" autocomplete="email">
+      <button id="signup-email-btn">Send OTP</button>
+      <div class="err" id="signup-email-err"></div>
+      <div class="auth-link" id="open-email-settings-1">Email delivery settings</div>
+    </div>
+
+    <div id="screen-otp" class="auth-screen hidden">
+      <h2 id="otp-title">Verify your email</h2>
+      <p id="otp-sub">Enter the 6-digit code sent to your email.</p>
+      <div class="demo-note" id="otp-demo-note"></div>
+      <input type="text" id="otp-input" maxlength="6" inputmode="numeric" placeholder="••••••">
+      <button id="otp-verify-btn">Verify</button>
+      <div class="err" id="otp-err"></div>
+      <div class="auth-link" id="otp-resend">Resend code</div>
+    </div>
+
+    <div id="screen-set-pin" class="auth-screen hidden">
+      <h2 id="setpin-title">Set a 4-digit PIN</h2>
+      <p>Choose a 4-digit PIN to protect your ledger.</p>
+      <input type="password" id="setpin-input" maxlength="4" inputmode="numeric" placeholder="••••">
+      <input type="password" id="setpin-confirm" maxlength="4" inputmode="numeric" placeholder="Confirm PIN" style="margin-top:-4px;">
+      <button id="setpin-btn">Set PIN</button>
+      <div class="err" id="setpin-err"></div>
+    </div>
+
+    <div id="screen-unlock" class="auth-screen hidden">
+      <h2>Enter PIN</h2>
+      <p>Unlock your ledger.</p>
+      <input type="password" id="unlock-pin-input" maxlength="4" inputmode="numeric" placeholder="••••">
+      <button id="unlock-btn">Unlock</button>
+      <div class="err" id="unlock-err"></div>
+      <div class="auth-link" id="forgot-pin-link">Forgot PIN?</div>
+      <div class="auth-link" id="open-email-settings-2">Email delivery settings</div>
+    </div>
+
+    <div id="screen-email-settings" class="auth-screen hidden">
+      <h2>Email delivery settings</h2>
+      <p>Connect a free <strong>EmailJS</strong> account so OTP codes are actually emailed, instead of shown on-screen in demo mode.</p>
+      <label class="field-label">1. Create a free account at emailjs.com, add an Email Service, and a Template with two variables: <code>{{to_email}}</code> and <code>{{otp_code}}</code>.</label>
+      <label class="field-label">Public Key</label>
+      <input type="text" id="ej-public-key" placeholder="e.g. AbCdEfGhIjKlMnOp">
+      <label class="field-label">Service ID</label>
+      <input type="text" id="ej-service-id" placeholder="e.g. service_abc123">
+      <label class="field-label">Template ID</label>
+      <input type="text" id="ej-template-id" placeholder="e.g. template_xyz789">
+      <button id="ej-save-btn" style="margin-top:12px;">Save &amp; enable real email delivery</button>
+      <div class="err" id="ej-err"></div>
+      <div class="auth-link" id="ej-test-btn">Send a test OTP to my email</div>
+      <div class="auth-link" id="close-email-settings">Back</div>
+    </div>
+  </div>
+</div>
+
+<div id="ledger-root">
+  <div class="hero">
+    <div>
+      <div class="fy-tag" id="fy-tag">FY —</div>
+      <h1>Personal Ledger</h1>
+      <div class="muted" id="month-label">—</div>
+    </div>
+    <div class="hero-actions">
+      <div class="profit-figure">
+        <div class="amt num" id="hero-profit">₹0</div>
+        <div class="lbl">this month's profit</div>
+      </div>
+      <button class="export-btn" id="export-btn">Export CSV</button>
+    </div>
+  </div>
+
+  <div class="month-rail" id="month-rail"></div>
+
+  <div class="panel dashboard-panel">
+    <h2>Dashboard — income, expenditure &amp; profit by month</h2>
+    <div class="chart-filters">
+      <div><label>Year</label><select id="chart-year"></select></div>
+      <div><label>From</label><select id="chart-month-from"></select></div>
+      <div><label>To</label><select id="chart-month-to"></select></div>
+    </div>
+    <div class="summary-cards">
+      <div class="summary-card income"><div class="sc-label">Total income</div><div class="sc-amt num" id="sum-income">₹0</div></div>
+      <div class="summary-card expense"><div class="sc-label">Total expenditure</div><div class="sc-amt num" id="sum-expense">₹0</div></div>
+      <div class="summary-card profit"><div class="sc-label">Total profit</div><div class="sc-amt num" id="sum-profit">₹0</div></div>
+    </div>
+    <div class="chart-legend">
+      <span><i class="swatch" style="background:var(--income-c)"></i>Income</span>
+      <span><i class="swatch" style="background:var(--expense-c)"></i>Expenditure</span>
+      <span><i class="swatch" style="background:var(--profit-c)"></i>Profit</span>
+    </div>
+    <div class="chart-wrap"><div id="bar-chart"></div></div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="panel" id="entry-panel">
+        <h2>Add entry</h2>
+        <div class="txn-form">
+          <div class="full type-toggle">
+            <div class="type-btn income sel" data-type="income">Income</div>
+            <div class="type-btn expense" data-type="expense">Expense</div>
+          </div>
+          <div><label>Date</label><input type="date" id="f-date"></div>
+          <div><label>Amount (₹)</label><input type="number" id="f-amount" placeholder="0" min="0"></div>
+          <div class="full"><label>Category</label><select id="f-category"></select></div>
+          <div class="full"><label>Note (optional)</label><input type="text" id="f-note" placeholder="e.g. Client invoice, rent, groceries"></div>
+          <div class="add-btn" id="add-btn">Add entry</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>This month's entries</h2>
+        <div id="txn-list"></div>
+        <div class="month-totals">
+          <div>Income <span class="num val pos" id="m-income">₹0</span></div>
+          <div>Expense <span class="num val neg" id="m-expense">₹0</span></div>
+          <div>Profit <span class="num val" id="m-profit">₹0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h2>Forecast (customizable)</h2>
+        <div class="muted" style="margin-bottom:10px;">Project ahead based on your average monthly profit so far.</div>
+        <div class="forecast-controls">
+          <span class="muted">Months ahead:</span>
+          <input type="range" id="f-months" min="1" max="12" value="3">
+          <span class="num" id="f-months-val">3</span>
+        </div>
+        <div class="forecast-out">
+          <div><div class="muted">Projected profit (period)</div><div class="amt num" id="fc-period">₹0</div></div>
+          <div><div class="muted">Projected FY-end total</div><div class="amt num" id="fc-fy">₹0</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Goal planner</h2>
+        <div class="muted" style="margin-bottom:12px;">Set a target amount and a timeframe. Everything below is calculated directly from your entries — no AI involved in the numbers.</div>
+        <div class="goal-inputs">
+          <div><label>Forecast / target amount (₹)</label><input type="number" id="goal-target" placeholder="e.g. 1000000" min="0"></div>
+          <div><label>Months to reach it</label><input type="number" id="goal-months" placeholder="e.g. 24" min="1" max="360"></div>
+          <div><label>Existing savings / investments (₹)</label><input type="number" id="goal-existing" placeholder="0" min="0"></div>
+          <div><label>Assumed annual return for overall projection (%)</label><input type="number" id="goal-return" placeholder="8" min="0" max="20" step="0.5"></div>
+          <div class="full add-btn" id="goal-calc-btn">Calculate my plan</div>
+        </div>
+        <div id="goal-output"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const root = document.getElementById('ledger-root');
+  const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const CATS = { income:['Salary','Freelance','Business','Interest','Other'], expense:['Rent','Groceries','Utilities','Transport','EMI/Loan','Healthcare','Entertainment','Other'] };
+
+  function getFYMonths(){
+    const now = new Date();
+    const y = now.getFullYear(), m = now.getMonth();
+    const fyStartYear = m>=3 ? y : y-1;
+    const fyEndYear = fyStartYear+1;
+    let months = [];
+    for(let i=0;i<12;i++){
+      const mi = (3+i)%12;
+      const yr = mi>=3 ? fyStartYear : fyEndYear;
+      months.push({year:yr, month:mi});
+    }
+    const idx = months.findIndex(mo => mo.year===y && mo.month===m);
+    return { all: months, visible: months.slice(idx), fyLabel: `FY ${fyStartYear}-${String(fyEndYear).slice(2)}`, currentKey: `${y}-${m}` };
+  }
+
+  const fy = getFYMonths();
+  let state = { transactions: [], selected: `${fy.visible[0].year}-${fy.visible[0].month}`, type: 'income' };
+  let lastForecast = null; // filled in by renderForecast, read by the AI insights button
+
+  const monthKey = mo => `${mo.year}-${mo.month}`;
+  const fmtMoney = n => '₹' + Math.round(n).toLocaleString('en-IN');
+  const monthLabel = mo => `${MONTH_NAMES[mo.month]} ${mo.year}`;
+
+  async function load(){
+    try {
+      const raw = localStorage.getItem('ledger-transactions');
+      if(raw) state.transactions = JSON.parse(raw);
+    } catch(e){ /* no data yet */ }
+    render();
+  }
+  async function save(){
+    try { localStorage.setItem('ledger-transactions', JSON.stringify(state.transactions)); }
+    catch(e){ console.error('storage save failed', e); }
+  }
+
+  function monthTotals(key){
+    const txns = state.transactions.filter(t => t.key === key);
+    const income = txns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+    const expense = txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+    return { income, expense, profit: income-expense, txns };
+  }
+
+  function renderRail(){
+    const rail = document.getElementById('month-rail');
+    rail.innerHTML = '';
+    fy.visible.forEach((mo, i) => {
+      const key = monthKey(mo);
+      const el = document.createElement('div');
+      const isCurrent = key === fy.currentKey;
+      el.className = 'month-tab' + (key===state.selected?' active':'') + (isCurrent?'':' locked');
+      el.textContent = MONTH_NAMES[mo.month] + " '" + String(mo.year).slice(2) + (isCurrent ? '' : ' 🔒');
+      if(isCurrent){
+        el.onclick = () => { state.selected = key; render(); };
+      }
+      rail.appendChild(el);
+    });
+    document.getElementById('fy-tag').textContent = fy.fyLabel;
+  }
+
+  function renderEntryAndList(){
+    const currentMo = fy.visible[0];
+    const isCurrentSelected = state.selected === fy.currentKey;
+    document.getElementById('month-label').textContent = monthLabel(fy.visible.find(m=>monthKey(m)===state.selected) || currentMo);
+
+    const entryPanel = document.getElementById('entry-panel');
+    if(!isCurrentSelected){
+      entryPanel.innerHTML = '<h2>Add entry</h2><div class="locked-note">This month hasn\'t opened yet. It unlocks automatically on the 1st.</div>';
+    } else if(!document.getElementById('f-date')){
+      // rebuild if it was replaced by locked-note earlier
+      location.reload();
+    }
+
+    const t = monthTotals(state.selected);
+    document.getElementById('m-income').textContent = fmtMoney(t.income);
+    document.getElementById('m-expense').textContent = fmtMoney(t.expense);
+    const profitEl = document.getElementById('m-profit');
+    profitEl.textContent = fmtMoney(t.profit);
+    profitEl.className = 'num val ' + (t.profit>=0?'pos':'neg');
+
+    const heroProfit = document.getElementById('hero-profit');
+    heroProfit.textContent = fmtMoney(t.profit);
+    heroProfit.className = 'amt num ' + (t.profit>=0?'pos':'neg');
+
+    const list = document.getElementById('txn-list');
+    if(t.txns.length === 0){
+      list.innerHTML = '<div class="empty-note">No entries yet this month.</div>';
+    } else {
+      list.innerHTML = t.txns.slice().reverse().map(tx => `
+        <div class="txn-row">
+          <div class="cat">${new Date(tx.date).getDate()} ${MONTH_NAMES[new Date(tx.date).getMonth()]}</div>
+          <div>${tx.category}${tx.note ? ' — <span class="cat">'+tx.note+'</span>' : ''}</div>
+          <div class="amt ${tx.type==='income'?'pos':'neg'}">${tx.type==='income'?'+':'-'}${fmtMoney(tx.amount)}</div>
+          <div class="del" data-id="${tx.id}">✕</div>
+        </div>`).join('');
+      list.querySelectorAll('.del').forEach(d => d.onclick = () => {
+        state.transactions = state.transactions.filter(x => String(x.id) !== d.dataset.id);
+        save(); render();
+      });
+    }
+  }
+
+  function fmtShort(n){
+    const sign = n < 0 ? '-' : '';
+    const v = Math.abs(n);
+    if(v >= 10000000) return sign + '₹' + (v/10000000).toFixed(1).replace(/\.0$/,'') + 'Cr';
+    if(v >= 100000) return sign + '₹' + (v/100000).toFixed(1).replace(/\.0$/,'') + 'L';
+    if(v >= 1000) return sign + '₹' + (v/1000).toFixed(1).replace(/\.0$/,'') + 'k';
+    return sign + '₹' + Math.round(v);
+  }
+
+  function populateChartFilters(){
+    const yearSel = document.getElementById('chart-year');
+    const fromSel = document.getElementById('chart-month-from');
+    const toSel = document.getElementById('chart-month-to');
+    if(!yearSel || !fromSel || !toSel) return;
+
+    const curYear = new Date().getFullYear();
+    const years = Array.from(new Set(state.transactions.map(t => new Date(t.date).getFullYear())));
+    if(!years.includes(curYear)) years.push(curYear);
+    years.sort((a,b) => a-b);
+    const key = years.join(',');
+    if(yearSel.dataset.built !== key){
+      const prevVal = yearSel.value ? parseInt(yearSel.value,10) : curYear;
+      yearSel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+      yearSel.value = years.includes(prevVal) ? prevVal : curYear;
+      yearSel.dataset.built = key;
+    }
+    if(!fromSel.dataset.built){
+      fromSel.innerHTML = MONTH_NAMES.map((m,i) => `<option value="${i}">${m}</option>`).join('');
+      toSel.innerHTML = MONTH_NAMES.map((m,i) => `<option value="${i}">${m}</option>`).join('');
+      fromSel.value = 0; toSel.value = 11;
+      fromSel.dataset.built = '1'; toSel.dataset.built = '1';
+    }
+  }
+
+  function buildBarChartSVG(data){
+    const W = Math.max(600, data.length*100 + 80);
+    const H = 300;
+    const marginL = 60, marginR = 16, marginT = 16, marginB = 42;
+    const plotW = W - marginL - marginR;
+    const plotH = H - marginT - marginB;
+    const groupW = plotW / data.length;
+    const barW = Math.min(24, groupW/4);
+
+    let maxPos = 0, minNeg = 0;
+    data.forEach(d => {
+      maxPos = Math.max(maxPos, d.income, d.expense, d.profit);
+      minNeg = Math.min(minNeg, d.profit);
+    });
+    if(maxPos === 0 && minNeg === 0) maxPos = 1000;
+    const range = maxPos - minNeg;
+    const scale = plotH / range;
+    const zeroY = marginT + maxPos*scale;
+
+    // alternating background bands, one per month group, to make scanning columns easier
+    let bands = '';
+    data.forEach((d,i) => {
+      if(i % 2 === 1){
+        bands += `<rect x="${marginL + i*groupW}" y="${marginT}" width="${groupW}" height="${plotH}" fill="var(--paper-2)" opacity="0.5"/>`;
+      }
+    });
+
+    let gridLines = '';
+    const steps = 4;
+    for(let i=0;i<=steps;i++){
+      const val = maxPos - (maxPos/steps)*i;
+      const y = marginT + (maxPos-val)*scale;
+      gridLines += `<line x1="${marginL}" x2="${W-marginR}" y1="${y}" y2="${y}" stroke="var(--rule)" stroke-width="1"/>`;
+      gridLines += `<text x="${marginL-8}" y="${y+4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${fmtShort(val)}</text>`;
+    }
+    if(minNeg < 0){
+      const negSteps = 2;
+      for(let i=1;i<=negSteps;i++){
+        const val = (minNeg/negSteps)*i;
+        const y = marginT + (maxPos-val)*scale;
+        gridLines += `<line x1="${marginL}" x2="${W-marginR}" y1="${y}" y2="${y}" stroke="var(--rule)" stroke-width="1" stroke-dasharray="3,3"/>`;
+        gridLines += `<text x="${marginL-8}" y="${y+4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${fmtShort(val)}</text>`;
+      }
+    }
+
+    let bars = '', labels = '';
+    data.forEach((d,i) => {
+      const cx = marginL + i*groupW + groupW/2;
+      [
+        { v:d.income, color:'var(--income-c)', dx:-barW-3, label:'Income' },
+        { v:d.expense, color:'var(--expense-c)', dx:0, label:'Expenditure' },
+        { v:d.profit, color:'var(--profit-c)', dx:barW+3, label:'Profit' }
+      ].forEach(b => {
+        const h = Math.abs(b.v) * scale;
+        const y = b.v >= 0 ? zeroY - h : zeroY;
+        bars += `<rect x="${cx+b.dx-barW/2}" y="${y}" width="${barW}" height="${Math.max(h,1)}" fill="${b.color}" rx="2"><title>${b.label} — ${MONTH_NAMES[d.month]} ${d.year}: ${fmtMoney(b.v)}</title></rect>`;
+      });
+      labels += `<text x="${cx}" y="${H-marginB+18}" text-anchor="middle" font-size="11" fill="var(--ink)" font-weight="500" font-family="IBM Plex Mono, monospace">${MONTH_NAMES[d.month]} '${String(d.year).slice(2)}</text>`;
+    });
+
+    return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible; min-width:${W}px;">
+      ${bands}
+      ${gridLines}
+      <line x1="${marginL}" x2="${W-marginR}" y1="${zeroY}" y2="${zeroY}" stroke="var(--ink)" stroke-width="1.4"/>
+      ${bars}
+      ${labels}
+    </svg>`;
+  }
+
+  function renderBarChart(){
+    populateChartFilters();
+    const yearSel = document.getElementById('chart-year');
+    const fromSel = document.getElementById('chart-month-from');
+    const toSel = document.getElementById('chart-month-to');
+    const chart = document.getElementById('bar-chart');
+    if(!yearSel || !fromSel || !toSel || !chart) return;
+
+    const year = parseInt(yearSel.value, 10);
+    let fromM = parseInt(fromSel.value, 10);
+    let toM = parseInt(toSel.value, 10);
+    if(fromM > toM){ [fromM, toM] = [toM, fromM]; }
+
+    const data = [];
+    for(let m=fromM; m<=toM; m++){
+      const t = monthTotals(`${year}-${m}`);
+      data.push({ month:m, year, income:t.income, expense:t.expense, profit:t.profit });
+    }
+    chart.innerHTML = buildBarChartSVG(data);
+
+    const totalIncome = data.reduce((s,d) => s+d.income, 0);
+    const totalExpense = data.reduce((s,d) => s+d.expense, 0);
+    const totalProfit = totalIncome - totalExpense;
+    document.getElementById('sum-income').textContent = fmtMoney(totalIncome);
+    document.getElementById('sum-expense').textContent = fmtMoney(totalExpense);
+    const profitEl = document.getElementById('sum-profit');
+    profitEl.textContent = fmtMoney(totalProfit);
+    profitEl.className = 'sc-amt num ' + (totalProfit >= 0 ? 'pos' : 'neg');
+  }
+
+  function getAvgMonthlyProfit(){
+    const monthsWithData = fy.all.filter(mo => monthTotals(monthKey(mo)).txns.length > 0);
+    if(!monthsWithData.length) return 0;
+    return monthsWithData.reduce((s,mo)=>s+monthTotals(monthKey(mo)).profit,0) / monthsWithData.length;
+  }
+
+  function renderForecast(){
+    const monthsAhead = parseInt(document.getElementById('f-months').value, 10);
+    document.getElementById('f-months-val').textContent = monthsAhead;
+
+    const avg = getAvgMonthlyProfit();
+    const monthsElapsed = fy.all.filter(mo => monthTotals(monthKey(mo)).txns.length > 0).length;
+
+    const projectedPeriod = avg * monthsAhead;
+    const monthsRemainingInFY = 12 - monthsElapsed;
+    const actualSoFar = fy.all.reduce((s,mo)=>s+monthTotals(monthKey(mo)).profit,0);
+    const projectedFY = actualSoFar + avg * monthsRemainingInFY;
+
+    document.getElementById('fc-period').textContent = fmtMoney(projectedPeriod);
+    document.getElementById('fc-fy').textContent = fmtMoney(projectedFY);
+
+    lastForecast = { avg, monthsAhead, projectedPeriod, projectedFY, bracket: getBracketLabel(avg) };
+  }
+
+  function getBracketLabel(avg){
+    if(avg <= 0) return 'No consistent surplus — build a buffer first';
+    if(avg < 5000) return 'Small surplus — Recurring Deposit (RD)';
+    if(avg < 25000) return 'Moderate surplus — split Fixed Deposit + Index Fund SIP';
+    return 'Healthy surplus — Index Fund SIP + PPF/ELSS';
+  }
+
+  function populateCategorySelect(){
+    const sel = document.getElementById('f-category');
+    if(!sel) return;
+    sel.innerHTML = CATS[state.type].map(c => `<option value="${c}">${c}</option>`).join('');
+  }
+
+  function bindEntryForm(){
+    const dateInput = document.getElementById('f-date');
+    if(!dateInput) return;
+    dateInput.value = new Date().toISOString().slice(0,10);
+    populateCategorySelect();
+
+    root.querySelectorAll('.type-btn').forEach(btn => {
+      btn.onclick = () => {
+        state.type = btn.dataset.type;
+        root.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('sel'));
+        btn.classList.add('sel');
+        populateCategorySelect();
+      };
+    });
+
+    document.getElementById('add-btn').onclick = () => {
+      const amount = parseFloat(document.getElementById('f-amount').value);
+      const date = document.getElementById('f-date').value;
+      const category = document.getElementById('f-category').value;
+      const note = document.getElementById('f-note').value.trim();
+      if(!amount || amount<=0 || !date) return;
+      const d = new Date(date);
+      state.transactions.push({
+        id: Date.now(), key: `${d.getFullYear()}-${d.getMonth()}`,
+        type: state.type, amount, category, note, date
+      });
+      document.getElementById('f-amount').value = '';
+      document.getElementById('f-note').value = '';
+      save(); render();
+    };
+  }
+
+  function render(){
+    renderRail();
+    renderEntryAndList();
+    bindEntryForm();
+    renderBarChart();
+    renderForecast();
+  }
+
+  document.getElementById('f-months') && document.getElementById('f-months').addEventListener('input', renderForecast);
+  root.addEventListener('input', (e) => { if(e.target.id === 'f-months') renderForecast(); });
+  root.addEventListener('change', (e) => {
+    if(['chart-year','chart-month-from','chart-month-to'].includes(e.target.id)) renderBarChart();
+  });
+
+  function exportCSV(){
+    const rows = [['Date','Type','Category','Amount','Note']];
+    state.transactions
+      .slice()
+      .sort((a,b)=> new Date(a.date) - new Date(b.date))
+      .forEach(t => rows.push([t.date, t.type, t.category, t.amount, (t.note||'').replace(/,/g,';')]));
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type:'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `ledger-${fy.fyLabel.replace(/\s/g,'-')}.csv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+  document.getElementById('export-btn').addEventListener('click', exportCSV);
+
+  // ---- Authentication: email + OTP signup, 4-digit PIN unlock, forgot-PIN via OTP ----
+  // PROTOTYPE NOTE: this is a static, client-only page with no backend server. It sends OTP
+  // emails directly from the browser using EmailJS (emailjs.com) — a real third-party service
+  // built for exactly this (client-side email sending without a backend). If EmailJS isn't
+  // configured yet, it falls back to a "Demo mode" note that shows the code on-screen so the
+  // app is still usable. The PIN itself is still stored as plain text in localStorage — for
+  // anything beyond a prototype, verify PINs against a backend and store them as a salted hash.
+  const overlay = document.getElementById('lock-overlay');
+  const screens = {
+    signupEmail: document.getElementById('screen-signup-email'),
+    otp: document.getElementById('screen-otp'),
+    setPin: document.getElementById('screen-set-pin'),
+    unlock: document.getElementById('screen-unlock'),
+    emailSettings: document.getElementById('screen-email-settings')
+  };
+  let screenBeforeSettings = 'signupEmail';
+  function showScreen(name){
+    Object.values(screens).forEach(s => s.classList.add('hidden'));
+    screens[name].classList.remove('hidden');
+  }
+
+  let pendingOtp = null; // { code, purpose: 'signup'|'reset', email }
+
+  function genOtp(){ return String(Math.floor(100000 + Math.random()*900000)); }
+
+  function getEmailJsConfig(){
+    try {
+      return {
+        publicKey: localStorage.getItem('emailjs-public-key') || '',
+        serviceId: localStorage.getItem('emailjs-service-id') || '',
+        templateId: localStorage.getItem('emailjs-template-id') || ''
+      };
+    } catch(e){ return { publicKey:'', serviceId:'', templateId:'' }; }
+  }
+  function isEmailJsConfigured(cfg){
+    return !!(cfg.publicKey && cfg.serviceId && cfg.templateId);
+  }
+
+  async function deliverOtpEmail(email, code){
+    const cfg = getEmailJsConfig();
+    if(!isEmailJsConfigured(cfg) || typeof emailjs === 'undefined'){
+      return { sent:false, reason:'not-configured' };
+    }
+    try {
+      await emailjs.send(cfg.serviceId, cfg.templateId, { to_email: email, otp_code: code }, { publicKey: cfg.publicKey });
+      return { sent:true };
+    } catch(e){
+      return { sent:false, reason:'send-failed', detail: (e && e.text) || String(e) };
+    }
+  }
+
+  async function sendOtp(email, purpose){
+    pendingOtp = { code: genOtp(), purpose, email };
+    document.getElementById('otp-title').textContent = purpose === 'signup' ? 'Verify your email' : 'Reset your PIN';
+    document.getElementById('otp-sub').textContent = `Enter the 6-digit code sent to ${email}`;
+    const noteEl = document.getElementById('otp-demo-note');
+    noteEl.textContent = 'Sending code…';
+    document.getElementById('otp-input').value = '';
+    document.getElementById('otp-err').textContent = '';
+    showScreen('otp');
+
+    const result = await deliverOtpEmail(email, pendingOtp.code);
+    if(result.sent){
+      noteEl.textContent = `A verification code was emailed to ${email}. It may take a minute to arrive — check spam if you don't see it.`;
+    } else if(result.reason === 'not-configured'){
+      noteEl.textContent = `Demo mode — no email server connected yet. Your code: ${pendingOtp.code}`;
+    } else {
+      noteEl.textContent = `Couldn't send the email (${result.detail || 'unknown error'}). Demo mode fallback — your code: ${pendingOtp.code}`;
+    }
+  }
+
+  function initAuthGate(){
+    let email = null, pin = null;
+    try { email = localStorage.getItem('ledger-email'); pin = localStorage.getItem('ledger-pin'); } catch(e){}
+    showScreen((!email || !pin) ? 'signupEmail' : 'unlock');
+
+    document.getElementById('signup-email-btn').onclick = () => {
+      const val = document.getElementById('signup-email-input').value.trim();
+      const errEl = document.getElementById('signup-email-err');
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){
+        errEl.textContent = 'Enter a valid email address.';
+        return;
+      }
+      errEl.textContent = '';
+      sendOtp(val, 'signup');
+    };
+
+    document.getElementById('otp-verify-btn').onclick = () => {
+      const val = document.getElementById('otp-input').value.trim();
+      const errEl = document.getElementById('otp-err');
+      if(!pendingOtp){ errEl.textContent = 'No code was sent — go back and try again.'; return; }
+      if(val !== pendingOtp.code){
+        errEl.textContent = 'Incorrect code. Try again.';
+        return;
+      }
+      errEl.textContent = '';
+      if(pendingOtp.purpose === 'signup'){
+        try { localStorage.setItem('ledger-email', pendingOtp.email); } catch(e){}
+        document.getElementById('setpin-title').textContent = 'Set a 4-digit PIN';
+      } else {
+        document.getElementById('setpin-title').textContent = 'Set a new 4-digit PIN';
+      }
+      showScreen('setPin');
+    };
+    document.getElementById('otp-resend').onclick = () => {
+      if(pendingOtp) sendOtp(pendingOtp.email, pendingOtp.purpose);
+    };
+
+    document.getElementById('setpin-btn').onclick = () => {
+      const p1 = document.getElementById('setpin-input').value.trim();
+      const p2 = document.getElementById('setpin-confirm').value.trim();
+      const errEl = document.getElementById('setpin-err');
+      if(!/^\d{4}$/.test(p1)){
+        errEl.textContent = 'PIN must be exactly 4 digits.';
+        return;
+      }
+      if(p1 !== p2){
+        errEl.textContent = 'PINs do not match.';
+        return;
+      }
+      try { localStorage.setItem('ledger-pin', p1); } catch(e){}
+      errEl.textContent = '';
+      overlay.style.display = 'none';
+      load();
+    };
+
+    document.getElementById('unlock-btn').onclick = () => {
+      const val = document.getElementById('unlock-pin-input').value.trim();
+      const errEl = document.getElementById('unlock-err');
+      let storedPin = null;
+      try { storedPin = localStorage.getItem('ledger-pin'); } catch(e){}
+      if(val === storedPin){
+        overlay.style.display = 'none';
+        load();
+      } else {
+        errEl.textContent = 'Incorrect PIN. Try again.';
+        document.getElementById('unlock-pin-input').value = '';
+      }
+    };
+    document.getElementById('forgot-pin-link').onclick = () => {
+      let storedEmail = null;
+      try { storedEmail = localStorage.getItem('ledger-email'); } catch(e){}
+      if(!storedEmail){ showScreen('signupEmail'); return; }
+      sendOtp(storedEmail, 'reset');
+    };
+
+    // ---- Email delivery settings (EmailJS) ----
+    function openEmailSettings(from){
+      screenBeforeSettings = from;
+      const cfg = getEmailJsConfig();
+      document.getElementById('ej-public-key').value = cfg.publicKey;
+      document.getElementById('ej-service-id').value = cfg.serviceId;
+      document.getElementById('ej-template-id').value = cfg.templateId;
+      document.getElementById('ej-err').textContent = '';
+      showScreen('emailSettings');
+    }
+    document.getElementById('open-email-settings-1').onclick = () => openEmailSettings('signupEmail');
+    document.getElementById('open-email-settings-2').onclick = () => openEmailSettings('unlock');
+    document.getElementById('close-email-settings').onclick = () => showScreen(screenBeforeSettings);
+
+    document.getElementById('ej-save-btn').onclick = () => {
+      const pub = document.getElementById('ej-public-key').value.trim();
+      const svc = document.getElementById('ej-service-id').value.trim();
+      const tpl = document.getElementById('ej-template-id').value.trim();
+      const errEl = document.getElementById('ej-err');
+      if(!pub || !svc || !tpl){
+        errEl.textContent = 'Fill in all three fields.';
+        return;
+      }
+      try {
+        localStorage.setItem('emailjs-public-key', pub);
+        localStorage.setItem('emailjs-service-id', svc);
+        localStorage.setItem('emailjs-template-id', tpl);
+      } catch(e){}
+      errEl.textContent = '';
+      errEl.style.color = '#1F4A2C';
+      errEl.textContent = 'Saved. Real email delivery is now enabled.';
+      showScreen(screenBeforeSettings);
+    };
+    document.getElementById('ej-test-btn').onclick = () => {
+      let storedEmail = null;
+      try { storedEmail = localStorage.getItem('ledger-email'); } catch(e){}
+      const target = storedEmail || document.getElementById('signup-email-input').value.trim();
+      const errEl = document.getElementById('ej-err');
+      if(!target || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(target)){
+        errEl.textContent = 'Enter your email on the previous screen first.';
+        return;
+      }
+      errEl.textContent = 'Sending test code…';
+      sendOtp(target, 'signup').then(() => {
+        errEl.textContent = '';
+      });
+    };
+
+    document.getElementById('signup-email-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('signup-email-btn').click(); });
+    document.getElementById('otp-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('otp-verify-btn').click(); });
+    document.getElementById('setpin-confirm').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('setpin-btn').click(); });
+    document.getElementById('unlock-pin-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('unlock-btn').click(); });
+  }
+
+  initAuthGate();
+
+  // ---- Goal Planner: forecast-amount-driven plan, all arithmetic, no AI ----
+  const ESSENTIAL_CATS = ['Rent','EMI/Loan','Healthcare','Utilities'];
+
+  function computeDataRatios(){
+    const FIXED_INCOME_CATS = ['Salary','Interest'];
+    let fixedIncome = 0, totalIncome = 0;
+    state.transactions.filter(t => t.type === 'income').forEach(t => {
+      totalIncome += t.amount;
+      if(FIXED_INCOME_CATS.includes(t.category)) fixedIncome += t.amount;
+    });
+    const incomeStabilityRatio = totalIncome > 0 ? fixedIncome / totalIncome : null;
+
+    let essential = 0, totalExpense = 0;
+    state.transactions.filter(t => t.type === 'expense').forEach(t => {
+      totalExpense += t.amount;
+      if(ESSENTIAL_CATS.includes(t.category)) essential += t.amount;
+    });
+    const essentialExpenseRatio = totalExpense > 0 ? essential / totalExpense : null;
+
+    return { incomeStabilityRatio, essentialExpenseRatio };
+  }
+
+  // Rates below are sourced from published bank/AMFI/government data (SBI & HDFC FD/RD
+  // tenure-wise cards, India Post small-savings notification, AMFI category-average returns
+  // for liquid and Nifty 50 index funds) as of Aug 2026. Banks revise FD/RD rates often and
+  // fund returns move with markets — verify current figures at bankbazaar.com, paisabazaar.com,
+  // amfiindia.com or nsiindia.gov.in before actually investing.
+  function getInvestmentPlan(months, monthlyAmount){
+    const { incomeStabilityRatio, essentialExpenseRatio } = computeDataRatios();
+    const stability = incomeStabilityRatio ?? 0.5; // neutral only when no income entries exist yet
+    const flexibility = essentialExpenseRatio !== null ? (1 - essentialExpenseRatio) : 0.4;
+    const dataNote = incomeStabilityRatio === null
+      ? 'No income entries recorded yet, so this split uses a neutral 50/50 starting point rather than your data — add income entries for a personalised split.'
+      : `Based on ${Math.round(incomeStabilityRatio*100)}% of your recorded income coming from stable sources (Salary/Interest) — more stability shifts more of your money toward the locked-in option.`;
+
+    let allocations;
+    if(months <= 6){
+      // Sourced: SBI FD 180-210 days = 5.65% p.a.; HDFC Bank RD 6 months = 4.50% p.a.;
+      // AMFI liquid-fund category average 1Y return ≈ 6.3-6.5% (Aug 2026).
+      const rdPct = Math.round(Math.max(20, Math.min(80, 30 + stability*50)));
+      allocations = [
+        { name:'Recurring Deposit', company:'SBI RD or HDFC Bank RD (6-month tenure)', pct:rdPct, rate:5.1, note:'SBI 180-210 day FD card rate 5.65% p.a.; HDFC 6-month RD 4.50% p.a. — capital-protected, matches your tenure exactly.' },
+        { name:'Liquid Fund', company:'SBI Liquid Fund or Axis Liquid Fund (Direct Growth)', pct:100-rdPct, rate:6.4, note:'AMFI category-average 1-year return ≈6.3-6.5% — very low risk, can withdraw anytime if the goal date shifts.' }
+      ];
+    } else if(months <= 12){
+      // Sourced: HDFC RD 9-12 months = 5.75-6.60% p.a.
+      const rdPct = Math.round(Math.max(20, Math.min(80, 25 + stability*50)));
+      allocations = [
+        { name:'Recurring Deposit', company:'SBI RD or HDFC Bank RD (9-12 month tenure)', pct:rdPct, rate:6.2, note:'HDFC RD card rate: 5.75% (9mo) to 6.60% (12mo) p.a. — capital-protected base.' },
+        { name:'Short-term Debt Fund', company:'HDFC Short Term Debt Fund or ICICI Prudential Short Term Fund', pct:100-rdPct, rate:7.0, note:'Typical short-duration debt fund category return — check current NAV/returns at amfiindia.com before investing.' }
+      ];
+    } else if(months <= 36){
+      // Sourced: SBI FD 2-3yr = 6.40% p.a.; AMFI Nifty 50 index fund 3Y category returns ≈9.5-9.9%.
+      const equityPct = Math.round(Math.max(10, Math.min(35, 10 + flexibility*25)));
+      const remaining = 100 - equityPct;
+      const fdPct = Math.round(remaining * 0.55);
+      const hybridPct = remaining - fdPct;
+      allocations = [
+        { name:'Fixed Deposit', company:'SBI Fixed Deposit (2-3yr slab)', pct:fdPct, rate:6.4, note:'SBI card rate for 2-3 year tenure is 6.40% p.a. as of Aug 2026 — safety anchor.' },
+        { name:'Debt-oriented Hybrid Fund', company:'ICICI Prudential Regular Savings Fund or HDFC Hybrid Debt Fund', pct:hybridPct, rate:7.3, note:'Balances safety and growth — verify current returns at amfiindia.com.' },
+        { name:'Nifty 50 Index Fund SIP', company:'UTI Nifty 50 Index Fund or HDFC Nifty 50 Index Fund', pct:equityPct, rate:9.8, note:'AMFI 3-year category return ≈9.8-9.9% (Aug 2026). Market-linked, not guaranteed — your discretionary spending headroom supports a small equity slice here.' }
+      ];
+    } else {
+      // Sourced: PPF = 7.1% p.a. (govt-fixed, revised quarterly, NSI notification);
+      // AMFI Nifty 50 index fund 5Y category returns ≈10.1-10.4%; SBI FD 3-5yr = 6.30% p.a.
+      const equityPct = Math.round(Math.max(30, Math.min(65, 30 + flexibility*35)));
+      const remaining = 100 - equityPct;
+      const ppfPct = Math.round(remaining * (0.4 + 0.2*stability));
+      const fdPct = remaining - ppfPct;
+      allocations = [
+        { name:'Nifty 50 Index Fund SIP', company:'UTI Nifty 50 Index Fund or SBI Nifty Index Fund', pct:equityPct, rate:10.2, note:'AMFI 5-year category return ≈10.1-10.4% (Aug 2026). Market-linked, not guaranteed.' },
+        { name:'Public Provident Fund (PPF)', company:'Any nationalised bank or India Post PPF account', pct:ppfPct, rate:7.1, note:'Government-fixed rate, currently 7.1% p.a. (revised quarterly by the Finance Ministry) — tax-free under EEE, 15-year lock-in.' },
+        { name:'Fixed Deposit', company:'SBI Fixed Deposit (3-5yr slab)', pct:fdPct, rate:6.3, note:'SBI card rate for 3-5 year tenure is 6.30% p.a. — emergency-fund buffer.' }
+      ];
+    }
+    const withAmounts = allocations.map(a => {
+      const monthlyAlloc = monthlyAmount * a.pct / 100;
+      const r = a.rate / 100 / 12;
+      const growth = r > 0 ? (Math.pow(1+r, months) - 1) / r : months;
+      const maturity = monthlyAlloc * growth;
+      return { ...a, tenure: `${months} months`, monthlyAlloc, maturity };
+    });
+    return { allocations: withAmounts, dataNote };
+  }
+
+  function computeGoalPlan(target, months, existingSavings, annualReturnPct){
+    const avg = getAvgMonthlyProfit();
+    const r = (annualReturnPct/100)/12;
+    const growthFactor = r > 0 ? (Math.pow(1+r, months)-1)/r : months; // FV of ₹1/month contributed
+    const existingFV = existingSavings * Math.pow(1+r, months);
+
+    const currentProjected = existingSavings + avg * months; // no-change baseline, no investment growth assumed
+    const gap = target - currentProjected;
+
+    const requiredMonthly = growthFactor > 0
+      ? (target - existingFV) / growthFactor
+      : (target - existingSavings) / months;
+    const additionalNeeded = requiredMonthly - avg;
+
+    // average monthly spend per category, from actual entries
+    const catAvg = {};
+    const monthsWithData = fy.all.filter(mo => monthTotals(monthKey(mo)).txns.length > 0).length || 1;
+    CATS.expense.forEach(c => catAvg[c] = 0);
+    state.transactions.filter(t => t.type === 'expense').forEach(t => {
+      catAvg[t.category] = (catAvg[t.category] || 0) + t.amount;
+    });
+    Object.keys(catAvg).forEach(c => catAvg[c] = catAvg[c] / monthsWithData);
+
+    const discretionary = Object.entries(catAvg)
+      .filter(([c, amt]) => !ESSENTIAL_CATS.includes(c) && amt > 0)
+      .sort((a,b) => b[1]-a[1]);
+
+    let remainingNeed = Math.max(0, additionalNeeded);
+    const reductionRows = [];
+    discretionary.forEach(([cat, amt]) => {
+      if(remainingNeed <= 0) return;
+      const capPct = cat === 'Groceries' ? 0.10 : 0.30;
+      const cut = Math.min(amt * capPct, remainingNeed);
+      if(cut > 50){
+        reductionRows.push({
+          category: cat, current: amt, recommended: amt - cut, saving: cut,
+          reason: cat === 'Groceries' ? 'Semi-essential — small trim only' : 'Discretionary — highest average spend'
+        });
+        remainingNeed -= cut;
+      }
+    });
+    const totalReduction = reductionRows.reduce((s,row) => s + row.saving, 0);
+
+    const availableMonthlyInvestment = avg + totalReduction;
+    const stillShort = Math.max(0, requiredMonthly - availableMonthlyInvestment);
+    const bracket = getBracketLabel(availableMonthlyInvestment);
+
+    const recommendedProjected = existingFV + availableMonthlyInvestment * growthFactor;
+    const acceleratedMonthly = availableMonthlyInvestment + totalReduction * 0.5;
+    const acceleratedProjected = existingFV + acceleratedMonthly * growthFactor;
+
+    let status;
+    const ratio = target > 0 ? recommendedProjected / target : 1;
+    if(currentProjected >= target) status = { label:'On Track', cls:'status-green', emoji:'🟢' };
+    else if(ratio >= 0.98) status = { label:'Achievable With Optimization', cls:'status-yellow', emoji:'🟡' };
+    else if(ratio >= 0.75) status = { label:'Challenging', cls:'status-orange', emoji:'🟠' };
+    else status = { label:'Not Achievable With Current Cash Flow', cls:'status-red', emoji:'🔴' };
+
+    const investmentResult = getInvestmentPlan(months, availableMonthlyInvestment);
+    const investmentPlan = investmentResult.allocations;
+    const investmentDataNote = investmentResult.dataNote;
+    const investmentMaturityTotal = investmentPlan.reduce((s,a) => s + a.maturity, 0);
+    const investmentGrowthOnly = investmentMaturityTotal - (availableMonthlyInvestment * months);
+    const monthsNeededAtCurrentRate = avg > 0 ? Math.ceil((target - existingSavings) / avg) : null;
+    // The honest "most possible" outcome from the actual instrument-level plan — never forced to equal the target.
+    const achievableAmount = existingFV + investmentMaturityTotal;
+
+    return { target, months, existingSavings, annualReturnPct, avg, currentProjected, gap,
+      requiredMonthly, additionalNeeded, reductionRows, totalReduction, availableMonthlyInvestment,
+      stillShort, bracket, recommendedProjected, acceleratedMonthly, acceleratedProjected, status,
+      investmentPlan, investmentDataNote, investmentMaturityTotal, investmentGrowthOnly,
+      monthsNeededAtCurrentRate, achievableAmount };
+  }
+
+  function renderGoalPlan(plan){
+    const out = document.getElementById('goal-output');
+
+    out.innerHTML = `
+      <div class="status-badge ${plan.status.cls}">${plan.status.emoji} ${plan.status.label}</div>
+
+      <div class="forecast-out">
+        <div><div class="muted">Target amount</div><div class="amt num">${fmtMoney(plan.target)}</div></div>
+        <div><div class="muted">Realistically achievable amount</div><div class="amt num ${plan.achievableAmount>=plan.target?'pos':'neg'}">${fmtMoney(plan.achievableAmount)}</div></div>
+      </div>
+      ${plan.achievableAmount < plan.target ? `<div class="muted" style="margin-bottom:14px;">This is the honest number your data supports — it is not adjusted to match your target. Gap: <strong class="num">${fmtMoney(plan.target - plan.achievableAmount)}</strong></div>` : ''}
+
+      <div class="forecast-out">
+        <div><div class="muted">Required monthly contribution</div><div class="amt num">${fmtMoney(plan.requiredMonthly)}</div></div>
+        <div><div class="muted">Available after cuts (invest this)</div><div class="amt num">${fmtMoney(plan.availableMonthlyInvestment)}</div></div>
+      </div>
+
+      <h3 style="font-size:13px; margin:16px 0 10px;">Where to put your ${fmtMoney(plan.availableMonthlyInvestment)}/month</h3>
+      <div class="muted" style="margin-bottom:10px;">${plan.investmentDataNote}</div>
+      <table class="rtable">
+        <tr><th>Investment</th><th>Company / where to open it</th><th>Tenure</th><th class="num">Amount/mo (%)</th><th class="num">Forecast at maturity</th></tr>
+        ${plan.investmentPlan.map(a => `
+          <tr><td>${a.name}</td><td>${a.company}<br><span class="muted">${a.note}</span></td><td>${a.tenure}</td><td class="num">${fmtMoney(a.monthlyAlloc)} (${a.pct}%)</td><td class="num">${fmtMoney(a.maturity)}</td></tr>
+        `).join('')}
+        <tr><td colspan="4" style="font-weight:600;">Total at maturity</td><td class="num" style="font-weight:600;">${fmtMoney(plan.investmentMaturityTotal)}</td></tr>
+      </table>
+
+      ${plan.stillShort > 0 ? `
+      <div class="suggestion" style="border-left-color:var(--rust);">
+        <div class="head">Be realistic about what growth alone can do here</div>
+        Over ${plan.months} months, these instruments add about ${fmtMoney(plan.investmentGrowthOnly)} in interest on top of what you put in. If that's not enough to close your full target, the rest has to come from cutting more expenses or earning more, not from investment growth on a short timeline.
+        ${plan.monthsNeededAtCurrentRate ? `<br><br><strong>A simpler fix:</strong> at your current pace of ${fmtMoney(plan.avg)}/month, you'd reach ${fmtMoney(plan.target)} in about <strong>${plan.monthsNeededAtCurrentRate} months</strong> with no changes at all — extending your timeline may be more realistic than squeezing this into ${plan.months}.` : ''}
+      </div>` : ''}
+    `;
+  }
+
+  document.getElementById('goal-calc-btn').addEventListener('click', () => {
+    const target = parseFloat(document.getElementById('goal-target').value);
+    const months = parseInt(document.getElementById('goal-months').value, 10);
+    const existingSavings = parseFloat(document.getElementById('goal-existing').value) || 0;
+    const returnRaw = document.getElementById('goal-return').value;
+    const annualReturnPct = returnRaw === '' ? 8 : parseFloat(returnRaw); // respects an explicit 0, only defaults when left blank
+    if(!target || target <= 0 || !months || months <= 0){
+      document.getElementById('goal-output').innerHTML = '<div class="suggestion"><div class="head">Missing info</div>Enter a target amount and number of months first.</div>';
+      return;
+    }
+    renderGoalPlan(computeGoalPlan(target, months, existingSavings, annualReturnPct));
+  });
+})();
+</script>
