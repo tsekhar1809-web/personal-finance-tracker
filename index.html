@@ -1,5 +1,5 @@
 <!-- Personal Ledger — FY tracker prototype -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
@@ -135,59 +135,67 @@
 </style>
 
 <div id="lock-overlay">
-  <div class="box">
-    <div id="screen-signup-email" class="auth-screen">
+  <div class="box wide">
+    <div id="screen-login" class="auth-screen hidden">
+      <h2>Welcome back</h2>
+      <p>Sign in to your ledger.</p>
+      <label class="field-label">Email</label>
+      <input type="email" id="login-email-input" placeholder="you@example.com" autocomplete="email">
+      <label class="field-label">Password</label>
+      <input type="password" id="login-password-input" placeholder="Password" autocomplete="current-password">
+      <button id="login-btn">Sign in</button>
+      <div class="err" id="login-err"></div>
+      <div class="auth-link" id="goto-forgot-link">Forgot password?</div>
+      <div class="auth-link" id="goto-signup-link">New here? Create an account</div>
+    </div>
+
+    <div id="screen-signup" class="auth-screen">
       <h2>Create your account</h2>
-      <p>Enter your email — we'll send a one-time code to verify it.</p>
+      <p>We'll email you a 6-digit code to verify it.</p>
+      <label class="field-label">First name</label>
+      <input type="text" id="signup-firstname-input" placeholder="First name" autocomplete="given-name">
+      <label class="field-label">Last name</label>
+      <input type="text" id="signup-lastname-input" placeholder="Last name" autocomplete="family-name">
+      <label class="field-label">Email</label>
       <input type="email" id="signup-email-input" placeholder="you@example.com" autocomplete="email">
-      <button id="signup-email-btn">Send OTP</button>
-      <div class="err" id="signup-email-err"></div>
-      <div class="auth-link" id="open-email-settings-1">Email delivery settings</div>
+      <label class="field-label">Password</label>
+      <input type="password" id="signup-password-input" placeholder="Password (min 6 characters)" autocomplete="new-password">
+      <label class="field-label">Confirm password</label>
+      <input type="password" id="signup-confirm-input" placeholder="Confirm password" autocomplete="new-password">
+      <button id="signup-btn">Create account</button>
+      <div class="err" id="signup-err"></div>
+      <div class="auth-link" id="goto-login-link">Already have an account? Sign in</div>
     </div>
 
     <div id="screen-otp" class="auth-screen hidden">
       <h2 id="otp-title">Verify your email</h2>
       <p id="otp-sub">Enter the 6-digit code sent to your email.</p>
-      <div class="demo-note" id="otp-demo-note"></div>
+      <div class="demo-note hidden" id="otp-demo-note"></div>
       <input type="text" id="otp-input" maxlength="6" inputmode="numeric" placeholder="••••••">
       <button id="otp-verify-btn">Verify</button>
       <div class="err" id="otp-err"></div>
       <div class="auth-link" id="otp-resend">Resend code</div>
     </div>
 
-    <div id="screen-set-pin" class="auth-screen hidden">
-      <h2 id="setpin-title">Set a 4-digit PIN</h2>
-      <p>Choose a 4-digit PIN to protect your ledger.</p>
-      <input type="password" id="setpin-input" maxlength="4" inputmode="numeric" placeholder="••••">
-      <input type="password" id="setpin-confirm" maxlength="4" inputmode="numeric" placeholder="Confirm PIN" style="margin-top:-4px;">
-      <button id="setpin-btn">Set PIN</button>
-      <div class="err" id="setpin-err"></div>
+    <div id="screen-forgot-email" class="auth-screen hidden">
+      <h2>Reset your password</h2>
+      <p>Enter your account email — we'll send a 6-digit code.</p>
+      <label class="field-label">Email</label>
+      <input type="email" id="forgot-email-input" placeholder="you@example.com" autocomplete="email">
+      <button id="forgot-send-btn">Send code</button>
+      <div class="err" id="forgot-email-err"></div>
+      <div class="auth-link" id="back-to-login-1">Back to sign in</div>
     </div>
 
-    <div id="screen-unlock" class="auth-screen hidden">
-      <h2>Enter PIN</h2>
-      <p>Unlock your ledger.</p>
-      <input type="password" id="unlock-pin-input" maxlength="4" inputmode="numeric" placeholder="••••">
-      <button id="unlock-btn">Unlock</button>
-      <div class="err" id="unlock-err"></div>
-      <div class="auth-link" id="forgot-pin-link">Forgot PIN?</div>
-      <div class="auth-link" id="open-email-settings-2">Email delivery settings</div>
-    </div>
-
-    <div id="screen-email-settings" class="auth-screen hidden">
-      <h2>Email delivery settings</h2>
-      <p>Connect a free <strong>EmailJS</strong> account so OTP codes are actually emailed, instead of shown on-screen in demo mode.</p>
-      <label class="field-label">1. Create a free account at emailjs.com, add an Email Service, and a Template with two variables: <code>{{to_email}}</code> and <code>{{otp_code}}</code>.</label>
-      <label class="field-label">Public Key</label>
-      <input type="text" id="ej-public-key" placeholder="e.g. AbCdEfGhIjKlMnOp">
-      <label class="field-label">Service ID</label>
-      <input type="text" id="ej-service-id" placeholder="e.g. service_abc123">
-      <label class="field-label">Template ID</label>
-      <input type="text" id="ej-template-id" placeholder="e.g. template_xyz789">
-      <button id="ej-save-btn" style="margin-top:12px;">Save &amp; enable real email delivery</button>
-      <div class="err" id="ej-err"></div>
-      <div class="auth-link" id="ej-test-btn">Send a test OTP to my email</div>
-      <div class="auth-link" id="close-email-settings">Back</div>
+    <div id="screen-new-password" class="auth-screen hidden">
+      <h2>Set a new password</h2>
+      <p>Choose a new password for your account.</p>
+      <label class="field-label">New password</label>
+      <input type="password" id="newpw-input" placeholder="New password (min 6 characters)" autocomplete="new-password">
+      <label class="field-label">Confirm new password</label>
+      <input type="password" id="newpw-confirm-input" placeholder="Confirm new password" autocomplete="new-password">
+      <button id="newpw-btn">Update password</button>
+      <div class="err" id="newpw-err"></div>
     </div>
   </div>
 </div>
@@ -205,6 +213,7 @@
         <div class="lbl">this month's profit</div>
       </div>
       <button class="export-btn" id="export-btn">Export CSV</button>
+      <button class="export-btn" id="logout-btn">Logout</button>
     </div>
   </div>
 
@@ -628,204 +637,193 @@
   }
   document.getElementById('export-btn').addEventListener('click', exportCSV);
 
-  // ---- Authentication: email + OTP signup, 4-digit PIN unlock, forgot-PIN via OTP ----
-  // PROTOTYPE NOTE: this is a static, client-only page with no backend server. It sends OTP
-  // emails directly from the browser using EmailJS (emailjs.com) — a real third-party service
-  // built for exactly this (client-side email sending without a backend). If EmailJS isn't
-  // configured yet, it falls back to a "Demo mode" note that shows the code on-screen so the
-  // app is still usable. The PIN itself is still stored as plain text in localStorage — for
-  // anything beyond a prototype, verify PINs against a backend and store them as a salted hash.
+  // ---- Authentication: Supabase Auth (email + password), email OTP verification on
+  // signup, and OTP-based forgot-password reset. Real backend — no PINs, no localStorage
+  // password storage. Supabase sends the actual emails through the SMTP provider (Brevo)
+  // connected in the Supabase dashboard.
+  const SUPABASE_URL = 'https://cctlitzmvqsarwfpogpj.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_YdbHws1a5_w2wQiVfL0qRw_YbNhnTyE';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
   const overlay = document.getElementById('lock-overlay');
   const screens = {
-    signupEmail: document.getElementById('screen-signup-email'),
+    login: document.getElementById('screen-login'),
+    signup: document.getElementById('screen-signup'),
     otp: document.getElementById('screen-otp'),
-    setPin: document.getElementById('screen-set-pin'),
-    unlock: document.getElementById('screen-unlock'),
-    emailSettings: document.getElementById('screen-email-settings')
+    forgotEmail: document.getElementById('screen-forgot-email'),
+    newPassword: document.getElementById('screen-new-password')
   };
-  let screenBeforeSettings = 'signupEmail';
   function showScreen(name){
     Object.values(screens).forEach(s => s.classList.add('hidden'));
     screens[name].classList.remove('hidden');
   }
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  let pendingOtp = null; // { code, purpose: 'signup'|'reset', email }
+  let pendingOtp = null; // { purpose: 'signup'|'recovery', email }
 
-  function genOtp(){ return String(Math.floor(100000 + Math.random()*900000)); }
-
-  function getEmailJsConfig(){
-    try {
-      return {
-        publicKey: localStorage.getItem('emailjs-public-key') || '',
-        serviceId: localStorage.getItem('emailjs-service-id') || '',
-        templateId: localStorage.getItem('emailjs-template-id') || ''
-      };
-    } catch(e){ return { publicKey:'', serviceId:'', templateId:'' }; }
-  }
-  function isEmailJsConfigured(cfg){
-    return !!(cfg.publicKey && cfg.serviceId && cfg.templateId);
+  function setErr(id, msg){ document.getElementById(id).textContent = msg || ''; }
+  function setBusy(btnId, busy, busyLabel, normalLabel){
+    const b = document.getElementById(btnId);
+    b.disabled = busy;
+    b.textContent = busy ? busyLabel : normalLabel;
   }
 
-  async function deliverOtpEmail(email, code){
-    const cfg = getEmailJsConfig();
-    if(!isEmailJsConfigured(cfg) || typeof emailjs === 'undefined'){
-      return { sent:false, reason:'not-configured' };
-    }
-    try {
-      await emailjs.send(cfg.serviceId, cfg.templateId, { to_email: email, otp_code: code }, { publicKey: cfg.publicKey });
-      return { sent:true };
-    } catch(e){
-      return { sent:false, reason:'send-failed', detail: (e && e.text) || String(e) };
-    }
-  }
-
-  async function sendOtp(email, purpose){
-    pendingOtp = { code: genOtp(), purpose, email };
-    document.getElementById('otp-title').textContent = purpose === 'signup' ? 'Verify your email' : 'Reset your PIN';
-    document.getElementById('otp-sub').textContent = `Enter the 6-digit code sent to ${email}`;
-    const noteEl = document.getElementById('otp-demo-note');
-    noteEl.textContent = 'Sending code…';
-    document.getElementById('otp-input').value = '';
-    document.getElementById('otp-err').textContent = '';
-    showScreen('otp');
-
-    const result = await deliverOtpEmail(email, pendingOtp.code);
-    if(result.sent){
-      noteEl.textContent = `A verification code was emailed to ${email}. It may take a minute to arrive — check spam if you don't see it.`;
-    } else if(result.reason === 'not-configured'){
-      noteEl.textContent = `Demo mode — no email server connected yet. Your code: ${pendingOtp.code}`;
-    } else {
-      noteEl.textContent = `Couldn't send the email (${result.detail || 'unknown error'}). Demo mode fallback — your code: ${pendingOtp.code}`;
-    }
+  async function goToApp(){
+    overlay.style.display = 'none';
+    load();
   }
 
   function initAuthGate(){
-    let email = null, pin = null;
-    try { email = localStorage.getItem('ledger-email'); pin = localStorage.getItem('ledger-pin'); } catch(e){}
-    showScreen((!email || !pin) ? 'signupEmail' : 'unlock');
-
-    document.getElementById('signup-email-btn').onclick = () => {
-      const val = document.getElementById('signup-email-input').value.trim();
-      const errEl = document.getElementById('signup-email-err');
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){
-        errEl.textContent = 'Enter a valid email address.';
-        return;
-      }
-      errEl.textContent = '';
-      sendOtp(val, 'signup');
-    };
-
-    document.getElementById('otp-verify-btn').onclick = () => {
-      const val = document.getElementById('otp-input').value.trim();
-      const errEl = document.getElementById('otp-err');
-      if(!pendingOtp){ errEl.textContent = 'No code was sent — go back and try again.'; return; }
-      if(val !== pendingOtp.code){
-        errEl.textContent = 'Incorrect code. Try again.';
-        return;
-      }
-      errEl.textContent = '';
-      if(pendingOtp.purpose === 'signup'){
-        try { localStorage.setItem('ledger-email', pendingOtp.email); } catch(e){}
-        document.getElementById('setpin-title').textContent = 'Set a 4-digit PIN';
+    // If a session already exists (returning, already-logged-in user), skip straight in.
+    sb.auth.getSession().then(({ data }) => {
+      if(data && data.session){
+        goToApp();
       } else {
-        document.getElementById('setpin-title').textContent = 'Set a new 4-digit PIN';
+        showScreen('login');
       }
-      showScreen('setPin');
-    };
-    document.getElementById('otp-resend').onclick = () => {
-      if(pendingOtp) sendOtp(pendingOtp.email, pendingOtp.purpose);
+    });
+
+    // ---- Logout ----
+    document.getElementById('logout-btn').onclick = async () => {
+      await sb.auth.signOut();
+      overlay.style.display = 'flex';
+      document.getElementById('login-email-input').value = '';
+      document.getElementById('login-password-input').value = '';
+      setErr('login-err');
+      showScreen('login');
     };
 
-    document.getElementById('setpin-btn').onclick = () => {
-      const p1 = document.getElementById('setpin-input').value.trim();
-      const p2 = document.getElementById('setpin-confirm').value.trim();
-      const errEl = document.getElementById('setpin-err');
-      if(!/^\d{4}$/.test(p1)){
-        errEl.textContent = 'PIN must be exactly 4 digits.';
-        return;
-      }
-      if(p1 !== p2){
-        errEl.textContent = 'PINs do not match.';
-        return;
-      }
-      try { localStorage.setItem('ledger-pin', p1); } catch(e){}
-      errEl.textContent = '';
-      overlay.style.display = 'none';
-      load();
-    };
+    // ---- Sign up ----
+    document.getElementById('goto-signup-link').onclick = () => { setErr('login-err'); showScreen('signup'); };
+    document.getElementById('goto-login-link').onclick = () => { setErr('signup-err'); showScreen('login'); };
 
-    document.getElementById('unlock-btn').onclick = () => {
-      const val = document.getElementById('unlock-pin-input').value.trim();
-      const errEl = document.getElementById('unlock-err');
-      let storedPin = null;
-      try { storedPin = localStorage.getItem('ledger-pin'); } catch(e){}
-      if(val === storedPin){
-        overlay.style.display = 'none';
-        load();
-      } else {
-        errEl.textContent = 'Incorrect PIN. Try again.';
-        document.getElementById('unlock-pin-input').value = '';
-      }
-    };
-    document.getElementById('forgot-pin-link').onclick = () => {
-      let storedEmail = null;
-      try { storedEmail = localStorage.getItem('ledger-email'); } catch(e){}
-      if(!storedEmail){ showScreen('signupEmail'); return; }
-      sendOtp(storedEmail, 'reset');
-    };
+    document.getElementById('signup-btn').onclick = async () => {
+      const first = document.getElementById('signup-firstname-input').value.trim();
+      const last = document.getElementById('signup-lastname-input').value.trim();
+      const email = document.getElementById('signup-email-input').value.trim();
+      const pw = document.getElementById('signup-password-input').value;
+      const pw2 = document.getElementById('signup-confirm-input').value;
 
-    // ---- Email delivery settings (EmailJS) ----
-    function openEmailSettings(from){
-      screenBeforeSettings = from;
-      const cfg = getEmailJsConfig();
-      document.getElementById('ej-public-key').value = cfg.publicKey;
-      document.getElementById('ej-service-id').value = cfg.serviceId;
-      document.getElementById('ej-template-id').value = cfg.templateId;
-      document.getElementById('ej-err').textContent = '';
-      showScreen('emailSettings');
-    }
-    document.getElementById('open-email-settings-1').onclick = () => openEmailSettings('signupEmail');
-    document.getElementById('open-email-settings-2').onclick = () => openEmailSettings('unlock');
-    document.getElementById('close-email-settings').onclick = () => showScreen(screenBeforeSettings);
+      if(!first || !last){ setErr('signup-err', 'Enter your first and last name.'); return; }
+      if(!EMAIL_RE.test(email)){ setErr('signup-err', 'Enter a valid email address.'); return; }
+      if(pw.length < 6){ setErr('signup-err', 'Password must be at least 6 characters.'); return; }
+      if(pw !== pw2){ setErr('signup-err', 'Passwords do not match.'); return; }
+      setErr('signup-err');
 
-    document.getElementById('ej-save-btn').onclick = () => {
-      const pub = document.getElementById('ej-public-key').value.trim();
-      const svc = document.getElementById('ej-service-id').value.trim();
-      const tpl = document.getElementById('ej-template-id').value.trim();
-      const errEl = document.getElementById('ej-err');
-      if(!pub || !svc || !tpl){
-        errEl.textContent = 'Fill in all three fields.';
-        return;
-      }
-      try {
-        localStorage.setItem('emailjs-public-key', pub);
-        localStorage.setItem('emailjs-service-id', svc);
-        localStorage.setItem('emailjs-template-id', tpl);
-      } catch(e){}
-      errEl.textContent = '';
-      errEl.style.color = '#1F4A2C';
-      errEl.textContent = 'Saved. Real email delivery is now enabled.';
-      showScreen(screenBeforeSettings);
-    };
-    document.getElementById('ej-test-btn').onclick = () => {
-      let storedEmail = null;
-      try { storedEmail = localStorage.getItem('ledger-email'); } catch(e){}
-      const target = storedEmail || document.getElementById('signup-email-input').value.trim();
-      const errEl = document.getElementById('ej-err');
-      if(!target || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(target)){
-        errEl.textContent = 'Enter your email on the previous screen first.';
-        return;
-      }
-      errEl.textContent = 'Sending test code…';
-      sendOtp(target, 'signup').then(() => {
-        errEl.textContent = '';
+      setBusy('signup-btn', true, 'Creating account…', 'Create account');
+      const { error } = await sb.auth.signUp({
+        email, password: pw,
+        options: { data: { first_name: first, last_name: last } }
       });
+      setBusy('signup-btn', false, 'Creating account…', 'Create account');
+
+      if(error){ setErr('signup-err', error.message); return; }
+
+      pendingOtp = { purpose: 'signup', email };
+      document.getElementById('otp-title').textContent = 'Verify your email';
+      document.getElementById('otp-sub').textContent = `Enter the 6-digit code sent to ${email}`;
+      document.getElementById('otp-input').value = '';
+      setErr('otp-err');
+      showScreen('otp');
     };
 
-    document.getElementById('signup-email-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('signup-email-btn').click(); });
+    // ---- OTP verify (used for both signup confirmation and password-reset codes) ----
+    document.getElementById('otp-verify-btn').onclick = async () => {
+      const code = document.getElementById('otp-input').value.trim();
+      if(!pendingOtp){ setErr('otp-err', 'No code was sent — go back and try again.'); return; }
+      if(!/^\d{6}$/.test(code)){ setErr('otp-err', 'Enter the 6-digit code.'); return; }
+      setErr('otp-err');
+
+      setBusy('otp-verify-btn', true, 'Verifying…', 'Verify');
+      const { error } = await sb.auth.verifyOtp({
+        email: pendingOtp.email, token: code, type: pendingOtp.purpose
+      });
+      setBusy('otp-verify-btn', false, 'Verifying…', 'Verify');
+
+      if(error){ setErr('otp-err', error.message); return; }
+
+      if(pendingOtp.purpose === 'signup'){
+        goToApp();
+      } else {
+        // Recovery OTP verified — user now has a temporary session; let them set a new password.
+        showScreen('newPassword');
+      }
+    };
+
+    document.getElementById('otp-resend').onclick = async () => {
+      if(!pendingOtp) return;
+      const errEl = document.getElementById('otp-err');
+      errEl.textContent = 'Resending…';
+      let error;
+      if(pendingOtp.purpose === 'signup'){
+        ({ error } = await sb.auth.resend({ type: 'signup', email: pendingOtp.email }));
+      } else {
+        ({ error } = await sb.auth.resetPasswordForEmail(pendingOtp.email));
+      }
+      errEl.textContent = error ? error.message : 'A new code has been sent.';
+    };
+
+    // ---- Login ----
+    document.getElementById('login-btn').onclick = async () => {
+      const email = document.getElementById('login-email-input').value.trim();
+      const pw = document.getElementById('login-password-input').value;
+      if(!EMAIL_RE.test(email)){ setErr('login-err', 'Enter a valid email address.'); return; }
+      if(!pw){ setErr('login-err', 'Enter your password.'); return; }
+      setErr('login-err');
+
+      setBusy('login-btn', true, 'Signing in…', 'Sign in');
+      const { error } = await sb.auth.signInWithPassword({ email, password: pw });
+      setBusy('login-btn', false, 'Signing in…', 'Sign in');
+
+      if(error){ setErr('login-err', error.message); return; }
+      goToApp();
+    };
+
+    // ---- Forgot password ----
+    document.getElementById('goto-forgot-link').onclick = () => { setErr('login-err'); showScreen('forgotEmail'); };
+    document.getElementById('back-to-login-1').onclick = () => { setErr('forgot-email-err'); showScreen('login'); };
+
+    document.getElementById('forgot-send-btn').onclick = async () => {
+      const email = document.getElementById('forgot-email-input').value.trim();
+      if(!EMAIL_RE.test(email)){ setErr('forgot-email-err', 'Enter a valid email address.'); return; }
+      setErr('forgot-email-err');
+
+      setBusy('forgot-send-btn', true, 'Sending…', 'Send code');
+      const { error } = await sb.auth.resetPasswordForEmail(email);
+      setBusy('forgot-send-btn', false, 'Sending…', 'Send code');
+
+      if(error){ setErr('forgot-email-err', error.message); return; }
+
+      pendingOtp = { purpose: 'recovery', email };
+      document.getElementById('otp-title').textContent = 'Reset your password';
+      document.getElementById('otp-sub').textContent = `Enter the 6-digit code sent to ${email}`;
+      document.getElementById('otp-input').value = '';
+      setErr('otp-err');
+      showScreen('otp');
+    };
+
+    // ---- Set new password (after recovery OTP verified) ----
+    document.getElementById('newpw-btn').onclick = async () => {
+      const p1 = document.getElementById('newpw-input').value;
+      const p2 = document.getElementById('newpw-confirm-input').value;
+      if(p1.length < 6){ setErr('newpw-err', 'Password must be at least 6 characters.'); return; }
+      if(p1 !== p2){ setErr('newpw-err', 'Passwords do not match.'); return; }
+      setErr('newpw-err');
+
+      setBusy('newpw-btn', true, 'Updating…', 'Update password');
+      const { error } = await sb.auth.updateUser({ password: p1 });
+      setBusy('newpw-btn', false, 'Updating…', 'Update password');
+
+      if(error){ setErr('newpw-err', error.message); return; }
+      goToApp();
+    };
+
+    // Enter-key convenience
+    document.getElementById('login-password-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('login-btn').click(); });
+    document.getElementById('signup-confirm-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('signup-btn').click(); });
     document.getElementById('otp-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('otp-verify-btn').click(); });
-    document.getElementById('setpin-confirm').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('setpin-btn').click(); });
-    document.getElementById('unlock-pin-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('unlock-btn').click(); });
+    document.getElementById('forgot-email-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('forgot-send-btn').click(); });
+    document.getElementById('newpw-confirm-input').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('newpw-btn').click(); });
   }
 
   initAuthGate();
