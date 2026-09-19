@@ -131,6 +131,29 @@
   .rtable td { padding:6px 8px; border-bottom:1px solid var(--rule); }
   .rtable td.num, .rtable th.num { text-align:right; font-family:'IBM Plex Mono',monospace; }
 
+  /* ---- Left sidebar navigation shell ---- */
+  #ledger-root { max-width:1180px; padding:0; }
+  .app-shell { display:flex; align-items:stretch; min-height:100vh; }
+  .sidebar {
+    width:200px; flex:0 0 200px; background:var(--ink); color:#EDEEDF;
+    padding:22px 0; position:sticky; top:0; align-self:flex-start; height:100vh; overflow-y:auto;
+  }
+  .sidebar-brand { font-family:'Source Serif 4',serif; font-size:17px; font-weight:600; padding:0 20px 20px; border-bottom:1px solid rgba(237,238,223,.15); margin-bottom:10px; }
+  .side-item { display:flex; align-items:center; gap:10px; padding:11px 20px; font-size:13.5px; cursor:pointer; color:#D8DAC6; }
+  .side-item .side-ic { width:16px; display:inline-block; text-align:center; font-size:14px; }
+  .side-item:hover { background:rgba(237,238,223,.08); color:#fff; }
+  .side-item.active { background:rgba(237,238,223,.14); color:#fff; border-left:3px solid var(--gold); padding-left:17px; font-weight:600; }
+  .side-item.side-logout { margin-top:16px; border-top:1px solid rgba(237,238,223,.15); padding-top:16px; }
+  .main-content { flex:1; min-width:0; padding:28px 24px 60px; }
+  .page.hidden { display:none; }
+  @media (max-width:760px){
+    .app-shell { flex-direction:column; }
+    .sidebar { width:100%; flex:none; height:auto; position:relative; padding:10px 0; display:flex; overflow-x:auto; }
+    .sidebar-brand { display:none; }
+    .side-item { padding:10px 14px; white-space:nowrap; }
+    .side-item.active { border-left:none; border-bottom:3px solid var(--gold); padding-left:14px; }
+    .side-item.side-logout { margin-top:0; border-top:none; padding-top:10px; }
+  }
 
 </style>
 
@@ -201,99 +224,140 @@
 </div>
 
 <div id="ledger-root">
-  <div class="hero">
-    <div>
-      <div class="fy-tag" id="fy-tag">FY —</div>
-      <h1>Personal Ledger</h1>
-      <div class="muted" id="month-label">—</div>
-    </div>
-    <div class="hero-actions">
-      <div class="profit-figure">
-        <div class="amt num" id="hero-profit">₹0</div>
-        <div class="lbl">this month's profit</div>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-brand">Personal Ledger</div>
+      <div class="side-item active" data-page="dashboard">
+        <span class="side-ic">▤</span><span>Dashboard</span>
       </div>
-      <button class="export-btn" id="export-btn">Export CSV</button>
-      <button class="export-btn" id="logout-btn">Logout</button>
-    </div>
-  </div>
+      <div class="side-item" data-page="transactions">
+        <span class="side-ic">₹</span><span>Transactions</span>
+      </div>
+      <div class="side-item" data-page="goals">
+        <span class="side-ic">◎</span><span>Goal planner</span>
+      </div>
+      <div class="side-item" data-page="settings">
+        <span class="side-ic">⚙</span><span>Settings</span>
+      </div>
+      <div class="side-item side-logout" id="sidebar-logout">
+        <span class="side-ic">⏻</span><span>Logout</span>
+      </div>
+    </nav>
 
-  <div class="month-rail" id="month-rail"></div>
-
-  <div class="panel dashboard-panel">
-    <h2>Dashboard — income, expenditure &amp; profit by month</h2>
-    <div class="chart-filters">
-      <div><label>Year</label><select id="chart-year"></select></div>
-      <div><label>From</label><select id="chart-month-from"></select></div>
-      <div><label>To</label><select id="chart-month-to"></select></div>
-    </div>
-    <div class="summary-cards">
-      <div class="summary-card income"><div class="sc-label">Total income</div><div class="sc-amt num" id="sum-income">₹0</div></div>
-      <div class="summary-card expense"><div class="sc-label">Total expenditure</div><div class="sc-amt num" id="sum-expense">₹0</div></div>
-      <div class="summary-card profit"><div class="sc-label">Total profit</div><div class="sc-amt num" id="sum-profit">₹0</div></div>
-    </div>
-    <div class="chart-legend">
-      <span><i class="swatch" style="background:var(--income-c)"></i>Income</span>
-      <span><i class="swatch" style="background:var(--expense-c)"></i>Expenditure</span>
-      <span><i class="swatch" style="background:var(--profit-c)"></i>Profit</span>
-    </div>
-    <div class="chart-wrap"><div id="bar-chart"></div></div>
-  </div>
-
-  <div class="grid">
-    <div>
-      <div class="panel" id="entry-panel">
-        <h2>Add entry</h2>
-        <div class="txn-form">
-          <div class="full type-toggle">
-            <div class="type-btn income sel" data-type="income">Income</div>
-            <div class="type-btn expense" data-type="expense">Expense</div>
+    <div class="main-content">
+      <div class="hero">
+        <div>
+          <div class="fy-tag" id="fy-tag">FY —</div>
+          <h1>Personal Ledger</h1>
+          <div class="muted" id="month-label">—</div>
+        </div>
+        <div class="hero-actions">
+          <div class="profit-figure">
+            <div class="amt num" id="hero-profit">₹0</div>
+            <div class="lbl">this month's profit</div>
           </div>
-          <div><label>Date</label><input type="date" id="f-date"></div>
-          <div><label>Amount (₹)</label><input type="number" id="f-amount" placeholder="0" min="0"></div>
-          <div class="full"><label>Category</label><select id="f-category"></select></div>
-          <div class="full"><label>Note (optional)</label><input type="text" id="f-note" placeholder="e.g. Client invoice, rent, groceries"></div>
-          <div class="add-btn" id="add-btn">Add entry</div>
+          <button class="export-btn" id="export-btn">Export CSV</button>
+          <button class="export-btn" id="logout-btn">Logout</button>
         </div>
       </div>
 
-      <div class="panel">
-        <h2>This month's entries</h2>
-        <div id="txn-list"></div>
-        <div class="month-totals">
-          <div>Income <span class="num val pos" id="m-income">₹0</span></div>
-          <div>Expense <span class="num val neg" id="m-expense">₹0</span></div>
-          <div>Profit <span class="num val" id="m-profit">₹0</span></div>
-        </div>
-      </div>
-    </div>
+      <div class="month-rail" id="month-rail"></div>
 
-    <div>
-      <div class="panel">
-        <h2>Forecast (customizable)</h2>
-        <div class="muted" style="margin-bottom:10px;">Project ahead based on your average monthly profit so far.</div>
-        <div class="forecast-controls">
-          <span class="muted">Months ahead:</span>
-          <input type="range" id="f-months" min="1" max="12" value="3">
-          <span class="num" id="f-months-val">3</span>
+      <!-- ===== DASHBOARD PAGE ===== -->
+      <div class="page" id="page-dashboard">
+        <div class="panel dashboard-panel">
+          <h2>Dashboard — income, expenditure &amp; profit by month</h2>
+          <div class="chart-filters">
+            <div><label>Year</label><select id="chart-year"></select></div>
+            <div><label>From</label><select id="chart-month-from"></select></div>
+            <div><label>To</label><select id="chart-month-to"></select></div>
+          </div>
+          <div class="summary-cards">
+            <div class="summary-card income"><div class="sc-label">Total income</div><div class="sc-amt num" id="sum-income">₹0</div></div>
+            <div class="summary-card expense"><div class="sc-label">Total expenditure</div><div class="sc-amt num" id="sum-expense">₹0</div></div>
+            <div class="summary-card profit"><div class="sc-label">Total profit</div><div class="sc-amt num" id="sum-profit">₹0</div></div>
+          </div>
+          <div class="chart-legend">
+            <span><i class="swatch" style="background:var(--income-c)"></i>Income</span>
+            <span><i class="swatch" style="background:var(--expense-c)"></i>Expenditure</span>
+            <span><i class="swatch" style="background:var(--profit-c)"></i>Profit</span>
+          </div>
+          <div class="chart-wrap"><div id="bar-chart"></div></div>
         </div>
-        <div class="forecast-out">
-          <div><div class="muted">Projected profit (period)</div><div class="amt num" id="fc-period">₹0</div></div>
-          <div><div class="muted">Projected FY-end total</div><div class="amt num" id="fc-fy">₹0</div></div>
+
+        <div class="panel">
+          <h2>Report — forecast (customizable)</h2>
+          <div class="muted" style="margin-bottom:10px;">Project ahead based on your average monthly profit so far.</div>
+          <div class="forecast-controls">
+            <span class="muted">Months ahead:</span>
+            <input type="range" id="f-months" min="1" max="12" value="3">
+            <span class="num" id="f-months-val">3</span>
+          </div>
+          <div class="forecast-out">
+            <div><div class="muted">Projected profit (period)</div><div class="amt num" id="fc-period">₹0</div></div>
+            <div><div class="muted">Projected FY-end total</div><div class="amt num" id="fc-fy">₹0</div></div>
+          </div>
         </div>
       </div>
 
-      <div class="panel">
-        <h2>Goal planner</h2>
-        <div class="muted" style="margin-bottom:12px;">Set a target amount and a timeframe. Everything below is calculated directly from your entries — no AI involved in the numbers.</div>
-        <div class="goal-inputs">
-          <div><label>Forecast / target amount (₹)</label><input type="number" id="goal-target" placeholder="e.g. 1000000" min="0"></div>
-          <div><label>Months to reach it</label><input type="number" id="goal-months" placeholder="e.g. 24" min="1" max="360"></div>
-          <div><label>Existing savings / investments (₹)</label><input type="number" id="goal-existing" placeholder="0" min="0"></div>
-          <div><label>Assumed annual return for overall projection (%)</label><input type="number" id="goal-return" placeholder="8" min="0" max="20" step="0.5"></div>
-          <div class="full add-btn" id="goal-calc-btn">Calculate my plan</div>
+      <!-- ===== TRANSACTIONS PAGE ===== -->
+      <div class="page hidden" id="page-transactions">
+        <div class="grid">
+          <div>
+            <div class="panel" id="entry-panel">
+              <h2>Add entry</h2>
+              <div class="txn-form">
+                <div class="full type-toggle">
+                  <div class="type-btn income sel" data-type="income">Income</div>
+                  <div class="type-btn expense" data-type="expense">Expense</div>
+                </div>
+                <div><label>Date</label><input type="date" id="f-date"></div>
+                <div><label>Amount (₹)</label><input type="number" id="f-amount" placeholder="0" min="0"></div>
+                <div class="full"><label>Category</label><select id="f-category"></select></div>
+                <div class="full"><label>Note (optional)</label><input type="text" id="f-note" placeholder="e.g. Client invoice, rent, groceries"></div>
+                <div class="add-btn" id="add-btn">Add entry</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="panel">
+              <h2>This month's entries</h2>
+              <div id="txn-list"></div>
+              <div class="month-totals">
+                <div>Income <span class="num val pos" id="m-income">₹0</span></div>
+                <div>Expense <span class="num val neg" id="m-expense">₹0</span></div>
+                <div>Profit <span class="num val" id="m-profit">₹0</span></div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div id="goal-output"></div>
       </div>
+
+      <!-- ===== GOAL PLANNER PAGE ===== -->
+      <div class="page hidden" id="page-goals">
+        <div class="panel">
+          <h2>Goal planner</h2>
+          <div class="muted" style="margin-bottom:12px;">Set a target amount and a timeframe. Everything below is calculated directly from your entries — no AI involved in the numbers.</div>
+          <div class="goal-inputs">
+            <div><label>Forecast / target amount (₹)</label><input type="number" id="goal-target" placeholder="e.g. 1000000" min="0"></div>
+            <div><label>Months to reach it</label><input type="number" id="goal-months" placeholder="e.g. 24" min="1" max="360"></div>
+            <div><label>Existing savings / investments (₹)</label><input type="number" id="goal-existing" placeholder="0" min="0"></div>
+            <div><label>Assumed annual return for overall projection (%)</label><input type="number" id="goal-return" placeholder="8" min="0" max="20" step="0.5"></div>
+            <div class="full add-btn" id="goal-calc-btn">Calculate my plan</div>
+          </div>
+          <div id="goal-output"></div>
+        </div>
+      </div>
+
+      <!-- ===== SETTINGS PAGE (placeholder only, no new functionality) ===== -->
+      <div class="page hidden" id="page-settings">
+        <div class="panel">
+          <h2>Settings</h2>
+          <div class="muted">Nothing configurable here yet.</div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -637,6 +701,21 @@
   }
   document.getElementById('export-btn').addEventListener('click', exportCSV);
 
+  // ---- Sidebar navigation (Dashboard / Transactions / Goal planner / Settings) ----
+  (function initSidebarNav(){
+    const pages = { dashboard: 'page-dashboard', transactions: 'page-transactions', goals: 'page-goals', settings: 'page-settings' };
+    const navItems = document.querySelectorAll('.sidebar .side-item[data-page]');
+    function showPage(name){
+      Object.entries(pages).forEach(([key, pageId]) => {
+        const el = document.getElementById(pageId);
+        if(el) el.classList.toggle('hidden', key !== name);
+      });
+      navItems.forEach(item => item.classList.toggle('active', item.dataset.page === name));
+    }
+    navItems.forEach(item => item.addEventListener('click', () => showPage(item.dataset.page)));
+    showPage('dashboard');
+  })();
+
   // ---- Authentication: Supabase Auth (email + password), email OTP verification on
   // signup, and OTP-based forgot-password reset. Real backend — no PINs, no localStorage
   // password storage. Supabase sends the actual emails through the SMTP provider (Brevo)
@@ -684,7 +763,7 @@
     });
 
     // ---- Logout ----
-    document.getElementById('logout-btn').onclick = async () => {
+    const doLogout = async () => {
       await sb.auth.signOut();
       overlay.style.display = 'flex';
       document.getElementById('login-email-input').value = '';
@@ -692,6 +771,9 @@
       setErr('login-err');
       showScreen('login');
     };
+    document.getElementById('logout-btn').onclick = doLogout;
+    const sidebarLogoutEl = document.getElementById('sidebar-logout');
+    if(sidebarLogoutEl) sidebarLogoutEl.onclick = doLogout;
 
     // ---- Sign up ----
     document.getElementById('goto-signup-link').onclick = () => { setErr('login-err'); showScreen('signup'); };
