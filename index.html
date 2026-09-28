@@ -114,6 +114,21 @@
   #lock-overlay .auth-screen input { font-size:14px; letter-spacing:normal; text-align:left; }
   #lock-overlay button { width:100%; padding:10px; background:#1C5FA8; color:#fff; border:none; cursor:pointer; border-radius:6px; font-size:13px; }
   #lock-overlay button:hover { background:#123E73; }
+  .field-err { color:#C0392B; font-size:12px; margin-top:4px; }
+  input.invalid, select.invalid, textarea.invalid { border-color:#C0392B !important; }
+  .set-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin-bottom:10px; }
+  .set-grid label { display:block; font-size:12px; margin-bottom:4px; color:var(--muted); }
+  .set-grid input, .set-grid select, .set-grid textarea { width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid var(--rule); border-radius:6px; font-family:'IBM Plex Sans',sans-serif; font-size:13px; }
+  .set-msg { font-size:12px; margin-top:8px; color:#2E7D4F; }
+  .set-msg.bad { color:#C0392B; }
+  .dbw-table { border-collapse:collapse; font-size:12px; width:100%; }
+  .dbw-table th, .dbw-table td { padding:6px 8px; border-bottom:1px solid var(--rule); text-align:right; white-space:nowrap; }
+  .dbw-table th:first-child, .dbw-table td:first-child { text-align:left; }
+  .dbw-table tr.tot td { font-weight:600; background:var(--paper-2); }
+  .dbw-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .dbw-kpi { border:1px solid var(--rule); border-radius:10px; padding:10px 12px; }
+  .dbw-kpi .k { font-size:11px; color:var(--muted); } .dbw-kpi .v { font-size:16px; font-weight:600; margin-top:2px; }
+  .dbw-list { margin:0; padding-left:18px; font-size:13px; line-height:1.7; }
   #lock-overlay .err { color:#8C3A2E; font-size:12px; min-height:16px; margin-top:8px; }
   #lock-overlay .hidden { display:none; }
   #lock-overlay .auth-screen.hidden { display:none; }
@@ -139,6 +154,35 @@
 
   .dash-welcome { background:linear-gradient(120deg,#3E8CDE,#123E73); color:#fff; border-radius:12px; padding:14px 20px; margin-bottom:18px; font-size:15px; font-weight:600; box-shadow:var(--card-shadow); }
   .dash-welcome.hidden { display:none; }
+
+  .dash-bot-fab { position:fixed; bottom:26px; right:26px; width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,#3E8CDE,#123E73); color:#fff; border:none; box-shadow:0 6px 18px rgba(18,62,115,.35); cursor:pointer; font-size:24px; display:flex; align-items:center; justify-content:center; z-index:900; }
+  .dash-bot-fab:hover { filter:brightness(1.08); }
+  .dash-bot-fab.hidden { display:none; }
+
+  .dash-bot-panel { position:fixed; bottom:26px; right:26px; width:340px; max-width:calc(100vw - 32px); height:460px; max-height:calc(100vh - 60px); background:#fff; border:1px solid var(--rule); border-radius:14px; box-shadow:0 12px 32px rgba(21,42,74,.22); display:flex; flex-direction:column; overflow:hidden; z-index:900; }
+  .dash-bot-panel.hidden { display:none; }
+  .dash-bot-head { background:linear-gradient(120deg,#3E8CDE,#123E73); color:#fff; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; font-weight:600; font-size:14px; }
+  .dash-bot-head button { background:rgba(255,255,255,.2); border:none; color:#fff; width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:14px; line-height:1; }
+  .dash-bot-head button:hover { background:rgba(255,255,255,.32); }
+  .dash-bot-msgs { flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; background:var(--paper-2); }
+  .dash-bot-msg { max-width:85%; padding:8px 11px; border-radius:10px; font-size:13px; line-height:1.4; }
+  .dash-bot-msg.bot { align-self:flex-start; background:#fff; border:1px solid var(--rule); color:var(--ink); }
+  .dash-bot-msg.user { align-self:flex-end; background:#3E8CDE; color:#fff; }
+  .dash-bot-input-row { display:flex; border-top:1px solid var(--rule); padding:8px; gap:6px; }
+  .dash-bot-input-row input { flex:1; border:1px solid var(--rule); border-radius:8px; padding:8px 10px; font-size:13px; font-family:'IBM Plex Sans',sans-serif; }
+  .dash-bot-input-row button { background:#3E8CDE; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; }
+  .dash-bot-input-row button:hover { background:#2F7FD1; }
+  .dash-bot-hint { font-size:11px; color:var(--muted); padding:0 12px 8px; }
+
+  .dash-bot-widgets { display:flex; flex-direction:column; gap:16px; margin-bottom:26px; }
+  .dash-bot-widget { background:#fff; border:1px solid var(--rule); border-radius:14px; box-shadow:var(--card-shadow); padding:16px 18px; position:relative; }
+  .dash-bot-widget h3 { font-size:14px; margin:0 0 12px; padding-right:24px; }
+  .dash-bot-widget .dbw-close { position:absolute; top:12px; right:12px; width:22px; height:22px; border-radius:50%; border:1px solid var(--rule); background:#fff; color:var(--muted); cursor:pointer; font-size:12px; line-height:1; }
+  .dash-bot-widget .dbw-close:hover { background:var(--paper-2); color:var(--ink); }
+  .dash-bot-widget .dbw-empty { font-size:13px; color:var(--muted); }
+  .dbw-legend-row { display:flex; align-items:center; gap:8px; font-size:12px; margin:4px 0; }
+  .dbw-legend-row .sw { width:10px; height:10px; border-radius:2px; flex:none; }
+  .dbw-legend-row .amt { margin-left:auto; font-family:'IBM Plex Mono',monospace; }
 
   .export-modal-overlay { position:fixed; inset:0; background:rgba(21,42,74,.35); z-index:10000; display:flex; align-items:center; justify-content:center; }
   .export-modal-overlay.hidden { display:none; }
@@ -317,7 +361,6 @@
             <div class="lbl">Monthly Net Profit</div>
           </div>
           <button class="export-btn" id="export-btn">Export CSV</button>
-          <button class="export-btn" id="logout-btn">Logout</button>
         </div>
       </div>
 
@@ -362,6 +405,8 @@
           <div class="chart-wrap"><div id="bar-chart"></div></div>
         </div>
 
+        <div id="dash-bot-widgets" class="dash-bot-widgets"></div>
+
         <div class="panel">
           <h2>Report — forecast (customizable)</h2>
           <div class="muted" style="margin-bottom:10px;">Project ahead based on your average monthly profit so far.</div>
@@ -374,6 +419,20 @@
             <div><div class="muted">Projected profit (period)</div><div class="amt num" id="fc-period">₹0</div></div>
             <div><div class="muted">Projected FY-end total</div><div class="amt num" id="fc-fy">₹0</div></div>
           </div>
+        </div>
+      </div>
+
+      <button class="dash-bot-fab" id="dash-bot-fab" title="Dashboard assistant">💬</button>
+      <div class="dash-bot-panel hidden" id="dash-bot-panel">
+        <div class="dash-bot-head">
+          <span>Dashboard Assistant</span>
+          <button id="dash-bot-close" title="Close">✕</button>
+        </div>
+        <div class="dash-bot-msgs" id="dash-bot-msgs"></div>
+        <div class="dash-bot-hint">Try: "full dashboard", "expense category by month", "insights", "FY 2024-25"</div>
+        <div class="dash-bot-input-row">
+          <input type="text" id="dash-bot-input" placeholder="Tell me how to build the dashboard…">
+          <button id="dash-bot-send">Send</button>
         </div>
       </div>
 
@@ -427,11 +486,43 @@
         </div>
       </div>
 
-      <!-- ===== SETTINGS PAGE (placeholder only, no new functionality) ===== -->
+      <!-- ===== SETTINGS PAGE ===== -->
       <div class="page hidden" id="page-settings">
-        <div class="panel">
-          <h2>Settings</h2>
-          <div class="muted">Nothing configurable here yet.</div>
+        <div class="panel"><h2>Profile</h2>
+          <div class="set-grid">
+            <div><label>First name</label><input type="text" id="set-first"></div>
+            <div><label>Last name</label><input type="text" id="set-last"></div>
+            <div><label>Email (login)</label><input type="email" id="set-email" readonly></div>
+          </div>
+          <button class="export-btn" id="set-profile-save">Save profile</button><div class="set-msg" id="set-profile-msg"></div>
+        </div>
+        <div class="panel"><h2>Change email</h2>
+          <div class="set-grid"><div><label>New email address</label><input type="email" id="set-newemail" placeholder="new@example.com"></div>
+            <div id="set-email-otp-wrap" class="hidden"><label>OTP sent to the new email</label><input type="text" id="set-email-otp" maxlength="6" inputmode="numeric"></div></div>
+          <button class="export-btn" id="set-email-send">Send OTP</button>
+          <button class="export-btn hidden" id="set-email-verify">Verify &amp; change email</button><div class="set-msg" id="set-email-msg"></div>
+        </div>
+        <div class="panel"><h2>Change password</h2>
+          <div class="set-grid"><div><label>New password</label><input type="password" id="set-newpw" autocomplete="new-password"></div>
+            <div><label>Confirm new password</label><input type="password" id="set-newpw2" autocomplete="new-password"></div>
+            <div id="set-pw-otp-wrap" class="hidden"><label>OTP sent to your email</label><input type="text" id="set-pw-otp" maxlength="6" inputmode="numeric"></div></div>
+          <button class="export-btn" id="set-pw-send">Send OTP</button>
+          <button class="export-btn hidden" id="set-pw-verify">Verify &amp; update password</button><div class="set-msg" id="set-pw-msg"></div>
+        </div>
+        <div class="panel"><h2>AI settings (Goal planner — Gemini)</h2>
+          <div class="set-grid"><div><label>Gemini API key</label><input type="password" id="set-gkey" placeholder="AIza…" autocomplete="off"></div>
+            <div><label>Gemini model</label><input type="text" id="set-gmodel" placeholder="gemini-2.0-flash"></div></div>
+          <button class="export-btn" id="set-gsave">Save key</button> <button class="export-btn" id="set-gclear">Remove key</button><div class="set-msg" id="set-g-msg"></div>
+        </div>
+        <div class="panel"><h2>Customer support</h2>
+          <div class="set-grid">
+            <div><label>Your name</label><input type="text" id="sup-name"></div>
+            <div><label>Your email</label><input type="email" id="sup-email"></div>
+            <div><label>Topic</label><select id="sup-topic"><option value="">Select a topic…</option><option>Login / OTP problem</option><option>Report / export issue</option><option>Dashboard question</option><option>Feature request</option><option>Other</option></select></div>
+            <div><label>Subject</label><input type="text" id="sup-subject"></div>
+            <div style="grid-column:1/-1"><label>Message</label><textarea id="sup-msg" rows="4"></textarea></div>
+          </div>
+          <button class="export-btn" id="sup-send">Submit to support</button><div class="set-msg" id="sup-msg-status"></div>
         </div>
       </div>
 
@@ -798,9 +889,13 @@
       const date = document.getElementById('f-date').value;
       const category = document.getElementById('f-category').value;
       const note = document.getElementById('f-note').value.trim();
-      if(!amount || amount<=0 || !date) return;
+      const dChk = date ? new Date(date) : null;
+      if(!checkFields([
+        ['f-date', !date ? 'Date is required.' : (dChk > todayMidnight ? 'Future dates are not allowed.' : '')],
+        ['f-amount', !document.getElementById('f-amount').value ? 'Amount is required.' : (amount > 0 ? '' : 'Enter an amount greater than 0.')],
+        ['f-category', category ? '' : 'Category is required.']
+      ])) return;
       const d = new Date(date);
-      if(d > todayMidnight) return; // future dates can never be entered, in any month
       state.transactions.push({
         id: Date.now(), key: `${d.getFullYear()}-${d.getMonth()}`,
         type: state.type, amount, category, note, date
@@ -877,7 +972,7 @@
     const fromVal = document.getElementById('export-from-date').value;
     const toVal = document.getElementById('export-to-date').value;
     const errEl = document.getElementById('export-date-err');
-    if(!fromVal || !toVal){ errEl.textContent = 'Pick both a from and a to date.'; return; }
+    errEl.textContent = ''; if(!checkFields([['export-from-date', fromVal ? '' : 'From date is required.'], ['export-to-date', toVal ? '' : 'To date is required.']])) return;
     let fromDate = new Date(fromVal), toDate = new Date(toVal);
     if(fromDate > todayMidnight || toDate > todayMidnight){ errEl.textContent = 'The date range can\'t include future dates.'; return; }
     if(fromDate > toDate){ [fromDate, toDate] = [toDate, fromDate]; }
@@ -925,6 +1020,350 @@
     btn.addEventListener('click', () => exportReport(btn.dataset.kind));
   });
 
+  // ---- Dashboard assistant: builds real widgets on the dashboard (pie breakdowns, trend
+  // lines, category lists) from natural-language input, live, plus the existing FY/month
+  // filter control. Widgets persist in state and re-render whenever the filter changes,
+  // until removed individually or the user says "clear widgets". Closing the chat panel
+  // just hides the chat — whatever's been built stays on the dashboard.
+  (function initDashboardBot(){
+    const fab = document.getElementById('dash-bot-fab');
+    const panel = document.getElementById('dash-bot-panel');
+    const msgs = document.getElementById('dash-bot-msgs');
+    const input = document.getElementById('dash-bot-input');
+    const sendBtn = document.getElementById('dash-bot-send');
+    const closeBtn = document.getElementById('dash-bot-close');
+    const widgetHost = document.getElementById('dash-bot-widgets');
+    if(!fab || !panel || !msgs || !input || !sendBtn || !closeBtn || !widgetHost) return;
+
+    state.botWidgets = state.botWidgets || []; // [{id, kind, title}]
+    let widgetSeq = 0;
+
+    function addMsg(text, who){
+      const div = document.createElement('div');
+      div.className = 'dash-bot-msg ' + who;
+      div.textContent = text;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function openPanel(){
+      panel.classList.remove('hidden');
+      fab.classList.add('hidden');
+      if(!msgs.childElementCount){
+        addMsg("Hi! Tell me what to build — e.g. \"build the full dashboard\", \"expense category by month\", \"income breakdown FY 2024-25\", \"profit trend April to July\", \"key figures\" or \"important insights\". Say \"clear widgets\" to remove them; closing this panel keeps the dashboard as built.", 'bot');
+      }
+    }
+    function closePanel(){
+      panel.classList.add('hidden');
+      fab.classList.remove('hidden');
+    }
+    fab.addEventListener('click', openPanel);
+    closeBtn.addEventListener('click', closePanel);
+
+    const MONTH_ALIASES = {
+      jan:0, january:0, feb:1, february:1, mar:2, march:2, apr:3, april:3,
+      may:4, jun:5, june:5, jul:6, july:6, aug:7, august:7,
+      sep:8, sept:8, september:8, oct:9, october:9, nov:10, november:10, dec:11, december:11
+    };
+    const PALETTE = ['#3E8CDE','#E07A3E','#4CAF7D','#C0577A','#8E6FCE','#D1B23E','#4AA3A3','#A85D3E','#6E8CB0','#B0507A'];
+
+    // ---- Data for the currently selected FY / month range (shared by every widget) ----
+    function getRangeTxns(){
+      const fySel = document.getElementById('chart-fy');
+      const fromSel = document.getElementById('chart-month-from');
+      const toSel = document.getElementById('chart-month-to');
+      if(!fySel || !fromSel || !toSel) return { txns: [], months: [] };
+      const months = fyMonths(parseInt(fySel.value, 10)).all;
+      let fromI = parseInt(fromSel.value, 10), toI = parseInt(toSel.value, 10);
+      if(fromI > toI){ [fromI, toI] = [toI, fromI]; }
+      const rangeMonths = months.slice(fromI, toI+1);
+      const keys = new Set(rangeMonths.map(monthKey));
+      const txns = state.transactions.filter(t => keys.has(t.key));
+      return { txns, months: rangeMonths };
+    }
+
+    function categoryTotals(txns, type){
+      const totals = {};
+      txns.filter(t => t.type === type).forEach(t => { totals[t.category] = (totals[t.category]||0) + t.amount; });
+      return Object.entries(totals).sort((a,b) => b[1]-a[1]);
+    }
+
+    function donutSVG(entries){
+      const total = entries.reduce((s,[,v])=>s+v, 0);
+      const size = 160, r = 62, cx = size/2, cy = size/2, stroke = 26;
+      if(total <= 0) return { svg: '', total };
+      let angle = -90;
+      let arcs = '';
+      entries.forEach(([, v], i) => {
+        const frac = v / total;
+        const sweep = frac * 360;
+        const large = sweep > 180 ? 1 : 0;
+        const a0 = angle * Math.PI/180, a1 = (angle+sweep) * Math.PI/180;
+        const x0 = cx + r*Math.cos(a0), y0 = cy + r*Math.sin(a0);
+        const x1 = cx + r*Math.cos(a1), y1 = cy + r*Math.sin(a1);
+        arcs += `<path d="M ${x0.toFixed(2)} ${y0.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)}" fill="none" stroke="${PALETTE[i % PALETTE.length]}" stroke-width="${stroke}"/>`;
+        angle += sweep;
+      });
+      return { svg: `<svg viewBox="0 0 ${size} ${size}" width="160" height="160">${arcs}</svg>`, total };
+    }
+
+    function trendSVG(months){
+      const W = Math.max(420, months.length*70), H = 180, mL=50, mR=16, mT=16, mB=30;
+      const plotW = W-mL-mR, plotH = H-mT-mB;
+      const vals = months.map(mo => monthTotals(monthKey(mo)).profit);
+      let maxV = Math.max(...vals, 0), minV = Math.min(...vals, 0);
+      if(maxV === minV){ maxV += 1000; minV -= 1000; }
+      const scaleY = v => mT + plotH - ((v-minV)/(maxV-minV))*plotH;
+      const stepX = months.length>1 ? plotW/(months.length-1) : 0;
+      const pts = vals.map((v,i) => `${mL+i*stepX},${scaleY(v).toFixed(1)}`).join(' ');
+      const zeroY = scaleY(0);
+      const dots = vals.map((v,i) => `<circle cx="${mL+i*stepX}" cy="${scaleY(v).toFixed(1)}" r="3.5" fill="var(--profit-c)"><title>${MONTH_NAMES[months[i].month]} ${months[i].year}: ${fmtMoney(v)}</title></circle>`).join('');
+      const labels = months.map((mo,i) => `<text x="${mL+i*stepX}" y="${H-mB+16}" text-anchor="middle" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${MONTH_NAMES[mo.month]}'${String(mo.year).slice(2)}</text>`).join('');
+      return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:${W}px;">
+        <line x1="${mL}" x2="${W-mR}" y1="${zeroY}" y2="${zeroY}" stroke="var(--rule)" stroke-width="1"/>
+        <polyline points="${pts}" fill="none" stroke="var(--profit-c)" stroke-width="2"/>
+        ${dots}${labels}
+      </svg>`;
+    }
+
+    const EXTRA_KINDS = ['kpis','insights','monthly-expense-cat','monthly-income-cat','monthly-summary'];
+    function catMonthTable(txns, months, type){
+      const cats = [...new Set(txns.filter(t => t.type === type).map(t => t.category))];
+      if(!cats.length) return '<div class="dbw-empty">No data in the selected period yet.</div>';
+      const colTot = months.map(() => 0);
+      const rows = cats.map(c => { let tot = 0;
+        const cells = months.map((mo,i) => { const v = txns.filter(t => t.type === type && t.category === c && t.key === monthKey(mo)).reduce((a,t) => a + t.amount, 0); colTot[i] += v; tot += v; return '<td>' + (v ? fmtMoney(v) : '–') + '</td>'; }).join('');
+        return '<tr><td>' + c + '</td>' + cells + '<td><b>' + fmtMoney(tot) + '</b></td></tr>'; }).join('');
+      const head = months.map(mo => '<th>' + MONTH_NAMES[mo.month] + "'" + String(mo.year).slice(2) + '</th>').join('');
+      return '<div style="overflow-x:auto"><table class="dbw-table"><thead><tr><th>Category</th>' + head + '<th>Total</th></tr></thead><tbody>' + rows +
+        '<tr class="tot"><td>Total</td>' + colTot.map(v => '<td>' + fmtMoney(v) + '</td>').join('') + '<td>' + fmtMoney(colTot.reduce((a,b) => a + b, 0)) + '</td></tr></tbody></table></div>';
+    }
+    function renderExtraWidget(w, card, txns, months){
+      const per = months.map(mo => ({ mo, ...monthTotals(monthKey(mo)) }));
+      const inc = per.reduce((a,p) => a + p.income, 0), exp = per.reduce((a,p) => a + p.expense, 0), prof = inc - exp;
+      const active = per.filter(p => p.txns.length);
+      const rate = inc > 0 ? (prof / inc * 100) : 0;
+      const label = p => MONTH_NAMES[p.mo.month] + ' ' + p.mo.year;
+      let html = '';
+      if(!txns.length && w.kind !== 'monthly-summary'){ html = '<div class="dbw-empty">No entries in the selected period yet.</div>'; }
+      else if(w.kind === 'kpis'){
+        const n = active.length || 1, best = [...active].sort((a,b) => b.profit - a.profit)[0], worst = [...active].sort((a,b) => a.profit - b.profit)[0];
+        const k = [['Total income', fmtMoney(inc)], ['Total expenditure', fmtMoney(exp)], ['Net profit', fmtMoney(prof)], ['Savings rate', rate.toFixed(1) + '%'],
+          ['Avg monthly income', fmtMoney(inc / n)], ['Avg monthly expenditure', fmtMoney(exp / n)], ['Avg monthly profit', fmtMoney(prof / n)],
+          ['Best month', best ? label(best) : '–'], ['Weakest month', worst ? label(worst) : '–'], ['Transactions', String(txns.length)]];
+        html = '<div class="dbw-kpis">' + k.map(([a,b]) => '<div class="dbw-kpi"><div class="k">' + a + '</div><div class="v">' + b + '</div></div>').join('') + '</div>';
+      } else if(w.kind === 'monthly-summary'){
+        const rows = per.map(p => '<tr><td>' + label(p) + '</td><td>' + fmtMoney(p.income) + '</td><td>' + fmtMoney(p.expense) + '</td><td>' + fmtMoney(p.profit) + '</td><td>' + (p.income > 0 ? (p.profit / p.income * 100).toFixed(1) + '%' : '–') + '</td></tr>').join('');
+        html = '<div style="overflow-x:auto"><table class="dbw-table"><thead><tr><th>Month</th><th>Income</th><th>Expenditure</th><th>Profit</th><th>Savings %</th></tr></thead><tbody>' + rows +
+          '<tr class="tot"><td>Total</td><td>' + fmtMoney(inc) + '</td><td>' + fmtMoney(exp) + '</td><td>' + fmtMoney(prof) + '</td><td>' + (inc > 0 ? rate.toFixed(1) + '%' : '–') + '</td></tr></tbody></table></div>';
+      } else if(w.kind === 'monthly-expense-cat'){ html = catMonthTable(txns, months, 'expense'); }
+      else if(w.kind === 'monthly-income-cat'){ html = catMonthTable(txns, months, 'income'); }
+      else if(w.kind === 'insights'){
+        const li = [], ec = categoryTotals(txns, 'expense'), ic = categoryTotals(txns, 'income');
+        const bigExp = txns.filter(t => t.type === 'expense').sort((a,b) => b.amount - a.amount)[0];
+        const loss = active.filter(p => p.profit < 0);
+        li.push('Net position: ' + (prof >= 0 ? 'profit of ' : 'loss of ') + fmtMoney(Math.abs(prof)) + ' — you kept ' + rate.toFixed(1) + '% of income.');
+        if(ec[0]) li.push('Largest expense category: ' + ec[0][0] + ' (' + fmtMoney(ec[0][1]) + ', ' + (exp ? (ec[0][1] / exp * 100).toFixed(0) : 0) + '% of spending).');
+        if(ic[0]) li.push('Main income source: ' + ic[0][0] + ' (' + (inc ? (ic[0][1] / inc * 100).toFixed(0) : 0) + '% of income).');
+        if(bigExp) li.push('Biggest single expense: ' + fmtMoney(bigExp.amount) + ' on ' + bigExp.category + ' (' + bigExp.date + ').');
+        li.push(loss.length ? 'Months spent more than earned: ' + loss.map(label).join(', ') + '.' : 'No loss-making months in this period.');
+        if(rate < 20 && inc > 0) li.push('Savings rate is under 20% — reviewing your top expense category is the quickest lever.');
+        html = '<ul class="dbw-list">' + li.map(x => '<li>' + x + '</li>').join('') + '</ul>';
+      }
+      card.insertAdjacentHTML('beforeend', html);
+    }
+
+    // ---- Renders every widget currently in state.botWidgets, using the live filtered range ----
+    function renderBotWidgets(){
+      widgetHost.innerHTML = '';
+      const { txns, months } = getRangeTxns();
+
+      state.botWidgets.forEach(w => {
+        const card = document.createElement('div');
+        card.className = 'dash-bot-widget';
+        card.dataset.widgetId = w.id;
+
+        const closeX = document.createElement('button');
+        closeX.className = 'dbw-close'; closeX.textContent = '✕'; closeX.title = 'Remove widget';
+        closeX.addEventListener('click', () => {
+          state.botWidgets = state.botWidgets.filter(x => x.id !== w.id);
+          renderBotWidgets();
+        });
+
+        const h3 = document.createElement('h3'); h3.textContent = w.title;
+        card.appendChild(closeX); card.appendChild(h3);
+
+        if(w.kind === 'pie-expense' || w.kind === 'pie-income'){
+          const entries = categoryTotals(txns, w.kind === 'pie-expense' ? 'expense' : 'income').slice(0,8);
+          if(!entries.length){
+            card.insertAdjacentHTML('beforeend', '<div class="dbw-empty">No data in the selected period yet.</div>');
+          } else {
+            const { svg, total } = donutSVG(entries);
+            const wrap = document.createElement('div');
+            wrap.style.display = 'flex'; wrap.style.gap = '18px'; wrap.style.flexWrap = 'wrap'; wrap.style.alignItems = 'center';
+            wrap.innerHTML = svg;
+            const legend = document.createElement('div'); legend.style.flex = '1'; legend.style.minWidth = '160px';
+            entries.forEach(([cat, amt], i) => {
+              legend.innerHTML += `<div class="dbw-legend-row"><span class="sw" style="background:${PALETTE[i%PALETTE.length]}"></span>${cat}<span class="amt">${fmtMoney(amt)}</span></div>`;
+            });
+            legend.innerHTML += `<div class="dbw-legend-row" style="border-top:1px solid var(--rule); padding-top:6px; font-weight:600;">Total<span class="amt">${fmtMoney(total)}</span></div>`;
+            wrap.appendChild(legend);
+            card.appendChild(wrap);
+          }
+        } else if(w.kind === 'trend'){
+          if(!months.length){
+            card.insertAdjacentHTML('beforeend', '<div class="dbw-empty">No months in the selected period.</div>');
+          } else {
+            const wrap = document.createElement('div'); wrap.style.overflowX = 'auto';
+            wrap.innerHTML = trendSVG(months);
+            card.appendChild(wrap);
+          }
+        } else if(w.kind === 'top-expenses'){
+          const entries = categoryTotals(txns, 'expense').slice(0,5);
+          if(!entries.length){
+            card.insertAdjacentHTML('beforeend', '<div class="dbw-empty">No expenses in the selected period yet.</div>');
+          } else {
+            const list = document.createElement('div');
+            entries.forEach(([cat,amt],i) => {
+              list.innerHTML += `<div class="dbw-legend-row"><span class="sw" style="background:${PALETTE[i%PALETTE.length]}"></span>${i+1}. ${cat}<span class="amt">${fmtMoney(amt)}</span></div>`;
+            });
+            card.appendChild(list);
+          }
+        }
+        if(EXTRA_KINDS.includes(w.kind)) renderExtraWidget(w, card, txns, months);
+        widgetHost.appendChild(card);
+      });
+    }
+
+    function addWidget(kind, title){
+      if(state.botWidgets.some(w => w.kind === kind)) return false; // already built
+      state.botWidgets.push({ id: 'w' + (++widgetSeq), kind, title });
+      renderBotWidgets();
+      return true;
+    }
+
+    // Smart widget mapper: interprets user input and maps to best available widget
+    function mapUserInputToWidgets(text){
+      const t = text.toLowerCase(), out = [];
+      const add = (kind, title) => { if(!out.some(o => o.kind === kind)) out.push({kind, title}); };
+      if(/(clear|remove|delete|hide)/.test(t)) return out;
+      const ALL = [['kpis','Key Figures'],['monthly-summary','Month-wise Income, Expenditure & Profit'],['trend','Profit Trend'],['pie-income','Income by Category'],['monthly-income-cat','Income Category by Month'],['pie-expense','Expenditure by Category'],['monthly-expense-cat','Expenditure Category by Month'],['top-expenses','Top 5 Expense Categories'],['insights','Important Insights']];
+      if(/(all|everything|complete|full|entire|every|possible)/.test(t) && /dashboard|widget|chart|report|view|analysis/.test(t)) return ALL.map(([kind,title]) => ({kind,title}));
+      const byMonth = /month|table|range|each|wise|monthly|fy|year/.test(t);
+      if(/kpi|summary|overview|key (figure|number)|savings rate|totals?/.test(t)) add('kpis','Key Figures');
+      if(/expen|spend|spent|cost|outflow/.test(t)){ add('pie-expense','Expenditure by Category'); if(byMonth) add('monthly-expense-cat','Expenditure Category by Month'); }
+      if(/income|earn|revenue|inflow|salary/.test(t)){ add('pie-income','Income by Category'); if(byMonth) add('monthly-income-cat','Income Category by Month'); }
+      if(/profit|net|trend|growth|over time|history|progress/.test(t)){ add('trend','Profit Trend'); add('monthly-summary','Month-wise Income, Expenditure & Profit'); }
+      if(/top|highest|biggest|largest|ranking/.test(t)) add('top-expenses','Top 5 Expense Categories');
+      if(/insight|important|analysis|highlight|information|info/.test(t)) add('insights','Important Insights');
+      return out;
+    }
+
+    // Parses free text and either (a) adjusts the FY/month filters, (b) adds/removes a widget,
+    // or (c) both. Returns a summary string, null if nothing was understood, or an error string.
+    function applyCommand(text){
+      const t = text.toLowerCase();
+      const fySel = document.getElementById('chart-fy');
+      const fromSel = document.getElementById('chart-month-from');
+      const toSel = document.getElementById('chart-month-to');
+      if(!fySel || !fromSel || !toSel) return null;
+
+      let changed = [];
+
+      if(/\bclear widgets\b|\bremove all\b|\bclear (the )?dashboard\b/.test(t)){
+        state.botWidgets = [];
+        renderBotWidgets();
+        changed.push('cleared all the widgets I\'d built');
+      }
+
+      if(/\breset\b|\bcurrent fy\b|\bthis (year|fy)\b/.test(t)){
+        populateChartFilters();
+        fySel.value = String(CURRENT_FY_START);
+        fySel.dataset.built = '';
+        populateChartFilters();
+        changed.push(`switched to the current financial year (${fyMonths(CURRENT_FY_START).fyLabel})`);
+      } else {
+        const fyMatch = t.match(/(?:fy|financial year)\s*-?\s*(\d{4})/);
+        if(fyMatch){
+          const startYear = parseInt(fyMatch[1], 10);
+          const available = fyList().map(f => f.startYear);
+          if(available.includes(startYear)){
+            populateChartFilters();
+            fySel.value = String(startYear);
+            fySel.dataset.built = '';
+            populateChartFilters();
+            changed.push(`set the financial year to ${fyMonths(startYear).fyLabel}`);
+          } else {
+            changed.push(`FY ${startYear} isn't available — left the FY as it was`);
+          }
+        }
+      }
+
+      const monthPattern = new RegExp('\\b(' + Object.keys(MONTH_ALIASES).join('|') + ')\\b[^a-z]{0,6}(?:to|-|through|till)[^a-z]{0,6}\\b(' + Object.keys(MONTH_ALIASES).join('|') + ')\\b');
+      const monthMatch = t.match(monthPattern);
+      const fyMentioned = /(?:fy|financial year)\s*-?\s*\d{4}/.test(t);
+      if(monthMatch){
+        const months = fyMonths(parseInt(fySel.value, 10)).all;
+        const fromIdx = months.findIndex(mo => mo.month === MONTH_ALIASES[monthMatch[1]]);
+        const toIdx = months.findIndex(mo => mo.month === MONTH_ALIASES[monthMatch[2]]);
+        if(fromIdx !== -1 && toIdx !== -1){
+          const lo = Math.min(fromIdx, toIdx), hi = Math.max(fromIdx, toIdx);
+          fromSel.value = String(lo);
+          toSel.value = String(hi);
+          changed.push(`set the month range to ${MONTH_NAMES[months[lo].month]} – ${MONTH_NAMES[months[hi].month]}`);
+        }
+      } else if(!fyMentioned){
+        const singleMatch = t.match(new RegExp('\\b(' + Object.keys(MONTH_ALIASES).join('|') + ')\\b'));
+        if(singleMatch){
+          const months = fyMonths(parseInt(fySel.value, 10)).all;
+          const mIdx = months.findIndex(mo => mo.month === MONTH_ALIASES[singleMatch[1]]);
+          if(mIdx !== -1){
+            fromSel.value = String(mIdx);
+            toSel.value = String(mIdx);
+            changed.push(`set the month to ${MONTH_NAMES[months[mIdx].month]}`);
+          }
+        }
+      }
+
+      // Try to map user input to a widget dynamically
+      const widgets = mapUserInputToWidgets(text);
+      const built = widgets.filter(w => addWidget(w.kind, w.title));
+      if(built.length) changed.push('added ' + built.map(w => w.title).join(', '));
+      else if(widgets.length) changed.push('those widgets are already on the dashboard');
+
+      if(changed.length){
+        renderBarChart();
+        renderBotWidgets();
+        return changed.join('; ') + '.';
+      }
+
+      // If nothing matched, return error
+      return "I couldn't understand that. Please describe what dashboard widget you'd like to see.";
+    }
+
+    function handleSend(){
+      const text = input.value.trim();
+      if(!text) return;
+      addMsg(text, 'user');
+      input.value = '';
+      const result = applyCommand(text);
+      if(result){
+        addMsg("Done — " + result, 'bot');
+      } else {
+        addMsg("I didn't catch that. Try \"expense breakdown\", \"income breakdown\", \"profit trend\", \"top expenses\", a financial year like \"FY 2024-25\", or a month range like \"April to July\".", 'bot');
+      }
+    }
+    sendBtn.addEventListener('click', handleSend);
+    input.addEventListener('keydown', e => { if(e.key === 'Enter') handleSend(); });
+
+    renderBotWidgets();
+    // keep widgets in sync whenever the FY/month filters change from the dropdowns directly
+    ['chart-fy','chart-month-from','chart-month-to'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('change', renderBotWidgets);
+    });
+  })();
+
   // ---- Sidebar navigation (Dashboard / Transactions / Goal planner / Settings) ----
   (function initSidebarNav(){
     const pages = { dashboard: 'page-dashboard', transactions: 'page-transactions', goals: 'page-goals', settings: 'page-settings' };
@@ -964,6 +1403,14 @@
 
   let pendingOtp = null; // { purpose: 'signup'|'recovery', email }
 
+  function fErr(id, msg){
+    const el = document.getElementById(id); if(!el) return;
+    let m = el.parentNode.querySelector('.field-err[data-for="'+id+'"]');
+    if(!m){ m = document.createElement('div'); m.className = 'field-err'; m.dataset.for = id; el.insertAdjacentElement('afterend', m); }
+    m.textContent = msg || ''; el.classList.toggle('invalid', !!msg);
+  }
+  function checkFields(pairs){ let ok = true; pairs.forEach(([id, msg]) => { fErr(id, msg); if(msg) ok = false; }); return ok; }
+  const emailMsg = v => !v ? 'Email is required.' : (EMAIL_RE.test(v) ? '' : 'Enter a valid email address.');
   function setErr(id, msg){ document.getElementById(id).textContent = msg || ''; }
   function setBusy(btnId, busy, busyLabel, normalLabel){
     const b = document.getElementById(btnId);
@@ -1012,7 +1459,6 @@
       setErr('login-err');
       showScreen('login');
     };
-    document.getElementById('logout-btn').onclick = doLogout;
     const sidebarLogoutEl = document.getElementById('sidebar-logout');
     if(sidebarLogoutEl) sidebarLogoutEl.onclick = doLogout;
 
@@ -1027,10 +1473,13 @@
       const pw = document.getElementById('signup-password-input').value;
       const pw2 = document.getElementById('signup-confirm-input').value;
 
-      if(!first || !last){ setErr('signup-err', 'Enter your first and last name.'); return; }
-      if(!EMAIL_RE.test(email)){ setErr('signup-err', 'Enter a valid email address.'); return; }
-      if(pw.length < 6){ setErr('signup-err', 'Password must be at least 6 characters.'); return; }
-      if(pw !== pw2){ setErr('signup-err', 'Passwords do not match.'); return; }
+      if(!checkFields([
+        ['signup-firstname-input', first ? '' : 'First name is required.'],
+        ['signup-lastname-input', last ? '' : 'Last name is required.'],
+        ['signup-email-input', emailMsg(email)],
+        ['signup-password-input', !pw ? 'Password is required.' : (pw.length < 6 ? 'Password must be at least 6 characters.' : '')],
+        ['signup-confirm-input', !pw2 ? 'Please confirm your password.' : (pw !== pw2 ? 'Passwords do not match.' : '')]
+      ])) return;
       setErr('signup-err');
 
       setBusy('signup-btn', true, 'Creating account…', 'Create account');
@@ -1054,7 +1503,7 @@
     document.getElementById('otp-verify-btn').onclick = async () => {
       const code = document.getElementById('otp-input').value.trim();
       if(!pendingOtp){ setErr('otp-err', 'No code was sent — go back and try again.'); return; }
-      if(!/^\d{6}$/.test(code)){ setErr('otp-err', 'Enter the 6-digit code.'); return; }
+      if(!checkFields([['otp-input', !code ? 'The code is required.' : (/^\d{6}$/.test(code) ? '' : 'Enter the 6-digit code.')]])) return;
       setErr('otp-err');
 
       setBusy('otp-verify-btn', true, 'Verifying…', 'Verify');
@@ -1090,8 +1539,7 @@
     document.getElementById('login-btn').onclick = async () => {
       const email = document.getElementById('login-email-input').value.trim();
       const pw = document.getElementById('login-password-input').value;
-      if(!EMAIL_RE.test(email)){ setErr('login-err', 'Enter a valid email address.'); return; }
-      if(!pw){ setErr('login-err', 'Enter your password.'); return; }
+      if(!checkFields([['login-email-input', emailMsg(email)], ['login-password-input', pw ? '' : 'Password is required.']])) return;
       setErr('login-err');
 
       setBusy('login-btn', true, 'Signing in…', 'Sign in');
@@ -1108,7 +1556,7 @@
 
     document.getElementById('forgot-send-btn').onclick = async () => {
       const email = document.getElementById('forgot-email-input').value.trim();
-      if(!EMAIL_RE.test(email)){ setErr('forgot-email-err', 'Enter a valid email address.'); return; }
+      if(!checkFields([['forgot-email-input', emailMsg(email)]])) return;
       setErr('forgot-email-err');
 
       setBusy('forgot-send-btn', true, 'Sending…', 'Send code');
@@ -1129,8 +1577,10 @@
     document.getElementById('newpw-btn').onclick = async () => {
       const p1 = document.getElementById('newpw-input').value;
       const p2 = document.getElementById('newpw-confirm-input').value;
-      if(p1.length < 6){ setErr('newpw-err', 'Password must be at least 6 characters.'); return; }
-      if(p1 !== p2){ setErr('newpw-err', 'Passwords do not match.'); return; }
+      if(!checkFields([
+        ['newpw-input', !p1 ? 'New password is required.' : (p1.length < 6 ? 'Password must be at least 6 characters.' : '')],
+        ['newpw-confirm-input', !p2 ? 'Please confirm the new password.' : (p1 !== p2 ? 'Passwords do not match.' : '')]
+      ])) return;
       setErr('newpw-err');
 
       setBusy('newpw-btn', true, 'Updating…', 'Update password');
@@ -1352,11 +1802,129 @@
     const existingSavings = parseFloat(document.getElementById('goal-existing').value) || 0;
     const returnRaw = document.getElementById('goal-return').value;
     const annualReturnPct = returnRaw === '' ? 8 : parseFloat(returnRaw); // respects an explicit 0, only defaults when left blank
-    if(!target || target <= 0 || !months || months <= 0){
-      document.getElementById('goal-output').innerHTML = '<div class="suggestion"><div class="head">Missing info</div>Enter a target amount and number of months first.</div>';
-      return;
-    }
-    renderGoalPlan(computeGoalPlan(target, months, existingSavings, annualReturnPct));
+    document.getElementById('goal-output').innerHTML = '';
+    if(!checkFields([
+      ['goal-target', !document.getElementById('goal-target').value ? 'Target amount is required.' : (target > 0 ? '' : 'Enter an amount greater than 0.')],
+      ['goal-months', !document.getElementById('goal-months').value ? 'Number of months is required.' : (months > 0 ? '' : 'Enter at least 1 month.')]
+    ])) return;
+    const plan = computeGoalPlan(target, months, existingSavings, annualReturnPct);
+    renderGoalPlan(plan);
+    const out = document.getElementById('goal-output');
+    out.insertAdjacentHTML('beforeend', '<div style="margin-top:14px"><button class="export-btn" id="goal-ai-btn">Get AI advice (Gemini)</button><div id="goal-ai-out" style="margin-top:10px;font-size:13px;line-height:1.6;white-space:pre-wrap"></div></div>');
+    document.getElementById('goal-ai-btn').onclick = async () => {
+      const key = localStorage.getItem('ledger-gemini-key') || '';
+      const model = localStorage.getItem('ledger-gemini-model') || 'gemini-2.0-flash';
+      const box = document.getElementById('goal-ai-out');
+      if(!key){ fErr('goal-ai-btn', 'Gemini API key is required — add it under Settings → AI settings.'); return; }
+      fErr('goal-ai-btn', ''); box.textContent = 'Thinking…';
+      try {
+        const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(key), {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts: [{ text: 'You are a concise personal-finance coach for an Indian user. Given this savings-goal plan computed from their real income/expense data, give 4-5 practical, specific suggestions. Plan JSON: ' + JSON.stringify(plan).slice(0, 4000) }] }] })
+        });
+        const j = await r.json();
+        if(!r.ok) throw new Error((j.error && j.error.message) || 'Request failed');
+        box.textContent = (j.candidates && j.candidates[0] && j.candidates[0].content.parts.map(p => p.text).join('')) || 'No response received.';
+      } catch(e){ box.textContent = ''; fErr('goal-ai-btn', 'Gemini request failed: ' + e.message + ' (check the API key in Settings).'); }
+    };
   });
+
+  // ---- Settings: profile, OTP-verified email/password change, Gemini key, customer support ----
+  (function initSettings(){
+    const $ = id => document.getElementById(id);
+    const msg = (id, text, bad) => { const el = $(id); el.textContent = text || ''; el.classList.toggle('bad', !!bad); };
+    let user = null;
+
+    async function loadProfile(){
+      try { const { data } = await sb.auth.getUser(); user = data && data.user; } catch(e){ return; }
+      if(!user) return;
+      const m = user.user_metadata || {};
+      $('set-first').value = m.first_name || ''; $('set-last').value = m.last_name || ''; $('set-email').value = user.email || '';
+      if(!$('sup-name').value) $('sup-name').value = [m.first_name, m.last_name].filter(Boolean).join(' ');
+      if(!$('sup-email').value) $('sup-email').value = user.email || '';
+      $('set-gkey').value = localStorage.getItem('ledger-gemini-key') || '';
+      $('set-gmodel').value = localStorage.getItem('ledger-gemini-model') || '';
+    }
+    document.querySelectorAll('.sidebar .side-item[data-page="settings"]').forEach(el => el.addEventListener('click', loadProfile));
+
+    $('set-profile-save').onclick = async () => {
+      const first = $('set-first').value.trim(), last = $('set-last').value.trim();
+      if(!checkFields([['set-first', first ? '' : 'First name is required.'], ['set-last', last ? '' : 'Last name is required.']])) return;
+      const { error } = await sb.auth.updateUser({ data: { first_name: first, last_name: last } });
+      if(error){ msg('set-profile-msg', error.message, true); return; }
+      msg('set-profile-msg', 'Profile saved.'); showWelcomeGreeting();
+    };
+
+    // Email change: Supabase emails a code to the new address; verifyOtp confirms it.
+    $('set-email-send').onclick = async () => {
+      const ne = $('set-newemail').value.trim();
+      if(!checkFields([['set-newemail', !emailMsg(ne) && ne.toLowerCase() === (user && user.email || '').toLowerCase() ? 'This is already your email.' : emailMsg(ne)]])) return;
+      const { error } = await sb.auth.updateUser({ email: ne });
+      if(error){ msg('set-email-msg', error.message, true); return; }
+      $('set-email-otp-wrap').classList.remove('hidden'); $('set-email-verify').classList.remove('hidden');
+      msg('set-email-msg', 'OTP sent to ' + ne + '. Enter it below to confirm.');
+    };
+    $('set-email-verify').onclick = async () => {
+      const code = $('set-email-otp').value.trim(), ne = $('set-newemail').value.trim();
+      if(!checkFields([['set-email-otp', !code ? 'The OTP is required.' : (/^\d{6}$/.test(code) ? '' : 'Enter the 6-digit code.')]])) return;
+      const { error } = await sb.auth.verifyOtp({ email: ne, token: code, type: 'email_change' });
+      if(error){ msg('set-email-msg', error.message, true); return; }
+      msg('set-email-msg', 'Email changed to ' + ne + '.'); $('set-email-otp-wrap').classList.add('hidden'); $('set-email-verify').classList.add('hidden');
+      $('set-newemail').value = ''; $('set-email-otp').value = ''; loadProfile();
+    };
+
+    // Password change: reauthenticate() emails an OTP (nonce) that must accompany the new password.
+    $('set-pw-send').onclick = async () => {
+      const p1 = $('set-newpw').value, p2 = $('set-newpw2').value;
+      if(!checkFields([
+        ['set-newpw', !p1 ? 'New password is required.' : (p1.length < 6 ? 'Password must be at least 6 characters.' : '')],
+        ['set-newpw2', !p2 ? 'Please confirm the new password.' : (p1 !== p2 ? 'Passwords do not match.' : '')]
+      ])) return;
+      const { error } = await sb.auth.reauthenticate();
+      if(error){ msg('set-pw-msg', error.message, true); return; }
+      $('set-pw-otp-wrap').classList.remove('hidden'); $('set-pw-verify').classList.remove('hidden');
+      msg('set-pw-msg', 'OTP sent to your email. Enter it below to confirm.');
+    };
+    $('set-pw-verify').onclick = async () => {
+      const code = $('set-pw-otp').value.trim(), p1 = $('set-newpw').value;
+      if(!checkFields([['set-pw-otp', !code ? 'The OTP is required.' : (/^\d{6}$/.test(code) ? '' : 'Enter the 6-digit code.')]])) return;
+      const { error } = await sb.auth.updateUser({ password: p1, nonce: code });
+      if(error){ msg('set-pw-msg', error.message, true); return; }
+      msg('set-pw-msg', 'Password updated.'); ['set-newpw','set-newpw2','set-pw-otp'].forEach(i => $(i).value = '');
+      $('set-pw-otp-wrap').classList.add('hidden'); $('set-pw-verify').classList.add('hidden');
+    };
+
+    // Gemini key (kept in this browser's localStorage only)
+    $('set-gsave').onclick = () => {
+      const k = $('set-gkey').value.trim();
+      if(!checkFields([['set-gkey', k ? '' : 'Gemini API key is required.']])) return;
+      localStorage.setItem('ledger-gemini-key', k);
+      const gm = $('set-gmodel').value.trim(); if(gm) localStorage.setItem('ledger-gemini-model', gm); else localStorage.removeItem('ledger-gemini-model');
+      msg('set-g-msg', 'Gemini settings saved on this device.');
+    };
+    $('set-gclear').onclick = () => { localStorage.removeItem('ledger-gemini-key'); $('set-gkey').value = ''; msg('set-g-msg', 'API key removed.'); };
+
+    // Customer support -> emailed to tsekhar1809@gmail.com via FormSubmit (no backend needed)
+    $('sup-send').onclick = async () => {
+      const v = id => $(id).value.trim();
+      if(!checkFields([
+        ['sup-name', v('sup-name') ? '' : 'Name is required.'], ['sup-email', emailMsg(v('sup-email'))],
+        ['sup-topic', v('sup-topic') ? '' : 'Please select a topic.'], ['sup-subject', v('sup-subject') ? '' : 'Subject is required.'],
+        ['sup-msg', v('sup-msg') ? '' : 'Message is required.']
+      ])) return;
+      const btn = $('sup-send'); btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        const r = await fetch('https://formsubmit.co/ajax/tsekhar1809@gmail.com', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ name: v('sup-name'), email: v('sup-email'), topic: v('sup-topic'), message: v('sup-msg'), _subject: '[Personal Ledger Support] ' + v('sup-subject'), _template: 'table' })
+        });
+        const j = await r.json();
+        if(!r.ok || String(j.success) === 'false') throw new Error(j.message || 'Could not send');
+        msg('sup-msg-status', 'Thanks — your request was sent to support.');
+        ['sup-subject','sup-msg'].forEach(i => $(i).value = ''); $('sup-topic').value = '';
+      } catch(e){ msg('sup-msg-status', 'Could not send right now (' + e.message + '). Please try again shortly.', true); }
+      btn.disabled = false; btn.textContent = 'Submit to support';
+    };
+  })();
 })();
 </script>
