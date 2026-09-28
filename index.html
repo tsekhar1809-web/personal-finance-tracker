@@ -116,6 +116,19 @@
   #lock-overlay button:hover { background:#123E73; }
   .field-err { color:#C0392B; font-size:12px; margin-top:4px; }
   input.invalid, select.invalid, textarea.invalid { border-color:#C0392B !important; }
+  #ledger-root .hidden { display:none !important; }
+  .set-hint { font-size:12px; color:var(--muted); margin:0 0 10px; line-height:1.5; }
+  .set-section { background:#fff; border:1px solid var(--rule); border-radius:12px; box-shadow:var(--card-shadow); margin-bottom:12px; overflow:hidden; }
+  .set-item { width:100%; display:flex; align-items:center; gap:14px; padding:16px 20px; background:none; border:none; cursor:pointer; text-align:left; font-family:'IBM Plex Sans',sans-serif; color:var(--ink); }
+  .set-item:hover { background:var(--paper-2); }
+  .set-item .si-ic { width:34px; height:34px; border-radius:9px; background:var(--paper-2); color:var(--brand); display:flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto; }
+  .set-item .si-main { flex:1; min-width:0; }
+  .set-item .si-title { display:block; font-size:14px; font-weight:600; }
+  .set-item .si-desc { display:block; font-size:12px; color:var(--muted); margin-top:2px; }
+  .set-item .si-chev { font-size:20px; color:var(--muted); transition:transform .2s; }
+  .set-item[aria-expanded="true"] .si-chev { transform:rotate(90deg); }
+  .set-item[aria-expanded="true"] { background:var(--paper-2); }
+  .set-body { padding:18px 20px 20px; border-top:1px solid var(--rule); }
   .set-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin-bottom:10px; }
   .set-grid label { display:block; font-size:12px; margin-bottom:4px; color:var(--muted); }
   .set-grid input, .set-grid select, .set-grid textarea { width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid var(--rule); border-radius:6px; font-family:'IBM Plex Sans',sans-serif; font-size:13px; }
@@ -292,6 +305,7 @@
       <button id="otp-verify-btn">Verify</button>
       <div class="err" id="otp-err"></div>
       <div class="auth-link" id="otp-resend">Resend code</div>
+      <div class="auth-link" id="otp-back-login">Back to sign in</div>
     </div>
 
     <div id="screen-forgot-email" class="auth-screen hidden">
@@ -486,43 +500,72 @@
         </div>
       </div>
 
-      <!-- ===== SETTINGS PAGE ===== -->
+      <!-- ===== SETTINGS PAGE (sub-menus: fields appear only after a section is clicked) ===== -->
       <div class="page hidden" id="page-settings">
-        <div class="panel"><h2>Profile</h2>
-          <div class="set-grid">
-            <div><label>First name</label><input type="text" id="set-first"></div>
-            <div><label>Last name</label><input type="text" id="set-last"></div>
-            <div><label>Email (login)</label><input type="email" id="set-email" readonly></div>
+        <div class="set-hint" id="set-pick-hint">Choose a section below to view and edit its details.</div>
+
+        <div class="set-section">
+          <button type="button" class="set-item" data-target="sp-profile" aria-expanded="false"><span class="si-ic">👤</span><span class="si-main"><span class="si-title">Profile</span><span class="si-desc">Your name and login email</span></span><span class="si-chev">›</span></button>
+          <div class="set-body hidden" id="sp-profile">
+            <div class="set-grid">
+              <div><label>First name</label><input type="text" id="set-first"></div>
+              <div><label>Last name</label><input type="text" id="set-last"></div>
+              <div><label>Email (login)</label><input type="email" id="set-email" readonly></div>
+            </div>
+            <button class="export-btn" id="set-profile-save">Save profile</button><div class="set-msg" id="set-profile-msg"></div>
           </div>
-          <button class="export-btn" id="set-profile-save">Save profile</button><div class="set-msg" id="set-profile-msg"></div>
         </div>
-        <div class="panel"><h2>Change email</h2>
-          <div class="set-grid"><div><label>New email address</label><input type="email" id="set-newemail" placeholder="new@example.com"></div>
-            <div id="set-email-otp-wrap" class="hidden"><label>OTP sent to the new email</label><input type="text" id="set-email-otp" maxlength="6" inputmode="numeric"></div></div>
-          <button class="export-btn" id="set-email-send">Send OTP</button>
-          <button class="export-btn hidden" id="set-email-verify">Verify &amp; change email</button><div class="set-msg" id="set-email-msg"></div>
-        </div>
-        <div class="panel"><h2>Change password</h2>
-          <div class="set-grid"><div><label>New password</label><input type="password" id="set-newpw" autocomplete="new-password"></div>
-            <div><label>Confirm new password</label><input type="password" id="set-newpw2" autocomplete="new-password"></div>
-            <div id="set-pw-otp-wrap" class="hidden"><label>OTP sent to your email</label><input type="text" id="set-pw-otp" maxlength="6" inputmode="numeric"></div></div>
-          <button class="export-btn" id="set-pw-send">Send OTP</button>
-          <button class="export-btn hidden" id="set-pw-verify">Verify &amp; update password</button><div class="set-msg" id="set-pw-msg"></div>
-        </div>
-        <div class="panel"><h2>AI settings (Goal planner — Gemini)</h2>
-          <div class="set-grid"><div><label>Gemini API key</label><input type="password" id="set-gkey" placeholder="AIza…" autocomplete="off"></div>
-            <div><label>Gemini model</label><input type="text" id="set-gmodel" placeholder="gemini-2.0-flash"></div></div>
-          <button class="export-btn" id="set-gsave">Save key</button> <button class="export-btn" id="set-gclear">Remove key</button><div class="set-msg" id="set-g-msg"></div>
-        </div>
-        <div class="panel"><h2>Customer support</h2>
-          <div class="set-grid">
-            <div><label>Your name</label><input type="text" id="sup-name"></div>
-            <div><label>Your email</label><input type="email" id="sup-email"></div>
-            <div><label>Topic</label><select id="sup-topic"><option value="">Select a topic…</option><option>Login / OTP problem</option><option>Report / export issue</option><option>Dashboard question</option><option>Feature request</option><option>Other</option></select></div>
-            <div><label>Subject</label><input type="text" id="sup-subject"></div>
-            <div style="grid-column:1/-1"><label>Message</label><textarea id="sup-msg" rows="4"></textarea></div>
+
+        <div class="set-section">
+          <button type="button" class="set-item" data-target="sp-email" aria-expanded="false"><span class="si-ic">✉️</span><span class="si-main"><span class="si-title">Change email</span><span class="si-desc">Update your login email with an OTP check</span></span><span class="si-chev">›</span></button>
+          <div class="set-body hidden" id="sp-email">
+            <div class="set-grid"><div><label>New email address</label><input type="email" id="set-newemail" placeholder="new@example.com"></div></div>
+            <button class="export-btn" id="set-email-send">Send OTP</button>
+            <div id="set-email-otp-wrap" class="hidden" style="margin-top:14px">
+              <div class="set-hint">Enter the code from the email sent to your <b>new</b> address. If you also received a code at your <b>current</b> address, enter it too — some projects require both before the change is applied. Only the latest code works.</div>
+              <div class="set-grid">
+                <div><label>Code sent to the new email</label><input type="text" id="set-email-otp" maxlength="6" inputmode="numeric" placeholder="6-digit code"></div>
+                <div><label>Code sent to the current email (if received)</label><input type="text" id="set-email-otp-cur" maxlength="6" inputmode="numeric" placeholder="6-digit code"></div>
+              </div>
+              <button class="export-btn" id="set-email-verify">Verify &amp; change email</button>
+              <button class="export-btn" id="set-email-resend">Resend code</button>
+            </div>
+            <div class="set-msg" id="set-email-msg"></div>
           </div>
-          <button class="export-btn" id="sup-send">Submit to support</button><div class="set-msg" id="sup-msg-status"></div>
+        </div>
+
+        <div class="set-section">
+          <button type="button" class="set-item" data-target="sp-password" aria-expanded="false"><span class="si-ic">🔒</span><span class="si-main"><span class="si-title">Change password</span><span class="si-desc">Set a new password, confirmed by OTP</span></span><span class="si-chev">›</span></button>
+          <div class="set-body hidden" id="sp-password">
+            <div class="set-grid"><div><label>New password</label><input type="password" id="set-newpw" autocomplete="new-password"></div>
+              <div><label>Confirm new password</label><input type="password" id="set-newpw2" autocomplete="new-password"></div>
+              <div id="set-pw-otp-wrap" class="hidden"><label>OTP sent to your email</label><input type="text" id="set-pw-otp" maxlength="6" inputmode="numeric"></div></div>
+            <button class="export-btn" id="set-pw-send">Send OTP</button>
+            <button class="export-btn hidden" id="set-pw-verify">Verify &amp; update password</button><div class="set-msg" id="set-pw-msg"></div>
+          </div>
+        </div>
+
+        <div class="set-section">
+          <button type="button" class="set-item" data-target="sp-ai" aria-expanded="false"><span class="si-ic">✨</span><span class="si-main"><span class="si-title">AI settings (Goal planner — Gemini)</span><span class="si-desc">Gemini API key and model</span></span><span class="si-chev">›</span></button>
+          <div class="set-body hidden" id="sp-ai">
+            <div class="set-grid"><div><label>Gemini API key</label><input type="password" id="set-gkey" placeholder="AIza…" autocomplete="off"></div>
+              <div><label>Gemini model</label><input type="text" id="set-gmodel" placeholder="gemini-2.0-flash"></div></div>
+            <button class="export-btn" id="set-gsave">Save key</button> <button class="export-btn" id="set-gclear">Remove key</button><div class="set-msg" id="set-g-msg"></div>
+          </div>
+        </div>
+
+        <div class="set-section">
+          <button type="button" class="set-item" data-target="sp-support" aria-expanded="false"><span class="si-ic">💬</span><span class="si-main"><span class="si-title">Customer support</span><span class="si-desc">Send a request to the support team</span></span><span class="si-chev">›</span></button>
+          <div class="set-body hidden" id="sp-support">
+            <div class="set-grid">
+              <div><label>Your name</label><input type="text" id="sup-name"></div>
+              <div><label>Your email</label><input type="email" id="sup-email"></div>
+              <div><label>Topic</label><select id="sup-topic"><option value="">Select a topic…</option><option>Login / OTP problem</option><option>Report / export issue</option><option>Dashboard question</option><option>Feature request</option><option>Other</option></select></div>
+              <div><label>Subject</label><input type="text" id="sup-subject"></div>
+              <div style="grid-column:1/-1"><label>Message</label><textarea id="sup-msg" rows="4"></textarea></div>
+            </div>
+            <button class="export-btn" id="sup-send">Submit to support</button><div class="set-msg" id="sup-msg-status"></div>
+          </div>
         </div>
       </div>
 
@@ -1410,6 +1453,15 @@
     m.textContent = msg || ''; el.classList.toggle('invalid', !!msg);
   }
   function checkFields(pairs){ let ok = true; pairs.forEach(([id, msg]) => { fErr(id, msg); if(msg) ok = false; }); return ok; }
+  function friendlyAuthError(err){
+    const m = (err && err.message) ? err.message : String(err || '');
+    if(/failed to fetch|networkerror|load failed/i.test(m)) return "Can't reach the server. Check your internet connection — if it keeps happening, the Supabase project may be paused (restore it in the Supabase dashboard).";
+    if(/invalid login credentials/i.test(m)) return 'Incorrect email or password. If you just changed your email, sign in with your previous email until the change is fully confirmed.';
+    if(/email not confirmed/i.test(m)) return "This email isn't verified yet. Check your inbox for the verification code.";
+    if(/expired or is invalid|otp_expired|token.*(invalid|expired)|invalid.*token/i.test(m)) return 'That code is invalid or has expired. Request a new code and enter only the latest one.';
+    if(/rate limit|security purposes|too many/i.test(m)) return 'Too many requests. Please wait about a minute and try again.';
+    return m;
+  }
   const emailMsg = v => !v ? 'Email is required.' : (EMAIL_RE.test(v) ? '' : 'Enter a valid email address.');
   function setErr(id, msg){ document.getElementById(id).textContent = msg || ''; }
   function setBusy(btnId, busy, busyLabel, normalLabel){
@@ -1512,7 +1564,7 @@
       });
       setBusy('otp-verify-btn', false, 'Verifying…', 'Verify');
 
-      if(error){ setErr('otp-err', error.message); return; }
+      if(error){ setErr('otp-err', friendlyAuthError(error)); return; }
 
       if(pendingOtp.purpose === 'signup'){
         goToApp();
@@ -1520,6 +1572,13 @@
         // Recovery OTP verified — user now has a temporary session; let them set a new password.
         showScreen('newPassword');
       }
+    };
+
+    document.getElementById('otp-back-login').onclick = () => {
+      pendingOtp = null;
+      document.getElementById('otp-input').value = '';
+      setErr('otp-err'); fErr('otp-input', '');
+      showScreen('login');
     };
 
     document.getElementById('otp-resend').onclick = async () => {
@@ -1546,7 +1605,7 @@
       const { error } = await sb.auth.signInWithPassword({ email, password: pw });
       setBusy('login-btn', false, 'Signing in…', 'Sign in');
 
-      if(error){ setErr('login-err', error.message); return; }
+      if(error){ setErr('login-err', friendlyAuthError(error)); return; }
       goToApp();
     };
 
@@ -1563,7 +1622,7 @@
       const { error } = await sb.auth.resetPasswordForEmail(email);
       setBusy('forgot-send-btn', false, 'Sending…', 'Send code');
 
-      if(error){ setErr('forgot-email-err', error.message); return; }
+      if(error){ setErr('forgot-email-err', friendlyAuthError(error)); return; }
 
       pendingOtp = { purpose: 'recovery', email };
       document.getElementById('otp-title').textContent = 'Reset your password';
@@ -1845,7 +1904,25 @@
       $('set-gkey').value = localStorage.getItem('ledger-gemini-key') || '';
       $('set-gmodel').value = localStorage.getItem('ledger-gemini-model') || '';
     }
-    document.querySelectorAll('.sidebar .side-item[data-page="settings"]').forEach(el => el.addEventListener('click', loadProfile));
+    // Sub-menus: nothing is shown until a section is clicked; one section open at a time.
+    function collapseAllSettings(){
+      document.querySelectorAll('#page-settings .set-item').forEach(b => b.setAttribute('aria-expanded', 'false'));
+      document.querySelectorAll('#page-settings .set-body').forEach(b => b.classList.add('hidden'));
+    }
+    document.querySelectorAll('#page-settings .set-item').forEach(btn => btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      collapseAllSettings();
+      if(!open){
+        btn.setAttribute('aria-expanded', 'true');
+        document.getElementById(btn.dataset.target).classList.remove('hidden');
+      }
+    }));
+    document.querySelectorAll('.sidebar .side-item[data-page="settings"]').forEach(el => el.addEventListener('click', () => { collapseAllSettings(); loadProfile(); }));
+
+    // If the user confirms an email change via the link in the email, refresh the profile.
+    sb.auth.onAuthStateChange((event) => {
+      if(event === 'USER_UPDATED') setTimeout(() => { loadProfile(); }, 0);
+    });
 
     $('set-profile-save').onclick = async () => {
       const first = $('set-first').value.trim(), last = $('set-last').value.trim();
@@ -1855,22 +1932,66 @@
       msg('set-profile-msg', 'Profile saved.'); showWelcomeGreeting();
     };
 
-    // Email change: Supabase emails a code to the new address; verifyOtp confirms it.
+    // Email change. Supabase emails a code to the NEW address and (when "Secure email change" is on,
+    // which is the default) a second code to the CURRENT address. Both must be confirmed.
+    let pendingNewEmail = '';
     $('set-email-send').onclick = async () => {
       const ne = $('set-newemail').value.trim();
-      if(!checkFields([['set-newemail', !emailMsg(ne) && ne.toLowerCase() === (user && user.email || '').toLowerCase() ? 'This is already your email.' : emailMsg(ne)]])) return;
-      const { error } = await sb.auth.updateUser({ email: ne });
-      if(error){ msg('set-email-msg', error.message, true); return; }
-      $('set-email-otp-wrap').classList.remove('hidden'); $('set-email-verify').classList.remove('hidden');
-      msg('set-email-msg', 'OTP sent to ' + ne + '. Enter it below to confirm.');
+      const cur = (user && user.email || $('set-email').value || '').toLowerCase();
+      if(!checkFields([['set-newemail', !emailMsg(ne) && ne.toLowerCase() === cur ? 'This is already your email.' : emailMsg(ne)]])) return;
+      const btn = $('set-email-send'); btn.disabled = true; btn.textContent = 'Sending…';
+      const opts = /^https?:/.test(location.protocol) ? { emailRedirectTo: location.origin + location.pathname } : undefined;
+      const { error } = await sb.auth.updateUser({ email: ne }, opts);
+      btn.disabled = false; btn.textContent = 'Send OTP';
+      if(error){ msg('set-email-msg', friendlyAuthError(error), true); return; }
+      pendingNewEmail = ne;
+      $('set-email-otp-wrap').classList.remove('hidden');
+      msg('set-email-msg', 'Codes sent. Check the inbox (and spam) of ' + ne + ', and of your current email if it also received one.');
+    };
+    $('set-email-resend').onclick = async () => {
+      const ne = pendingNewEmail || $('set-newemail').value.trim();
+      if(!ne){ msg('set-email-msg', 'Enter the new email address first.', true); return; }
+      const { error } = await sb.auth.resend({ type: 'email_change', email: ne });
+      msg('set-email-msg', error ? friendlyAuthError(error) : 'A new code has been sent. Use only the latest code.', !!error);
     };
     $('set-email-verify').onclick = async () => {
-      const code = $('set-email-otp').value.trim(), ne = $('set-newemail').value.trim();
-      if(!checkFields([['set-email-otp', !code ? 'The OTP is required.' : (/^\d{6}$/.test(code) ? '' : 'Enter the 6-digit code.')]])) return;
-      const { error } = await sb.auth.verifyOtp({ email: ne, token: code, type: 'email_change' });
-      if(error){ msg('set-email-msg', error.message, true); return; }
-      msg('set-email-msg', 'Email changed to ' + ne + '.'); $('set-email-otp-wrap').classList.add('hidden'); $('set-email-verify').classList.add('hidden');
-      $('set-newemail').value = ''; $('set-email-otp').value = ''; loadProfile();
+      const ne = pendingNewEmail || $('set-newemail').value.trim();
+      const cur = (user && user.email) || $('set-email').value.trim();
+      const codeNew = $('set-email-otp').value.trim(), codeCur = $('set-email-otp-cur').value.trim();
+      const fmt = c => /^\d{6}$/.test(c) ? '' : 'Enter the 6-digit code.';
+      if(!checkFields([
+        ['set-email-otp', !codeNew && !codeCur ? 'Enter the code sent to the new email.' : (codeNew ? fmt(codeNew) : '')],
+        ['set-email-otp-cur', codeCur ? fmt(codeCur) : '']
+      ])) return;
+      if(!ne){ msg('set-email-msg', 'Enter the new email address and press Send OTP first.', true); return; }
+
+      const btn = $('set-email-verify'); btn.disabled = true; btn.textContent = 'Verifying…';
+      // Each code is tried against the address it was sent to, then the other one as a fallback.
+      const tryCode = async (token, first, second) => {
+        let r = await sb.auth.verifyOtp({ email: first, token, type: 'email_change' });
+        if(r.error && second) r = await sb.auth.verifyOtp({ email: second, token, type: 'email_change' });
+        return r.error || null;
+      };
+      let lastError = null;
+      if(codeNew){ lastError = await tryCode(codeNew, ne, cur) || lastError; }
+      if(codeCur){ const er = await tryCode(codeCur, cur, ne); lastError = er || lastError; }
+
+      let fresh = null;
+      try { const { data } = await sb.auth.getUser(); fresh = data && data.user; } catch(e){}
+      btn.disabled = false; btn.textContent = 'Verify & change email';
+
+      if(fresh && (fresh.email || '').toLowerCase() === ne.toLowerCase()){
+        msg('set-email-msg', 'Email changed to ' + ne + '. Use it the next time you sign in.');
+        $('set-email-otp-wrap').classList.add('hidden');
+        ['set-newemail','set-email-otp','set-email-otp-cur'].forEach(i => { $(i).value = ''; fErr(i, ''); });
+        pendingNewEmail = ''; loadProfile();
+      } else if(lastError){
+        msg('set-email-msg', friendlyAuthError(lastError), true);
+      } else if(fresh && fresh.new_email){
+        msg('set-email-msg', 'Code accepted, but one more confirmation is pending: enter the code from your other inbox (current or new email) and press Verify again.');
+      } else {
+        msg('set-email-msg', 'Could not confirm the change yet. Please try again or request a new code.', true);
+      }
     };
 
     // Password change: reauthenticate() emails an OTP (nonce) that must accompany the new password.
