@@ -24,9 +24,14 @@
   .month-tab.locked { pointer-events:none; }
   .chart-filters select option:disabled { color:#b3b0a0; }
   .hero h1 { font-size:24px; margin-top:4px; }
-  .hero .profit-figure { text-align:right; }
-  .hero .profit-figure .amt { font-size:36px; font-weight:600; }
-  .hero .profit-figure .lbl { font-size:12px; color:var(--muted); }
+  .hero .profit-figure { text-align:right; padding-right:22px; margin-right:4px; border-right:1px solid var(--rule); }
+  .hero .profit-figure:last-of-type { border-right:none; padding-right:0; margin-right:0; }
+  .hero .profit-figure .amt { font-size:28px; font-weight:600; white-space:nowrap; }
+  .hero .profit-figure .lbl { font-size:12px; color:var(--muted); margin-top:2px; white-space:nowrap; }
+  @media (max-width:640px){
+    .hero-actions { width:100%; justify-content:space-between; }
+    .hero .profit-figure { text-align:left; border-right:none; padding-right:0; }
+  }
   .pos { color:var(--green); } .neg { color:var(--rust); }
 
   .month-rail { display:flex; gap:2px; overflow-x:auto; margin-bottom:22px; border-bottom:1px solid var(--rule); }
@@ -52,15 +57,29 @@
   .add-btn { grid-column:1/-1; padding:9px; background:var(--brand); color:#fff; border:none; cursor:pointer; font-size:13px; font-family:'IBM Plex Sans',sans-serif; border-radius:6px; }
   .add-btn:hover { background:var(--brand-dark); }
 
-  .txn-row { display:grid; grid-template-columns:70px 1fr 90px 26px; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid var(--rule); font-size:13px; }
+  .txn-row { display:grid; grid-template-columns:70px 1fr 90px 22px 22px; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid var(--rule); font-size:13px; }
   .txn-row .cat { color:var(--muted); font-size:12px; }
   .txn-row .amt { text-align:right; font-weight:500; }
-  .txn-row .del { cursor:pointer; color:var(--muted); text-align:center; }
+  .txn-row .del, .txn-row .edit-ic { cursor:pointer; color:var(--muted); text-align:center; }
   .txn-row .del:hover { color:var(--rust); }
+  .txn-row .edit-ic:hover { color:var(--brand); }
+  .txn-edit-row { padding:10px 0; border-bottom:1px solid var(--rule); }
+  .txn-edit-row .txn-edit-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:8px; margin-bottom:8px; }
+  .txn-edit-row label { display:block; font-size:11px; color:var(--muted); margin-bottom:3px; }
+  .txn-edit-row input, .txn-edit-row select { width:100%; box-sizing:border-box; padding:6px 8px; border:1px solid var(--rule); border-radius:6px; font-family:'IBM Plex Sans',sans-serif; font-size:13px; }
+  .txn-edit-row .txn-edit-type { display:flex; gap:6px; }
+  .txn-edit-row .txn-edit-type span { flex:1; text-align:center; padding:6px; border:1px solid var(--rule); border-radius:6px; cursor:pointer; font-size:12px; }
+  .txn-edit-row .txn-edit-type span.sel.income { background:var(--income-c); color:#fff; border-color:var(--income-c); }
+  .txn-edit-row .txn-edit-type span.sel.expense { background:var(--expense-c); color:#fff; border-color:var(--expense-c); }
+  .txn-edit-row .txn-edit-actions { display:flex; gap:8px; }
+  .txn-edit-row .txn-edit-actions button { font-family:'IBM Plex Sans',sans-serif; font-size:12px; padding:6px 14px; border-radius:6px; cursor:pointer; border:1px solid var(--rule); background:#fff; }
+  .txn-edit-row .txn-edit-actions button.save { background:var(--brand); color:#fff; border-color:var(--brand); }
   .empty-note { padding:20px 0; color:var(--muted); font-size:13px; text-align:center; border-bottom:1px solid var(--rule); }
 
-  .month-totals { display:flex; justify-content:space-between; padding:12px 0 0; font-size:13px; }
-  .month-totals .val { font-weight:600; }
+  .month-totals { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:14px 10px; padding:14px 0 0; margin-top:10px; border-top:1px solid var(--rule); font-size:13px; }
+  .month-totals > div { display:flex; flex-direction:column; gap:4px; }
+  .month-totals .mt-label { color:var(--muted); font-size:12px; }
+  .month-totals .val { font-weight:600; font-size:15px; white-space:nowrap; }
 
   .bar-row { display:grid; grid-template-columns:60px 1fr 60px; align-items:center; gap:8px; margin-bottom:6px; font-size:12px; }
   .bar-track { height:14px; background:var(--paper-2); position:relative; border-radius:2px; overflow:hidden; }
@@ -102,7 +121,7 @@
 
   .export-btn { font-family:'IBM Plex Mono',monospace; font-size:12px; border:1px solid var(--brand); background:transparent; color:var(--brand); padding:6px 12px; cursor:pointer; border-radius:6px; }
   .export-btn:hover { background:var(--brand); color:#fff; }
-  .hero-actions { display:flex; gap:8px; align-items:center; }
+  .hero-actions { display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
 
   #lock-overlay { position:fixed; inset:0; background:var(--paper, #F2F5FA); z-index:9999; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Sans',sans-serif; }
   #lock-overlay .box { background:#fff; border:1px solid #E1E6F0; border-radius:16px; box-shadow:0 4px 24px rgba(21,42,74,.10); padding:32px; width:320px; max-width:90vw; text-align:center; max-height:85vh; overflow-y:auto; }
@@ -115,6 +134,46 @@
   #lock-overlay button { width:100%; padding:10px; background:#1C5FA8; color:#fff; border:none; cursor:pointer; border-radius:6px; font-size:13px; }
   #lock-overlay button:hover { background:#123E73; }
   .field-err { color:#C0392B; font-size:12px; margin-top:4px; }
+
+  /* Toggle switch */
+  .tgl { position:relative; display:inline-block; width:40px; height:22px; flex:none; }
+  .tgl input { opacity:0; width:0; height:0; }
+  .tgl .tgl-track { position:absolute; inset:0; background:#C7CEDA; border-radius:22px; cursor:pointer; transition:background .15s; }
+  .tgl .tgl-track:before { content:''; position:absolute; width:16px; height:16px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .15s; }
+  .tgl input:checked + .tgl-track { background:var(--brand); }
+  .tgl input:checked + .tgl-track:before { transform:translateX(18px); }
+  .tgl-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:13px; }
+  .tgl-row .tgl-label { flex:1; }
+  .tgl-row .tgl-label .td { font-size:11px; color:var(--muted); }
+
+  /* Recurring expenses */
+  .rec-list { margin-top:16px; display:flex; flex-direction:column; gap:10px; }
+  .rec-card { border:1px solid var(--rule); border-radius:10px; padding:12px 14px; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+  .rec-card .rc-title { font-weight:600; font-size:13px; }
+  .rec-card .rc-meta { font-size:12px; color:var(--muted); margin-top:3px; line-height:1.6; }
+  .rec-card .rc-amt { font-weight:600; font-family:'IBM Plex Mono',monospace; }
+  .rec-card .rc-actions { display:flex; gap:8px; align-items:center; }
+  .rec-card .rc-actions button { font-size:12px; padding:5px 10px; border-radius:6px; border:1px solid var(--rule); background:#fff; cursor:pointer; }
+  .rec-card .rc-actions button.danger { color:var(--rust); border-color:var(--rust); }
+  .rec-badge { display:inline-block; font-size:10px; padding:2px 7px; border-radius:20px; background:var(--paper-2); color:var(--muted); margin-left:6px; }
+  .rec-badge.on { background:var(--income-c); color:#fff; }
+
+  /* Notification bell */
+  .notif-wrap { position:relative; }
+  .notif-bell { position:relative; width:38px; height:38px; border-radius:50%; border:1px solid var(--rule); background:#fff; cursor:pointer; font-size:17px; display:flex; align-items:center; justify-content:center; }
+  .notif-bell .notif-dot { position:absolute; top:2px; right:2px; min-width:16px; height:16px; padding:0 3px; border-radius:20px; background:var(--rust); color:#fff; font-size:10px; line-height:16px; text-align:center; font-weight:700; }
+  .notif-panel { position:absolute; top:46px; right:0; width:320px; max-width:calc(100vw - 32px); max-height:420px; overflow-y:auto; background:#fff; border:1px solid var(--rule); border-radius:12px; box-shadow:0 12px 32px rgba(21,42,74,.2); z-index:800; }
+  .notif-panel.hidden { display:none; }
+  .notif-panel-head { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid var(--rule); font-weight:600; font-size:13px; }
+  .notif-panel-head button { font-size:11px; border:none; background:none; color:var(--brand); cursor:pointer; }
+  .notif-item { padding:10px 14px; border-bottom:1px solid var(--rule); font-size:12px; cursor:pointer; }
+  .notif-item:last-child { border-bottom:none; }
+  .notif-item.unread { background:#EFF6FF; }
+  .notif-item .ni-title { font-weight:600; font-size:13px; }
+  .notif-item .ni-meta { color:var(--muted); margin-top:3px; }
+  .notif-empty { padding:18px 14px; font-size:12px; color:var(--muted); text-align:center; }
+  .dash-top-row { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:4px; }
+  .dash-top-row .dash-welcome { flex:1; margin-bottom:0; }
   input.invalid, select.invalid, textarea.invalid { border-color:#C0392B !important; }
   #ledger-root .hidden { display:none !important; }
   .set-hint { font-size:12px; color:var(--muted); margin:0 0 10px; line-height:1.5; }
@@ -363,23 +422,6 @@
     </nav>
 
     <div class="main-content">
-      <div class="hero">
-        <div>
-          <select class="fy-select" id="fy-select"></select>
-          <h1>Personal Ledger</h1>
-          <div class="muted" id="month-label">—</div>
-        </div>
-        <div class="hero-actions">
-          <div class="profit-figure">
-            <div class="amt num" id="hero-profit">₹0</div>
-            <div class="lbl">Monthly Net Profit</div>
-          </div>
-          <button class="export-btn" id="export-btn">Export CSV</button>
-        </div>
-      </div>
-
-      <div class="month-rail" id="month-rail"></div>
-
       <div class="export-modal-overlay hidden" id="export-modal">
         <div class="export-modal-box">
           <h3>Download report</h3>
@@ -398,7 +440,16 @@
 
       <!-- ===== DASHBOARD PAGE ===== -->
       <div class="page" id="page-dashboard">
-        <div class="dash-welcome hidden" id="dash-welcome">👋 <span id="dash-welcome-text">Welcome back!</span></div>
+        <div class="dash-top-row">
+          <div class="dash-welcome hidden" id="dash-welcome">👋 <span id="dash-welcome-text">Welcome back!</span></div>
+          <div class="notif-wrap">
+            <button class="notif-bell" id="notif-bell" title="Notifications">🔔<span class="notif-dot hidden" id="notif-dot">0</span></button>
+            <div class="notif-panel hidden" id="notif-panel">
+              <div class="notif-panel-head"><span>Notifications</span><button id="notif-clear-btn">Clear all</button></div>
+              <div id="notif-items"></div>
+            </div>
+          </div>
+        </div>
         <div class="panel dashboard-panel">
           <h2>Dashboard — income, expenditure &amp; profit by month</h2>
           <div class="chart-filters">
@@ -434,24 +485,45 @@
             <div><div class="muted">Projected FY-end total</div><div class="amt num" id="fc-fy">₹0</div></div>
           </div>
         </div>
-      </div>
 
-      <button class="dash-bot-fab" id="dash-bot-fab" title="Dashboard assistant">💬</button>
-      <div class="dash-bot-panel hidden" id="dash-bot-panel">
-        <div class="dash-bot-head">
-          <span>Dashboard Assistant</span>
-          <button id="dash-bot-close" title="Close">✕</button>
-        </div>
-        <div class="dash-bot-msgs" id="dash-bot-msgs"></div>
-        <div class="dash-bot-hint">Try: "full dashboard", "expense category by month", "insights", "FY 2024-25"</div>
-        <div class="dash-bot-input-row">
-          <input type="text" id="dash-bot-input" placeholder="Tell me how to build the dashboard…">
-          <button id="dash-bot-send">Send</button>
+        <button class="dash-bot-fab" id="dash-bot-fab" title="Dashboard assistant">💬</button>
+        <div class="dash-bot-panel hidden" id="dash-bot-panel">
+          <div class="dash-bot-head">
+            <span>Dashboard Assistant</span>
+            <button id="dash-bot-close" title="Close">✕</button>
+          </div>
+          <div class="dash-bot-msgs" id="dash-bot-msgs"></div>
+          <div class="dash-bot-hint">Try: "full dashboard", "expense category by month", "insights", "FY 2024-25"</div>
+          <div class="dash-bot-input-row">
+            <input type="text" id="dash-bot-input" placeholder="Tell me how to build the dashboard…">
+            <button id="dash-bot-send">Send</button>
+          </div>
         </div>
       </div>
 
       <!-- ===== TRANSACTIONS PAGE ===== -->
       <div class="page hidden" id="page-transactions">
+        <div class="hero">
+          <div>
+            <select class="fy-select" id="fy-select"></select>
+            <h1>Personal Ledger</h1>
+            <div class="muted" id="month-label">—</div>
+          </div>
+          <div class="hero-actions">
+            <div class="profit-figure">
+              <div class="amt num" id="hero-profit">₹0</div>
+              <div class="lbl">Monthly Net Profit</div>
+            </div>
+            <div class="profit-figure">
+              <div class="amt num" id="hero-combined-profit">₹0</div>
+              <div class="lbl">Combined Profit (FY)</div>
+            </div>
+            <button class="export-btn" id="export-btn">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="month-rail" id="month-rail"></div>
+
         <div class="grid">
           <div>
             <div class="panel" id="entry-panel">
@@ -475,9 +547,10 @@
               <h2>This month's entries</h2>
               <div id="txn-list"></div>
               <div class="month-totals">
-                <div>Income <span class="num val pos" id="m-income">₹0</span></div>
-                <div>Expense <span class="num val neg" id="m-expense">₹0</span></div>
-                <div>Monthly Net Profit <span class="num val" id="m-profit">₹0</span></div>
+                <div><span class="mt-label">Income</span><span class="num val pos" id="m-income">₹0</span></div>
+                <div><span class="mt-label">Expense</span><span class="num val neg" id="m-expense">₹0</span></div>
+                <div><span class="mt-label">Monthly Net Profit</span><span class="num val" id="m-profit">₹0</span></div>
+                <div><span class="mt-label">Combined Profit (FY)</span><span class="num val" id="m-combined-profit">₹0</span></div>
               </div>
             </div>
           </div>
@@ -546,15 +619,6 @@
         </div>
 
         <div class="set-section">
-          <button type="button" class="set-item" data-target="sp-ai" aria-expanded="false"><span class="si-ic">✨</span><span class="si-main"><span class="si-title">AI settings (Goal planner — Gemini)</span><span class="si-desc">Gemini API key and model</span></span><span class="si-chev">›</span></button>
-          <div class="set-body hidden" id="sp-ai">
-            <div class="set-grid"><div><label>Gemini API key</label><input type="password" id="set-gkey" placeholder="AIza…" autocomplete="off"></div>
-              <div><label>Gemini model</label><input type="text" id="set-gmodel" placeholder="gemini-2.0-flash"></div></div>
-            <button class="export-btn" id="set-gsave">Save key</button> <button class="export-btn" id="set-gclear">Remove key</button><div class="set-msg" id="set-g-msg"></div>
-          </div>
-        </div>
-
-        <div class="set-section">
           <button type="button" class="set-item" data-target="sp-support" aria-expanded="false"><span class="si-ic">💬</span><span class="si-main"><span class="si-title">Customer support</span><span class="si-desc">Send a request to the support team</span></span><span class="si-chev">›</span></button>
           <div class="set-body hidden" id="sp-support">
             <div class="set-grid">
@@ -567,6 +631,43 @@
             <button class="export-btn" id="sup-send">Submit to support</button><div class="set-msg" id="sup-msg-status"></div>
           </div>
         </div>
+
+        <div class="set-section">
+          <button type="button" class="set-item" data-target="sp-recurring" aria-expanded="false"><span class="si-ic">🔁</span><span class="si-main"><span class="si-title">Recurring expenses</span><span class="si-desc">EMIs, subscriptions, insurance — auto-added each cycle</span></span><span class="si-chev">›</span></button>
+          <div class="set-body hidden" id="sp-recurring">
+            <div class="set-hint">Set this up once for the financial year — each entry repeats on its own schedule until its end date. Turn "Add to expenses automatically" on to have Claude... (the app) create the expense entry itself on the due date, or leave it off to just get reminded.</div>
+            <div class="set-grid">
+              <div><label>Recurring name / title</label><input type="text" id="rec-title" placeholder="e.g. Home loan EMI"></div>
+              <div><label>Amount (₹)</label><input type="number" id="rec-amount" min="0"></div>
+              <div><label>Deduction / Due date</label><input type="date" id="rec-duedate"></div>
+              <div><label>Frequency</label><select id="rec-frequency"><option value="weekly">Weekly</option><option value="monthly" selected>Monthly</option><option value="quarterly">Quarterly</option><option value="yearly">Yearly</option></select></div>
+              <div><label>Start date</label><input type="date" id="rec-start"></div>
+              <div><label>End date</label><input type="date" id="rec-end"></div>
+            </div>
+            <div class="tgl-row">
+              <label class="tgl"><input type="checkbox" id="rec-autoadd" checked><span class="tgl-track"></span></label>
+              <div class="tgl-label">Add to expenses automatically on each due date<div class="td">When off, you'll only get a reminder — you add the expense yourself.</div></div>
+            </div>
+            <button class="export-btn" id="rec-save-btn">Add recurring expense</button><div class="set-msg" id="rec-msg"></div>
+            <div class="rec-list" id="rec-list"></div>
+          </div>
+        </div>
+
+        <div class="set-section">
+          <button type="button" class="set-item" data-target="sp-notif" aria-expanded="false"><span class="si-ic">🔔</span><span class="si-main"><span class="si-title">Notifications</span><span class="si-desc">Reminders for upcoming recurring expenses</span></span><span class="si-chev">›</span></button>
+          <div class="set-body hidden" id="sp-notif">
+            <div class="tgl-row">
+              <label class="tgl"><input type="checkbox" id="notif-inapp" checked><span class="tgl-track"></span></label>
+              <div class="tgl-label">In-app notifications (bell icon on the Dashboard)</div>
+            </div>
+            <div class="tgl-row">
+              <label class="tgl"><input type="checkbox" id="notif-email" checked><span class="tgl-track"></span></label>
+              <div class="tgl-label">Email reminders to my login email</div>
+            </div>
+            <div class="set-grid"><div><label>Remind me this many days before the due date</label><input type="number" id="notif-lead" min="1" max="30" value="7"></div></div>
+            <button class="export-btn" id="notif-save-btn">Save notification settings</button><div class="set-msg" id="notif-msg"></div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -577,7 +678,7 @@
 (function(){
   const root = document.getElementById('ledger-root');
   const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const CATS = { income:['Salary','Freelance','Business','Interest','Other'], expense:['Rent','Groceries','Utilities','Transport','EMI/Loan','Healthcare','Entertainment','Other'] };
+  const CATS = { income:['Salary','Freelance','Business','Interest','Other'], expense:['Rent','Groceries','Utilities','Transport','EMI/Loan','Healthcare','Entertainment','Recurring','Other'] };
 
   const today = new Date();
   const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -617,11 +718,21 @@
     transactions: [],
     txnFYStart: CURRENT_FY_START,
     selected: `${today.getFullYear()}-${today.getMonth()}`,
-    type: 'income'
+    type: 'income',
+    recurring: [],           // [{id,title,amount,dueDate,start,end,frequency,autoAdd,createdKeys,notifiedKeys}]
+    notifications: [],       // [{id,recId,title,amount,dueDate,read,createdAt}]
+    notifSettings: { inApp: true, email: true, leadDays: 7 }
   };
   let lastForecast = null; // filled in by renderForecast, read by the AI insights button
 
   const monthKey = mo => `${mo.year}-${mo.month}`;
+  // "YYYY-MM-DD" strings (from <input type=date> and stored transactions) must be parsed as a
+  // LOCAL calendar date, not via `new Date(str)`, which JS parses as UTC midnight — for IST
+  // (UTC+5:30) that silently shifts the date back by 5.5 hours and makes "today" look future.
+  function parseLocalDate(s){
+    const [y, m, d] = s.split('-').map(Number);
+    return new Date(y, m-1, d);
+  }
   const fmtMoney = n => '₹' + Math.round(n).toLocaleString('en-IN');
   const monthLabel = mo => `${MONTH_NAMES[mo.month]} ${mo.year}`;
 
@@ -630,11 +741,101 @@
       const raw = localStorage.getItem('ledger-transactions');
       if(raw) state.transactions = JSON.parse(raw);
     } catch(e){ /* no data yet */ }
+    try { const r = localStorage.getItem('ledger-recurring'); if(r) state.recurring = JSON.parse(r); } catch(e){}
+    try { const n = localStorage.getItem('ledger-notifications'); if(n) state.notifications = JSON.parse(n); } catch(e){}
+    try { const ns = localStorage.getItem('ledger-notif-settings'); if(ns) state.notifSettings = Object.assign(state.notifSettings, JSON.parse(ns)); } catch(e){}
+    await processRecurring();
+    if(window.renderNotifBell) window.renderNotifBell();
     render();
   }
   async function save(){
     try { localStorage.setItem('ledger-transactions', JSON.stringify(state.transactions)); }
     catch(e){ console.error('storage save failed', e); }
+  }
+  function saveRecurring(){ try { localStorage.setItem('ledger-recurring', JSON.stringify(state.recurring)); } catch(e){} }
+  function saveNotifications(){ try { localStorage.setItem('ledger-notifications', JSON.stringify(state.notifications)); } catch(e){} }
+  function saveNotifSettings(){ try { localStorage.setItem('ledger-notif-settings', JSON.stringify(state.notifSettings)); } catch(e){} }
+
+  // ---- Recurring expenses engine ----
+  // Steps an occurrence date forward by one cycle of the given frequency.
+  function stepDate(d, frequency){
+    const nd = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    if(frequency === 'weekly') nd.setDate(nd.getDate()+7);
+    else if(frequency === 'monthly') nd.setMonth(nd.getMonth()+1);
+    else if(frequency === 'quarterly') nd.setMonth(nd.getMonth()+3);
+    else if(frequency === 'yearly') nd.setFullYear(nd.getFullYear()+1);
+    return nd;
+  }
+
+  // Every occurrence of a recurring item from its due date up to (and including) `uptoDate`,
+  // bounded by its own start/end dates.
+  function recurringOccurrences(item, uptoDate){
+    const start = parseLocalDate(item.start), end = parseLocalDate(item.end), due = parseLocalDate(item.dueDate);
+    const out = [];
+    let d = due < start ? start : due;
+    let guard = 0;
+    while(d <= end && d <= uptoDate && guard < 500){
+      out.push(new Date(d));
+      d = stepDate(d, item.frequency);
+      guard++;
+    }
+    return out;
+  }
+
+  // Creates due expense entries (if auto-add is on) and due-soon notifications (emailed once
+  // per occurrence, deduped via notifiedKeys) for every recurring item. Runs once per app load.
+  async function processRecurring(){
+    if(!state.recurring.length) return;
+    const leadDays = state.notifSettings.leadDays || 7;
+    let userEmail = '';
+    try { const { data } = await sb.auth.getUser(); userEmail = data && data.user && data.user.email || ''; } catch(e){}
+
+    let txnsChanged = false, notifsChanged = false, recChanged = false;
+    for(const item of state.recurring){
+      item.createdKeys = item.createdKeys || [];
+      item.notifiedKeys = item.notifiedKeys || [];
+
+      // Occurrences must be scanned up to (today + lead time), not just up to today — otherwise
+      // a due date that falls inside the reminder window (e.g. due in 3 days with a 7-day lead,
+      // including a brand-new recurring item created with a near-term due date) is never even
+      // considered until the due date itself has passed, which defeats the "remind me N days
+      // before" setting entirely. Auto-adding the expense itself still only happens on/after
+      // the actual due date — only the notification is allowed to look ahead.
+      const scanUpto = new Date(todayMidnight); scanUpto.setDate(scanUpto.getDate() + leadDays);
+      const occurrences = recurringOccurrences(item, scanUpto);
+      for(const occ of occurrences){
+        const occKey = isoDate(occ);
+
+        if(item.autoAdd && occ <= todayMidnight && !item.createdKeys.includes(occKey)){
+          state.transactions.push({ id: Date.now() + Math.floor(Math.random()*1000), type:'expense', category:'Recurring', note:item.title, amount:item.amount, date:occKey, key:`${occ.getFullYear()}-${occ.getMonth()}` });
+          item.createdKeys.push(occKey); txnsChanged = true; recChanged = true;
+        }
+
+        const notifyFrom = new Date(occ); notifyFrom.setDate(notifyFrom.getDate()-leadDays);
+        if(todayMidnight >= notifyFrom && !item.notifiedKeys.includes(occKey)){
+          if(state.notifSettings.inApp){
+            state.notifications.unshift({ id:'n'+Date.now()+Math.floor(Math.random()*1000), recId:item.id, title:item.title, amount:item.amount, dueDate:occKey, read:false, createdAt:Date.now() });
+            notifsChanged = true;
+          }
+          if(state.notifSettings.email && userEmail){ sendRecurringEmail(userEmail, item, occKey); }
+          item.notifiedKeys.push(occKey); recChanged = true;
+        }
+      }
+    }
+    if(txnsChanged) await save();
+    if(notifsChanged) saveNotifications();
+    if(recChanged) saveRecurring();
+  }
+
+  // Best-effort email reminder via FormSubmit (client-only app, no backend). FormSubmit requires
+  // the destination inbox to confirm once the first time it receives mail this way.
+  function sendRecurringEmail(toEmail, item, occKey){
+    fetch('https://formsubmit.co/ajax/' + encodeURIComponent(toEmail), {
+      method:'POST', headers:{ 'Content-Type':'application/json', 'Accept':'application/json' },
+      body: JSON.stringify({ title:item.title, amount:fmtMoney(item.amount), due_date:occKey,
+        message: `Reminder: "${item.title}" (${fmtMoney(item.amount)}) is due on ${occKey}.`,
+        _subject:'[Personal Ledger] Upcoming recurring expense: ' + item.title, _template:'table' })
+    }).catch(()=>{ /* best-effort — in-app notification still shows regardless */ });
   }
 
   function monthTotals(key){
@@ -668,7 +869,7 @@
       el.className = 'month-tab' + (key===state.selected?' active':'') + (locked?' locked':'');
       el.textContent = MONTH_NAMES[mo.month] + " '" + String(mo.year).slice(2) + (locked ? ' 🔒' : (key===todayKey ? ' •' : ''));
       if(!locked){
-        el.onclick = () => { state.selected = key; render(); };
+        el.onclick = () => { state.selected = key; state.editingTxnId = null; render(); };
       }
       rail.appendChild(el);
     });
@@ -710,22 +911,122 @@
     heroProfit.textContent = fmtMoney(t.profit);
     heroProfit.className = 'amt num ' + (t.profit>=0?'pos':'neg');
 
+    // Combined profit = income minus expense across every month of the currently selected FY.
+    const combined = fyMonths(state.txnFYStart).all.reduce((sum, mo) => sum + monthTotals(monthKey(mo)).profit, 0);
+    const heroCombined = document.getElementById('hero-combined-profit');
+    if(heroCombined){
+      heroCombined.textContent = fmtMoney(combined);
+      heroCombined.className = 'amt num ' + (combined>=0?'pos':'neg');
+    }
+    const mCombined = document.getElementById('m-combined-profit');
+    if(mCombined){
+      mCombined.textContent = fmtMoney(combined);
+      mCombined.className = 'num val ' + (combined>=0?'pos':'neg');
+    }
+
     const list = document.getElementById('txn-list');
     if(t.txns.length === 0){
       list.innerHTML = '<div class="empty-note">No entries yet this month.</div>';
     } else {
-      list.innerHTML = t.txns.slice().reverse().map(tx => `
+      list.innerHTML = t.txns.slice().reverse().map(tx => {
+        if(state.editingTxnId === tx.id) return renderTxnEditRow(tx, selectedMo);
+        return `
         <div class="txn-row">
-          <div class="cat">${new Date(tx.date).getDate()} ${MONTH_NAMES[new Date(tx.date).getMonth()]}</div>
+          <div class="cat">${parseLocalDate(tx.date).getDate()} ${MONTH_NAMES[parseLocalDate(tx.date).getMonth()]}</div>
           <div>${tx.category}${tx.note ? ' — <span class="cat">'+tx.note+'</span>' : ''}</div>
           <div class="amt ${tx.type==='income'?'pos':'neg'}">${tx.type==='income'?'+':'-'}${fmtMoney(tx.amount)}</div>
-          <div class="del" data-id="${tx.id}">✕</div>
-        </div>`).join('');
+          <div class="edit-ic" data-id="${tx.id}" title="Edit">✎</div>
+          <div class="del" data-id="${tx.id}" title="Delete">✕</div>
+        </div>`;
+      }).join('');
       list.querySelectorAll('.del').forEach(d => d.onclick = () => {
         state.transactions = state.transactions.filter(x => String(x.id) !== d.dataset.id);
         save(); render();
       });
+      list.querySelectorAll('.edit-ic').forEach(d => d.onclick = () => {
+        state.editingTxnId = Number(d.dataset.id);
+        renderEntryAndList();
+      });
+      bindTxnEditRow();
     }
+  }
+
+  // Builds the inline edit form for one transaction row. `mo` is the currently selected
+  // month — used only to cap the date picker (an edited entry can be moved to any date
+  // within its own month, but never into the future).
+  function renderTxnEditRow(tx, mo){
+    const monthStart = new Date(mo.year, mo.month, 1);
+    const monthEnd = new Date(mo.year, mo.month+1, 0);
+    const isCurrentCalMonth = mo.year===today.getFullYear() && mo.month===today.getMonth();
+    const maxDate = isCurrentCalMonth ? todayMidnight : monthEnd;
+    return `
+      <div class="txn-edit-row" data-editing-id="${tx.id}">
+        <div class="txn-edit-grid">
+          <div>
+            <label>Type</label>
+            <div class="txn-edit-type">
+              <span class="income${tx.type==='income'?' sel':''}" data-type="income">Income</span>
+              <span class="expense${tx.type==='expense'?' sel':''}" data-type="expense">Expense</span>
+            </div>
+          </div>
+          <div><label>Date</label><input type="date" id="edit-date" value="${tx.date}" min="${isoDate(monthStart)}" max="${isoDate(maxDate)}"></div>
+          <div><label>Amount (₹)</label><input type="number" id="edit-amount" min="0" value="${tx.amount}"></div>
+          <div><label>Category</label><select id="edit-category"></select></div>
+          <div style="grid-column:1/-1"><label>Note (optional)</label><input type="text" id="edit-note" value="${(tx.note||'').replace(/"/g,'&quot;')}"></div>
+        </div>
+        <div class="field-err" id="edit-err" style="margin-bottom:8px;"></div>
+        <div class="txn-edit-actions">
+          <button class="save" id="edit-save-btn">Save changes</button>
+          <button id="edit-cancel-btn">Cancel</button>
+        </div>
+      </div>`;
+  }
+
+  function bindTxnEditRow(){
+    const row = document.querySelector('.txn-edit-row');
+    if(!row) return;
+    const id = Number(row.dataset.editingId);
+    const tx = state.transactions.find(x => x.id === id);
+    if(!tx) return;
+
+    let editType = tx.type;
+    const catSel = row.querySelector('#edit-category');
+    const fillCats = () => { catSel.innerHTML = CATS[editType].map(c => `<option value="${c}">${c}</option>`).join(''); catSel.value = CATS[editType].includes(tx.category) ? tx.category : CATS[editType][0]; };
+    fillCats();
+
+    row.querySelectorAll('.txn-edit-type span').forEach(el => el.onclick = () => {
+      editType = el.dataset.type;
+      row.querySelectorAll('.txn-edit-type span').forEach(s => s.classList.remove('sel'));
+      el.classList.add('sel');
+      fillCats();
+    });
+
+    row.querySelector('#edit-cancel-btn').onclick = () => { state.editingTxnId = null; renderEntryAndList(); };
+
+    row.querySelector('#edit-save-btn').onclick = () => {
+      const dateVal = row.querySelector('#edit-date').value;
+      const amountVal = parseFloat(row.querySelector('#edit-amount').value);
+      const category = catSel.value;
+      const note = row.querySelector('#edit-note').value.trim();
+      const errEl = row.querySelector('#edit-err');
+      const dChk = dateVal ? parseLocalDate(dateVal) : null;
+
+      let err = '';
+      if(!dateVal) err = 'Date is required.';
+      else if(dChk > todayMidnight) err = 'Future dates are not allowed.';
+      else if(!row.querySelector('#edit-amount').value) err = 'Amount is required.';
+      else if(!(amountVal > 0)) err = 'Enter an amount greater than 0.';
+      else if(!category) err = 'Category is required.';
+      errEl.textContent = err;
+      if(err) return;
+
+      const d = dChk;
+      tx.type = editType; tx.amount = amountVal; tx.category = category; tx.note = note;
+      tx.date = dateVal; tx.key = `${d.getFullYear()}-${d.getMonth()}`;
+
+      state.editingTxnId = null;
+      save(); render();
+    };
   }
 
   function fmtShort(n){
@@ -932,13 +1233,13 @@
       const date = document.getElementById('f-date').value;
       const category = document.getElementById('f-category').value;
       const note = document.getElementById('f-note').value.trim();
-      const dChk = date ? new Date(date) : null;
+      const dChk = date ? parseLocalDate(date) : null;
       if(!checkFields([
         ['f-date', !date ? 'Date is required.' : (dChk > todayMidnight ? 'Future dates are not allowed.' : '')],
         ['f-amount', !document.getElementById('f-amount').value ? 'Amount is required.' : (amount > 0 ? '' : 'Enter an amount greater than 0.')],
         ['f-category', category ? '' : 'Category is required.']
       ])) return;
-      const d = new Date(date);
+      const d = dChk;
       state.transactions.push({
         id: Date.now(), key: `${d.getFullYear()}-${d.getMonth()}`,
         type: state.type, amount, category, note, date
@@ -1016,15 +1317,15 @@
     const toVal = document.getElementById('export-to-date').value;
     const errEl = document.getElementById('export-date-err');
     errEl.textContent = ''; if(!checkFields([['export-from-date', fromVal ? '' : 'From date is required.'], ['export-to-date', toVal ? '' : 'To date is required.']])) return;
-    let fromDate = new Date(fromVal), toDate = new Date(toVal);
+    let fromDate = parseLocalDate(fromVal), toDate = parseLocalDate(toVal);
     if(fromDate > todayMidnight || toDate > todayMidnight){ errEl.textContent = 'The date range can\'t include future dates.'; return; }
     if(fromDate > toDate){ [fromDate, toDate] = [toDate, fromDate]; }
     errEl.textContent = '';
 
     const fromLabel = isoDate(fromDate), toLabel = isoDate(toDate);
     const sorted = state.transactions
-      .filter(t => { const d = new Date(t.date); return d >= fromDate && d <= toDate; })
-      .sort((a,b) => new Date(a.date) - new Date(b.date));
+      .filter(t => { const d = parseLocalDate(t.date); return d >= fromDate && d <= toDate; })
+      .sort((a,b) => parseLocalDate(a.date) - parseLocalDate(b.date));
 
     if(kind === 'income' || kind === 'expense'){
       const rows = [['Date','Category','Amount','Note']];
@@ -1290,7 +1591,7 @@
       const t = text.toLowerCase(), out = [];
       const add = (kind, title) => { if(!out.some(o => o.kind === kind)) out.push({kind, title}); };
       if(/(clear|remove|delete|hide)/.test(t)) return out;
-      const ALL = [['kpis','Key Figures'],['monthly-summary','Month-wise Income, Expenditure & Profit'],['trend','Profit Trend'],['pie-income','Income by Category'],['monthly-income-cat','Income Category by Month'],['pie-expense','Expenditure by Category'],['monthly-expense-cat','Expenditure Category by Month'],['top-expenses','Top 5 Expense Categories'],['insights','Important Insights']];
+      const ALL = [['kpis','Key Figures'],['monthly-summary','Month-wise Income, Expenditure & Profit'],['trend','Profit Trend'],['pie-income','Income by Category'],['monthly-income-cat','Income Category by Month'],['pie-expense','Expenditure by Category'],['monthly-expense-cat','Expenditure Category by Month'],['top-expenses','Top 5 Expense Categories'],['insights','AI Insights']];
       if(/(all|everything|complete|full|entire|every|possible)/.test(t) && /dashboard|widget|chart|report|view|analysis/.test(t)) return ALL.map(([kind,title]) => ({kind,title}));
       const byMonth = /month|table|range|each|wise|monthly|fy|year/.test(t);
       if(/kpi|summary|overview|key (figure|number)|savings rate|totals?/.test(t)) add('kpis','Key Figures');
@@ -1298,7 +1599,7 @@
       if(/income|earn|revenue|inflow|salary/.test(t)){ add('pie-income','Income by Category'); if(byMonth) add('monthly-income-cat','Income Category by Month'); }
       if(/profit|net|trend|growth|over time|history|progress/.test(t)){ add('trend','Profit Trend'); add('monthly-summary','Month-wise Income, Expenditure & Profit'); }
       if(/top|highest|biggest|largest|ranking/.test(t)) add('top-expenses','Top 5 Expense Categories');
-      if(/insight|important|analysis|highlight|information|info/.test(t)) add('insights','Important Insights');
+      if(/insight|important|analysis|highlight|information|info/.test(t)) add('insights','AI Insights');
       return out;
     }
 
@@ -1399,6 +1700,9 @@
     sendBtn.addEventListener('click', handleSend);
     input.addEventListener('keydown', e => { if(e.key === 'Enter') handleSend(); });
 
+    // AI Insights is always on the dashboard by default, generated locally from the user's own
+    // profit/expense/income trends — no API key or external AI call involved.
+    if(!state.botWidgets.some(w => w.kind === 'insights')) addWidget('insights', 'AI Insights');
     renderBotWidgets();
     // keep widgets in sync whenever the FY/month filters change from the dropdowns directly
     ['chart-fy','chart-month-from','chart-month-to'].forEach(id => {
@@ -1868,24 +2172,6 @@
     ])) return;
     const plan = computeGoalPlan(target, months, existingSavings, annualReturnPct);
     renderGoalPlan(plan);
-    const out = document.getElementById('goal-output');
-    out.insertAdjacentHTML('beforeend', '<div style="margin-top:14px"><button class="export-btn" id="goal-ai-btn">Get AI advice (Gemini)</button><div id="goal-ai-out" style="margin-top:10px;font-size:13px;line-height:1.6;white-space:pre-wrap"></div></div>');
-    document.getElementById('goal-ai-btn').onclick = async () => {
-      const key = localStorage.getItem('ledger-gemini-key') || '';
-      const model = localStorage.getItem('ledger-gemini-model') || 'gemini-2.0-flash';
-      const box = document.getElementById('goal-ai-out');
-      if(!key){ fErr('goal-ai-btn', 'Gemini API key is required — add it under Settings → AI settings.'); return; }
-      fErr('goal-ai-btn', ''); box.textContent = 'Thinking…';
-      try {
-        const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent?key=' + encodeURIComponent(key), {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: 'You are a concise personal-finance coach for an Indian user. Given this savings-goal plan computed from their real income/expense data, give 4-5 practical, specific suggestions. Plan JSON: ' + JSON.stringify(plan).slice(0, 4000) }] }] })
-        });
-        const j = await r.json();
-        if(!r.ok) throw new Error((j.error && j.error.message) || 'Request failed');
-        box.textContent = (j.candidates && j.candidates[0] && j.candidates[0].content.parts.map(p => p.text).join('')) || 'No response received.';
-      } catch(e){ box.textContent = ''; fErr('goal-ai-btn', 'Gemini request failed: ' + e.message + ' (check the API key in Settings).'); }
-    };
   });
 
   // ---- Settings: profile, OTP-verified email/password change, Gemini key, customer support ----
@@ -1901,8 +2187,6 @@
       $('set-first').value = m.first_name || ''; $('set-last').value = m.last_name || ''; $('set-email').value = user.email || '';
       if(!$('sup-name').value) $('sup-name').value = [m.first_name, m.last_name].filter(Boolean).join(' ');
       if(!$('sup-email').value) $('sup-email').value = user.email || '';
-      $('set-gkey').value = localStorage.getItem('ledger-gemini-key') || '';
-      $('set-gmodel').value = localStorage.getItem('ledger-gemini-model') || '';
     }
     // Sub-menus: nothing is shown until a section is clicked; one section open at a time.
     function collapseAllSettings(){
@@ -2015,16 +2299,6 @@
       $('set-pw-otp-wrap').classList.add('hidden'); $('set-pw-verify').classList.add('hidden');
     };
 
-    // Gemini key (kept in this browser's localStorage only)
-    $('set-gsave').onclick = () => {
-      const k = $('set-gkey').value.trim();
-      if(!checkFields([['set-gkey', k ? '' : 'Gemini API key is required.']])) return;
-      localStorage.setItem('ledger-gemini-key', k);
-      const gm = $('set-gmodel').value.trim(); if(gm) localStorage.setItem('ledger-gemini-model', gm); else localStorage.removeItem('ledger-gemini-model');
-      msg('set-g-msg', 'Gemini settings saved on this device.');
-    };
-    $('set-gclear').onclick = () => { localStorage.removeItem('ledger-gemini-key'); $('set-gkey').value = ''; msg('set-g-msg', 'API key removed.'); };
-
     // Customer support -> emailed to tsekhar1809@gmail.com via FormSubmit (no backend needed)
     $('sup-send').onclick = async () => {
       const v = id => $(id).value.trim();
@@ -2045,6 +2319,102 @@
         ['sup-subject','sup-msg'].forEach(i => $(i).value = ''); $('sup-topic').value = '';
       } catch(e){ msg('sup-msg-status', 'Could not send right now (' + e.message + '). Please try again shortly.', true); }
       btn.disabled = false; btn.textContent = 'Submit to support';
+    };
+
+    // ---- Recurring expenses ----
+    function renderRecurringList(){
+      const host = $('rec-list');
+      if(!state.recurring.length){ host.innerHTML = '<div class="dbw-empty">No recurring expenses set up yet.</div>'; return; }
+      host.innerHTML = state.recurring.map(item => {
+        const next = recurringOccurrences(item, parseLocalDate(item.end)).find(d => d >= todayMidnight);
+        return `<div class="rec-card" data-id="${item.id}">
+          <div>
+            <div class="rc-title">${item.title}<span class="rec-badge ${item.autoAdd?'on':''}">${item.autoAdd ? 'Auto-added' : 'Reminder only'}</span></div>
+            <div class="rc-meta">${item.frequency[0].toUpperCase()+item.frequency.slice(1)} · ${item.start} → ${item.end}<br>Next due: ${next ? isoDate(next) : '—'} · <span class="rc-amt">${fmtMoney(item.amount)}</span></div>
+          </div>
+          <div class="rc-actions"><button class="danger" data-act="del">Remove</button></div>
+        </div>`;
+      }).join('');
+      host.querySelectorAll('[data-act="del"]').forEach(btn => btn.onclick = () => {
+        const id = btn.closest('.rec-card').dataset.id;
+        state.recurring = state.recurring.filter(x => String(x.id) !== id);
+        saveRecurring(); renderRecurringList();
+      });
+    }
+    renderRecurringList();
+
+    $('rec-save-btn').onclick = async () => {
+      const title = $('rec-title').value.trim();
+      const amount = parseFloat($('rec-amount').value);
+      const due = $('rec-duedate').value, start = $('rec-start').value, end = $('rec-end').value;
+      const frequency = $('rec-frequency').value;
+      if(!checkFields([
+        ['rec-title', title ? '' : 'Title is required.'],
+        ['rec-amount', !$('rec-amount').value ? 'Amount is required.' : (amount > 0 ? '' : 'Enter an amount greater than 0.')],
+        ['rec-start', start ? '' : 'Start date is required.'],
+        ['rec-end', !end ? 'End date is required.' : (start && parseLocalDate(end) < parseLocalDate(start) ? 'End date must be on or after the start date.' : '')],
+        ['rec-duedate', !due ? 'Due date is required.' : ((start && parseLocalDate(due) < parseLocalDate(start)) || (end && parseLocalDate(due) > parseLocalDate(end)) ? 'Due date must fall within the start/end range.' : '')]
+      ])) return;
+
+      state.recurring.push({ id:'r'+Date.now(), title, amount, dueDate:due, start, end, frequency, autoAdd: $('rec-autoadd').checked, createdKeys:[], notifiedKeys:[] });
+      saveRecurring();
+      ['rec-title','rec-amount','rec-duedate','rec-start','rec-end'].forEach(i => $(i).value = '');
+      $('rec-autoadd').checked = true;
+      msg('rec-msg', 'Recurring expense added. It will be created automatically on its due dates.');
+      renderRecurringList();
+      await processRecurring();
+      if(window.renderNotifBell) window.renderNotifBell();
+      render();
+    };
+
+    // ---- Notification settings ----
+    $('notif-inapp').checked = state.notifSettings.inApp;
+    $('notif-email').checked = state.notifSettings.email;
+    $('notif-lead').value = state.notifSettings.leadDays;
+    $('notif-save-btn').onclick = () => {
+      const lead = parseInt($('notif-lead').value, 10);
+      if(!checkFields([['notif-lead', (lead >= 1 && lead <= 30) ? '' : 'Enter a number of days between 1 and 30.']])) return;
+      state.notifSettings = { inApp: $('notif-inapp').checked, email: $('notif-email').checked, leadDays: lead };
+      saveNotifSettings();
+      msg('notif-msg', 'Notification settings saved.');
+    };
+  })();
+
+  // ---- Notification bell (Dashboard) ----
+  (function initNotifBell(){
+    const bell = document.getElementById('notif-bell');
+    const panel = document.getElementById('notif-panel');
+    const dot = document.getElementById('notif-dot');
+    const itemsHost = document.getElementById('notif-items');
+    if(!bell || !panel || !dot || !itemsHost) return;
+
+    function renderNotifs(){
+      const unread = state.notifications.filter(n => !n.read).length;
+      dot.textContent = String(unread);
+      dot.classList.toggle('hidden', unread === 0);
+      if(!state.notifications.length){
+        itemsHost.innerHTML = '<div class="notif-empty">No notifications yet.</div>';
+        return;
+      }
+      itemsHost.innerHTML = state.notifications.map(n => `
+        <div class="notif-item ${n.read?'':'unread'}" data-id="${n.id}">
+          <div class="ni-title">${n.title} — ${fmtMoney(n.amount)}</div>
+          <div class="ni-meta">Due ${n.dueDate}</div>
+        </div>`).join('');
+      itemsHost.querySelectorAll('.notif-item').forEach(el => el.onclick = () => {
+        const n = state.notifications.find(x => x.id === el.dataset.id);
+        if(n){ n.read = true; saveNotifications(); renderNotifs(); }
+      });
+    }
+    renderNotifs();
+    window.renderNotifBell = renderNotifs; // let processRecurring refresh the badge after load()
+
+    bell.onclick = (e) => { e.stopPropagation(); panel.classList.toggle('hidden'); };
+    document.addEventListener('click', (e) => { if(!panel.contains(e.target) && e.target !== bell) panel.classList.add('hidden'); });
+    document.getElementById('notif-clear-btn').onclick = (e) => {
+      e.stopPropagation();
+      state.notifications = [];
+      saveNotifications(); renderNotifs();
     };
   })();
 })();
