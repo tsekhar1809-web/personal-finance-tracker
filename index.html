@@ -79,6 +79,7 @@
     }
 
     /* ---- Floating Top-Right Action Controls (Notification + Theme Toggle Side-by-Side) ---- */
+    body:not(.app-authed) .top-actions-bar { display: none !important; }
     .top-actions-bar {
       position: fixed;
       top: 16px;
@@ -253,6 +254,41 @@
     .type-btn.expense.sel { background:var(--rust); color:#fff; border-color:var(--rust); }
     .add-btn { grid-column:1/-1; padding:9px; background:var(--brand); color:#fff; border:none; cursor:pointer; font-size:13px; font-family:'IBM Plex Sans',sans-serif; border-radius:6px; }
     .add-btn:hover { background:var(--brand-dark); }
+
+
+    /* ---- OCR receipt scanner ---- */
+    .ocr-box { grid-column:1 / -1; border:1.5px dashed var(--rule); border-radius:10px; padding:12px; background:var(--paper-2); transition:border-color .2s, background .2s; }
+    .ocr-box.drag { border-color:var(--brand); background:var(--side-hover); }
+    .ocr-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .ocr-title { font-size:13px; font-weight:600; color:var(--ink); }
+    .ocr-sub { font-size:11px; color:var(--muted); flex-basis:100%; margin-top:-4px; }
+    .ocr-pick { margin-left:auto; padding:6px 12px; border-radius:6px; border:1px solid var(--brand); color:var(--brand); background:var(--card-bg); font-size:12px; cursor:pointer; font-family:'IBM Plex Sans',sans-serif; }
+    .ocr-pick:hover { background:var(--brand); color:#fff; }
+    .ocr-progress { margin-top:10px; }
+    .ocr-progress .ocr-bar { height:6px; border-radius:4px; background:var(--rule); overflow:hidden; }
+    .ocr-progress .ocr-bar > div { height:100%; width:0; background:var(--brand); transition:width .2s; }
+    .ocr-status { font-size:12px; color:var(--muted); margin-top:6px; }
+    .ocr-result { margin-top:10px; display:flex; gap:12px; align-items:flex-start; }
+    .ocr-thumb { width:84px; height:84px; border-radius:8px; border:1px solid var(--rule); background:var(--card-bg) center/cover no-repeat; cursor:zoom-in; flex:none; }
+    .ocr-info { flex:1; min-width:0; font-size:12px; color:var(--ink); }
+    .ocr-info .ocr-ok { color:var(--green); font-weight:600; }
+    .ocr-info .ocr-warn { color:var(--rust); }
+    .ocr-actions { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+    .ocr-link { border:none; background:none; color:var(--brand); font-size:12px; cursor:pointer; padding:0; font-family:'IBM Plex Sans',sans-serif; text-decoration:underline; }
+    .ocr-raw { margin-top:8px; max-height:140px; overflow:auto; white-space:pre-wrap; font-family:'IBM Plex Mono',monospace; font-size:11px; background:var(--card-bg); border:1px solid var(--rule); border-radius:6px; padding:8px; color:var(--muted); }
+    .txn-form input.ocr-filled, .txn-form select.ocr-filled { border-color:var(--brand); box-shadow:0 0 0 2px var(--side-hover); }
+    .ocr-score { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; border:1px solid var(--rule); background:var(--card-bg); color:var(--ink); }
+    .ocr-score .dot { width:8px; height:8px; border-radius:50%; background:var(--muted); }
+    .ocr-score.high .dot { background:var(--green); } .ocr-score.med .dot { background:#D99A1B; } .ocr-score.low .dot { background:var(--rust); }
+    .ocr-lowbox { margin-top:8px; padding:8px 10px; border-radius:6px; background:var(--card-bg); border:1px solid var(--rust); color:var(--ink); font-size:12px; line-height:1.55; }
+    .ocr-lowbox ul { margin:4px 0 0 16px; padding:0; }
+    .ocr-viewer { position:fixed; inset:0; background:var(--modal-overlay); z-index:10050; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .ocr-box.hidden, .ocr-viewer.hidden, .ocr-progress.hidden, .ocr-result.hidden, .ocr-raw.hidden { display:none; }
+    .ocr-viewer-inner { background:var(--card-bg); border-radius:12px; max-width:min(900px,100%); max-height:100%; display:flex; flex-direction:column; box-shadow:0 12px 40px rgba(0,0,0,.35); overflow:hidden; }
+    .ocr-viewer-head { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid var(--rule); font-size:13px; font-weight:600; color:var(--ink); }
+    .ocr-viewer-head button { border:none; background:none; font-size:20px; cursor:pointer; color:var(--muted); line-height:1; }
+    .ocr-viewer-body { overflow:auto; padding:12px; text-align:center; }
+    .ocr-viewer-body img { max-width:100%; height:auto; display:block; margin:0 auto 10px; border:1px solid var(--rule); border-radius:6px; }
 
     .txn-row { display:grid; grid-template-columns:70px 1fr 90px 22px 22px; gap:8px; align-items:center; padding:8px 0; border-bottom:1px solid var(--rule); font-size:13px; color:var(--ink); }
     .txn-row .cat { color:var(--muted); font-size:12px; }
@@ -803,7 +839,17 @@
                     <div class="type-btn income sel" data-type="income">Income</div>
                     <div class="type-btn expense" data-type="expense">Expense</div>
                   </div>
-                  <div><label>Date</label><input type="date" id="f-date"></div>
+                  <div class="ocr-box hidden" id="ocr-box">
+                <div class="ocr-head">
+                  <span class="ocr-title">📷 Scan receipt / bill</span>
+                  <button type="button" class="ocr-pick" id="ocr-pick-btn">Upload image or PDF</button>
+                  <span class="ocr-sub">Auto-fills date, amount, category &amp; note as an Expense. Nothing is saved until you click Add entry.</span>
+                </div>
+                <input type="file" id="ocr-file" accept="image/*,application/pdf" hidden>
+                <div class="ocr-progress hidden" id="ocr-progress"><div class="ocr-bar"><div id="ocr-bar-fill"></div></div><div class="ocr-status" id="ocr-status"></div></div>
+                <div class="ocr-result hidden" id="ocr-result"></div>
+              </div>
+                                <div><label>Date</label><input type="date" id="f-date"></div>
                   <div><label>Amount (<span class="cur-sym">₹</span>)</label><input type="number" id="f-amount" placeholder="0" min="0"></div>
                   <div class="full"><label>Category</label><select id="f-category"></select></div>
                   <div class="full"><label>Note (optional)</label><input type="text" id="f-note" placeholder="e.g. Client invoice, rent, groceries"></div>
@@ -1334,7 +1380,17 @@
                 <div class="type-btn income${state.type==='income'?' sel':''}" data-type="income">Income</div>
                 <div class="type-btn expense${state.type==='expense'?' sel':''}" data-type="expense">Expense</div>
               </div>
-              <div><label>Date</label><input type="date" id="f-date"></div>
+              <div class="ocr-box${state.type==='expense'?'':' hidden'}" id="ocr-box">
+                <div class="ocr-head">
+                  <span class="ocr-title">📷 Scan receipt / bill</span>
+                  <button type="button" class="ocr-pick" id="ocr-pick-btn">Upload image or PDF</button>
+                  <span class="ocr-sub">Auto-fills date, amount, category &amp; note as an Expense. Nothing is saved until you click Add entry.</span>
+                </div>
+                <input type="file" id="ocr-file" accept="image/*,application/pdf" hidden>
+                <div class="ocr-progress hidden" id="ocr-progress"><div class="ocr-bar"><div id="ocr-bar-fill"></div></div><div class="ocr-status" id="ocr-status"></div></div>
+                <div class="ocr-result hidden" id="ocr-result"></div>
+              </div>
+                            <div><label>Date</label><input type="date" id="f-date"></div>
               <div><label>Amount (<span class="cur-sym">${state.currencySymbol}</span>)</label><input type="number" id="f-amount" placeholder="0" min="0"></div>
               <div class="full"><label>Category</label><select id="f-category"></select></div>
               <div class="full"><label>Note (optional)</label><input type="text" id="f-note" placeholder="e.g. Client invoice, rent, groceries"></div>
@@ -1643,6 +1699,505 @@
         sel.innerHTML = list.map(c => `<option value="${c}">${c}</option>`).join('');
       }
 
+
+      /* =====================  OCR RECEIPT SCANNER  ===================== */
+      const OCR_LIBS = {
+        tesseract: 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js',
+        pdfjs: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js',
+        pdfWorker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'
+      };
+      const ocrScriptCache = {};
+      function ocrLoadScript(url){
+        if(!ocrScriptCache[url]){
+          ocrScriptCache[url] = new Promise((res, rej) => {
+            const el = document.createElement('script');
+            el.src = url; el.onload = res;
+            el.onerror = () => { delete ocrScriptCache[url]; rej(new Error('Could not load the OCR engine. Check your internet connection.')); };
+            document.head.appendChild(el);
+          });
+        }
+        return ocrScriptCache[url];
+      }
+
+      let ocrWorker = null, ocrWorkerPromise = null, ocrLogger = () => {};
+      let ocrBusy = false;
+      let ocrScan = null; // { pages:[dataURL], text, fileName }
+
+      async function ocrGetWorker(){
+        if(ocrWorker) return ocrWorker;
+        if(!ocrWorkerPromise){
+          ocrWorkerPromise = (async () => {
+            await ocrLoadScript(OCR_LIBS.tesseract);
+            ocrWorker = await Tesseract.createWorker('eng', 1, { logger: m => ocrLogger(m) });
+            return ocrWorker;
+          })().catch(e => { ocrWorkerPromise = null; throw e; });
+        }
+        return ocrWorkerPromise;
+      }
+
+      function ocrPrepCanvas(src, w, h){
+        // scale to a good OCR size, convert to high-contrast greyscale
+        const target = 2000;
+        let scale = Math.min(target / Math.max(w, h), 2.5);
+        if(w * scale < 1000) scale = Math.min(1000 / w, 3);
+        const cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+        const c = document.createElement('canvas'); c.width = cw; c.height = ch;
+        const ctx = c.getContext('2d', { willReadFrequently: true });
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cw, ch);
+        ctx.drawImage(src, 0, 0, cw, ch);
+        const img = ctx.getImageData(0, 0, cw, ch), d = img.data;
+        for(let i = 0; i < d.length; i += 4){
+          let g = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+          g = (g - 128) * 1.35 + 128; // contrast boost
+          g = g < 0 ? 0 : g > 255 ? 255 : g;
+          d[i] = d[i+1] = d[i+2] = g;
+        }
+        ctx.putImageData(img, 0, 0);
+        return c;
+      }
+
+      function ocrLoadImage(file){
+        return new Promise((res, rej) => {
+          const url = URL.createObjectURL(file);
+          const im = new Image();
+          im.onload = () => res({ im, url });
+          im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('This image format is not supported. Please use JPG, PNG or WEBP.')); };
+          im.src = url;
+        });
+      }
+
+      let ocrPdfWorkerReady = false;
+      async function ocrPdfOpen(buf){
+        await ocrLoadScript(OCR_LIBS.pdfjs);
+        const opts = pdfjsLib.GlobalWorkerOptions;
+        if(!ocrPdfWorkerReady){
+          try {
+            // run the real worker code from a same-origin blob (works from file:// and strict hosts)
+            const code = await (await fetch(OCR_LIBS.pdfWorker)).text();
+            opts.workerSrc = URL.createObjectURL(new Blob([code], { type: 'text/javascript' }));
+          } catch(e){
+            opts.workerSrc = OCR_LIBS.pdfWorker;
+          }
+          ocrPdfWorkerReady = true;
+        }
+        try {
+          return await pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
+        } catch(e){
+          // fallback: load worker script on the main thread (defines window.pdfjsWorker) and retry
+          opts.workerSrc = OCR_LIBS.pdfWorker;
+          await ocrLoadScript(OCR_LIBS.pdfWorker);
+          return await pdfjsLib.getDocument({ data: buf.slice(0) }).promise;
+        }
+      }
+
+      async function ocrPdfPages(file, setStatus){
+        const pdf = await ocrPdfOpen(await file.arrayBuffer());
+        const n = Math.min(pdf.numPages, 3);
+        const canvases = [];
+        for(let i = 1; i <= n; i++){
+          setStatus(`Reading PDF page ${i} of ${n}…`);
+          const page = await pdf.getPage(i);
+          const vp = page.getViewport({ scale: 2.5 });
+          const c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
+          await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+          canvases.push(c);
+        }
+        return { canvases, total: pdf.numPages };
+      }
+
+      /* ---------- Field extraction ---------- */
+      const OCR_MONTHS = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
+
+      function ocrParseAmount(text){
+        const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        const numRe = /\d{1,3}(?:,\d{2,3})+(?:\.\d{1,2})?|\d+(?:\.\d{1,2})?/g;
+        const toNum = t => parseFloat(t.replace(/,/g, ''));
+        const numsIn = l => (l.match(numRe) || []).map(toNum).filter(n => n > 0 && n < 10000000);
+        const strong = /(grand\s*total|total\s*(amount|payable|due|paid|invoice)|amount\s*(payable|due|paid)|net\s*(payable|amount|total)|balance\s*due|bill\s*(amount|total)|invoice\s*(total|amount)|to\s*pay|you\s*paid|paid\s*amount|amt\s*paid)/i;
+        const weak = /\btotal\b/i, notTotal = /sub\s*-?\s*total|total\s*(tax|gst|cgst|sgst|igst|vat|discount|savings?|qty|quantity|items?|saved)/i;
+        const pick = (test) => {
+          const found = [];
+          lines.forEach((l, i) => {
+            if(!test(l)) return;
+            let n = numsIn(l);
+            if(!n.length && lines[i+1]) n = numsIn(lines[i+1]);
+            if(n.length) found.push(n[n.length - 1]);
+          });
+          return found.length ? Math.max(...found) : null;
+        };
+        let v = pick(l => strong.test(l) && !notTotal.test(l));
+        if(v) return { value: v, confident: true };
+        v = pick(l => weak.test(l) && !notTotal.test(l));
+        if(v) return { value: v, confident: true };
+        // fallback: largest price-like number (has decimals or follows a currency marker)
+        const skip = /gstin|invoice\s*(no|#)|phone|tel\b|mob|a\/c|account|order\s*(id|no)|pin\s*code|txn|ref\b|cin\b|fssai|date|time|hsn/i;
+        const cands = [];
+        lines.forEach(l => {
+          if(skip.test(l)) return;
+          const cur = /(₹|\brs\.?(?=\s|\d)|\binr\b|[$€£])/i.test(l);
+          (l.match(numRe) || []).forEach(t => { if(/\./.test(t) || cur){ const n = toNum(t); if(n > 0 && n < 1000000) cands.push(n); } });
+        });
+        return cands.length ? { value: Math.max(...cands), confident: false } : { value: null, confident: false };
+      }
+
+      function ocrParseDate(text){
+        const lines = text.split(/\r?\n/);
+        const today0 = todayMidnight, cands = [];
+        const valid = (y, m, d) => {
+          if(y < 100) y += 2000;
+          if(y < 2000 || y > today0.getFullYear() + 1) return null;
+          const dt = new Date(y, m, d);
+          return (dt.getFullYear() === y && dt.getMonth() === m && dt.getDate() === d) ? dt : null;
+        };
+        const mon = t => OCR_MONTHS[t.slice(0, 3).toLowerCase()];
+        const mnames = 'jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec';
+        lines.forEach((line, idx) => {
+          const hint = /date|dt\b|bill|invoice|inv\b|paid|order/i.test(line) ? 1 : 0;
+          let m, dt;
+          const reA = /\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4}|\d{2})\b/g;
+          while((m = reA.exec(line))){
+            const a = +m[1], b = +m[2], y = +m[3];
+            dt = (a > 12) ? valid(y, b - 1, a) : (b > 12) ? valid(y, a - 1, b) : valid(y, b - 1, a);
+            if(dt) cands.push({ dt, hint, idx });
+          }
+          const reB = /\b(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})\b/g;
+          while((m = reB.exec(line))){ dt = valid(+m[1], +m[2] - 1, +m[3]); if(dt) cands.push({ dt, hint, idx }); }
+          const reC = new RegExp('\\b(\\d{1,2})(?:st|nd|rd|th)?[\\s\\-,.]*(' + mnames + ')[a-z]*[\\s\\-,.\']*(\\d{4}|\\d{2})\\b', 'gi');
+          while((m = reC.exec(line))){ dt = valid(+m[3], mon(m[2]), +m[1]); if(dt) cands.push({ dt, hint, idx }); }
+          const reD = new RegExp('\\b(' + mnames + ')[a-z]*\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?,?\\s+(\\d{4})\\b', 'gi');
+          while((m = reD.exec(line))){ dt = valid(+m[3], mon(m[1]), +m[2]); if(dt) cands.push({ dt, hint, idx }); }
+        });
+        const usable = cands.filter(c => c.dt <= today0);
+        if(!usable.length) return null;
+        usable.sort((x, y) => (y.hint - x.hint) || (x.idx - y.idx));
+        return usable[0].dt;
+      }
+
+      const OCR_CAT_RULES = [
+        { names: ['Groceries', 'Grocery', 'Food', 'Food & Dining'], re: /grocer|supermarket|super\s*market|bigbasket|big\s*basket|dmart|d-mart|reliance\s*(fresh|smart)|more\s*retail|vegetable|kirana|blinkit|zepto|instamart|fresh|provision|bakery|dairy/i },
+        { names: ['Food', 'Dining', 'Food & Dining', 'Restaurants', 'Entertainment'], re: /restaurant|cafe|café|hotel|dhaba|biryani|pizza|burger|kitchen|swiggy|zomato|dominos|kfc|mcdonald|starbucks|food\s*court|dine|bistro/i },
+        { names: ['Transport', 'Travel', 'Fuel'], re: /uber|\bola\b|rapido|petrol|diesel|fuel|\bhpcl\b|\bbpcl\b|\biocl\b|indian\s*oil|bharat\s*petroleum|shell|metro|irctc|railway|redbus|toll|fastag|parking|cab\b|taxi|airline|indigo|air\s*india|flight/i },
+        { names: ['Utilities', 'Bills'], re: /electric|\bbescom\b|\btsspdcl\b|\btgspdcl\b|power\s*bill|water\s*(bill|board)|broadband|internet|wifi|fibre|fiber|recharge|airtel|jio|\bvi\b|vodafone|bsnl|gas\s*(bill|cylinder)|\blpg\b|postpaid|dth|tata\s*play/i },
+        { names: ['Healthcare', 'Medical', 'Health'], re: /pharma|medical|medico|medplus|apollo|hospital|clinic|diagnostic|\blab\b|laborator|doctor|dr\.|dental|consultation|chemist|1mg|netmeds/i },
+        { names: ['Entertainment'], re: /cinema|movie|pvr|inox|bookmyshow|netflix|prime\s*video|hotstar|spotify|gaming|theatre|theater|amusement|concert/i },
+        { names: ['Rent'], re: /\brent\b|rental|landlord|lease/i },
+        { names: ['EMI/Loan', 'EMI', 'Loan'], re: /\bemi\b|loan|instal?lment|installment/i }
+      ];
+      function ocrGuessCategory(text){
+        const list = state.categories.expense || DEFAULT_CATS.expense;
+        const find = nm => list.find(c => c.toLowerCase() === nm.toLowerCase());
+        // a user's own custom category name appearing in the text wins
+        const low = text.toLowerCase();
+        const custom = list.find(c => c.length > 3 && !DEFAULT_CATS.expense.includes(c) && low.includes(c.toLowerCase()));
+        if(custom) return { cat: custom, matched: true };
+        for(const r of OCR_CAT_RULES){
+          if(r.re.test(text)){
+            for(const nm of r.names){ const f = find(nm); if(f) return { cat: f, matched: true }; }
+          }
+        }
+        return { cat: find('Other') || list[list.length - 1] || '', matched: false };
+      }
+
+      function ocrGuessNote(text){
+        const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean).slice(0, 8);
+        const skip = /invoice|receipt|tax|gst|bill\b|cash\s*memo|date|time|tel|phone|mob|www\.|http|@|^\W*$|^\d/i;
+        for(const l of lines){
+          const letters = (l.match(/[A-Za-z]/g) || []).length;
+          if(letters >= 3 && letters / l.length > 0.55 && !skip.test(l)){
+            return l.replace(/[^A-Za-z0-9 &'.,\-\/]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60);
+          }
+        }
+        return '';
+      }
+
+      /* ---------- UI ---------- */
+      function ocrEl(id){ return document.getElementById(id); }
+      function ocrSetProgress(show, pct, msg){
+        const box = ocrEl('ocr-progress'); if(!box) return;
+        box.classList.toggle('hidden', !show);
+        if(pct != null) ocrEl('ocr-bar-fill').style.width = Math.round(pct * 100) + '%';
+        if(msg != null) ocrEl('ocr-status').textContent = msg;
+      }
+      function ocrEsc(t){ return String(t).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c])); }
+
+      function ocrMarkFilled(id){
+        const el = ocrEl(id); if(!el) return;
+        el.classList.add('ocr-filled');
+        const clear = () => { el.classList.remove('ocr-filled'); el.removeEventListener('input', clear); el.removeEventListener('change', clear); };
+        el.addEventListener('input', clear); el.addEventListener('change', clear);
+      }
+      function ocrClearFilledMarks(){ ['f-date','f-amount','f-category','f-note'].forEach(id => { const e = ocrEl(id); if(e) e.classList.remove('ocr-filled'); }); }
+
+      function ocrReset(){
+        ocrScan = null;
+        const r = ocrEl('ocr-result'); if(r){ r.classList.add('hidden'); r.innerHTML = ''; }
+        ocrSetProgress(false, 0, '');
+        ocrClearFilledMarks();
+      }
+
+      function ocrDiscardScan(){
+        const had = !!ocrScan;
+        ocrReset();
+        if(had){ const a = ocrEl('f-amount'), n = ocrEl('f-note'); if(a) a.value = ''; if(n) n.value = ''; }
+      }
+      function ocrSyncVisibility(){
+        const b = ocrEl('ocr-box'); if(!b) return;
+        const isExp = state.type === 'expense';
+        b.classList.toggle('hidden', !isExp);
+        if(!isExp) ocrDiscardScan();
+      }
+
+      function ocrOpenViewer(){
+        if(!ocrScan) return;
+        let v = ocrEl('ocr-viewer');
+        if(!v){
+          v = document.createElement('div'); v.id = 'ocr-viewer'; v.className = 'ocr-viewer hidden';
+          v.innerHTML = '<div class="ocr-viewer-inner"><div class="ocr-viewer-head"><span id="ocr-viewer-title"></span><button type="button" id="ocr-viewer-close" aria-label="Close">×</button></div><div class="ocr-viewer-body" id="ocr-viewer-body"></div></div>';
+          document.body.appendChild(v);
+          const close = () => v.classList.add('hidden');
+          v.addEventListener('click', e => { if(e.target === v) close(); });
+          v.querySelector('#ocr-viewer-close').onclick = close;
+          document.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+        }
+        ocrEl('ocr-viewer-title').textContent = ocrScan.fileName || 'Uploaded document';
+        ocrEl('ocr-viewer-body').innerHTML = ocrScan.pages.map((u, i) => `<img src="${u}" alt="Uploaded document page ${i+1}">`).join('');
+        v.classList.remove('hidden');
+      }
+
+      /* ---------- Confidence scoring ---------- */
+      const OCR_MIN_CONFIDENCE = 50;
+
+      function ocrWordsOf(data){
+        if(Array.isArray(data.words) && data.words.length) return data.words;
+        const out = [];
+        (data.blocks || []).forEach(bl => (bl.paragraphs || []).forEach(pa => (pa.lines || []).forEach(li => (li.words || []).forEach(w => out.push(w)))));
+        return out;
+      }
+
+      function ocrRelevance(text, amt, dt){
+        const billWords = ['invoice','receipt','cash memo','bill','gstin','gst','cgst','sgst','igst','vat','subtotal','sub total','total','qty','quantity','mrp','rate','amount','paid','payment','upi','card','change','thank you','visit again','order','customer','table','fare','trip','ride','price','item','balance','due','tax'];
+        const low = text.toLowerCase();
+        const distinct = billWords.filter(w => new RegExp('\\b' + w.replace(' ', '\\s*') + '\\b', 'i').test(low)).length;
+        const priceLike = (text.match(/\b\d{1,3}(?:,\d{2,3})*\.\d{2}\b/g) || []).length;
+        let rel = Math.min(40, distinct * 8);
+        rel += amt.value != null ? (amt.confident ? 25 : 10) : 0;
+        rel += /(₹|\brs\.?\b|\binr\b|\$|€|£)/i.test(text) ? 10 : 0;
+        rel += dt ? 15 : 0;
+        rel += priceLike >= 2 ? 10 : 0;
+        return Math.min(100, rel);
+      }
+
+      function ocrAnalyze(pageData){
+        const text = pageData.map(p => p.text).join('\n').trim();
+        const words = pageData.flatMap(p => p.words);
+        const usable = words.filter(w => /[A-Za-z0-9]{2,}/.test(w.text || '') && typeof w.confidence === 'number');
+        let meanConf, lowFrac;
+        if(usable.length){
+          meanConf = usable.reduce((t, w) => t + w.confidence, 0) / usable.length;
+          lowFrac = usable.filter(w => w.confidence < 50).length / usable.length;
+        } else {
+          const cs = pageData.map(p => p.conf).filter(c => typeof c === 'number');
+          meanConf = cs.length ? cs.reduce((t, c) => t + c, 0) / cs.length : 0;
+          lowFrac = meanConf < 50 ? 1 : 0;
+        }
+        const amt = ocrParseAmount(text);
+        const dt = ocrParseDate(text);
+        const cat = ocrGuessCategory(text);
+        const note = ocrGuessNote(text);
+        const relevance = ocrRelevance(text, amt, dt);
+
+        // confidence of the words that actually make up the amount
+        let amtConf = meanConf;
+        if(amt.value != null){
+          const variants = [String(amt.value), amt.value.toFixed(2), amt.value.toFixed(1)];
+          const hits = usable.filter(w => { const d = (w.text || '').replace(/[^0-9.]/g, ''); return d && variants.includes(d); });
+          if(hits.length) amtConf = Math.max(...hits.map(w => w.confidence));
+        }
+
+        let score = 0.30 * meanConf + 0.25 * amtConf + 0.45 * relevance;
+        const reasons = [];
+        if(!text || relevance < 40){
+          score = Math.min(score, 35);
+          reasons.push('This does not look like a bill, receipt or invoice for an expense.');
+        }
+        if(amt.value == null){
+          score = Math.min(score, 35);
+          if(relevance >= 40) reasons.push('No clear total amount could be found.');
+        } else if(!amt.confident){
+          score = Math.min(score, 45);
+          if(relevance >= 40) reasons.push('The total amount is not clearly marked, so the value may be wrong.');
+        }
+        if(meanConf < 55 || lowFrac > 0.45){
+          score = Math.min(score, 45);
+          reasons.push('The text is unclear (blurry, low quality or handwritten), so the values cannot be read reliably.');
+        } else if(amt.value != null && amtConf < 60){
+          score = Math.min(score, 45);
+          reasons.push('The amount digits are not clear enough to trust.');
+        }
+        score = Math.max(0, Math.min(100, Math.round(score)));
+        return { text, score, reasons, amt, dt, cat, note, relevance, meanConf: Math.round(meanConf) };
+      }
+
+      function ocrScoreBadge(score){
+        const cls = score >= 75 ? 'high' : score >= OCR_MIN_CONFIDENCE ? 'med' : 'low';
+        const lbl = score >= 75 ? 'High' : score >= OCR_MIN_CONFIDENCE ? 'Medium' : 'Low';
+        return `<span class="ocr-score ${cls}" title="OCR confidence score"><span class="dot"></span>Confidence ${score}% · ${lbl}</span>`;
+      }
+
+      function ocrRenderResult(info){
+        const r = ocrEl('ocr-result'); if(!r || !ocrScan) return;
+        const low = info.score < OCR_MIN_CONFIDENCE;
+        let body;
+        if(low){
+          const reasons = (info.reasons && info.reasons.length ? info.reasons : ['The document could not be read reliably.']).map(x => `<li>${ocrEsc(x)}</li>`).join('');
+          body = `
+            <div class="ocr-warn" style="font-weight:600">⚠ Fields were not auto-filled</div>
+            <div style="margin-top:4px">${ocrScoreBadge(info.score)}</div>
+            <div class="ocr-lowbox">Confidence is below ${OCR_MIN_CONFIDENCE}%. Please enter the details manually.<ul>${reasons}</ul></div>`;
+        } else {
+          const notes = [];
+          notes.push(info.amount != null ? `Amount: <b>${state.currencySymbol}${info.amount}</b>` : '<span class="ocr-warn">Amount not found — please enter it</span>');
+          notes.push(info.date ? `Date: <b>${isoDate(info.date)}</b>` : '<span class="ocr-warn">Date not found — please check</span>');
+          notes.push(info.catMatched ? `Category: <b>${ocrEsc(info.cat)}</b>` : `Category: <span class="ocr-warn">no match, set to ${ocrEsc(info.cat || 'default')}</span>`);
+          if(info.dateOutOfMonth) notes.push(`<span class="ocr-warn">Date is outside the selected month — the entry will be filed under its own month.</span>`);
+          if(info.extraPages) notes.push(`<span class="ocr-warn">Only the first 3 pages of the PDF were read.</span>`);
+          body = `
+            <div class="ocr-ok">✓ Scan complete — please verify the highlighted fields</div>
+            <div style="margin-top:4px">${ocrScoreBadge(info.score)}</div>
+            <div style="margin-top:6px; line-height:1.6">${notes.join('<br>')}</div>`;
+        }
+        r.innerHTML = `
+          <div class="ocr-thumb" id="ocr-thumb" title="Click to view full image" style="background-image:url('${ocrScan.pages[0]}')"></div>
+          <div class="ocr-info">
+            ${body}
+            <div class="ocr-actions">
+              <button type="button" class="ocr-link" id="ocr-view">View uploaded image</button>
+              <button type="button" class="ocr-link" id="ocr-rawtoggle">Show extracted text</button>
+              <button type="button" class="ocr-link" id="ocr-clear">Clear</button>
+            </div>
+            <div class="ocr-raw hidden" id="ocr-raw">${ocrEsc(ocrScan.text || '(no text detected)')}</div>
+          </div>`;
+        r.classList.remove('hidden');
+        ocrEl('ocr-thumb').onclick = ocrOpenViewer;
+        ocrEl('ocr-view').onclick = ocrOpenViewer;
+        ocrEl('ocr-rawtoggle').onclick = () => {
+          const raw = ocrEl('ocr-raw'); raw.classList.toggle('hidden');
+          ocrEl('ocr-rawtoggle').textContent = raw.classList.contains('hidden') ? 'Show extracted text' : 'Hide extracted text';
+        };
+        ocrEl('ocr-clear').onclick = ocrReset;
+      }
+
+      function ocrApplyToForm(an, extraPages){
+        // Always an expense
+        state.type = 'expense';
+        root.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('sel', b.dataset.type === 'expense'));
+        populateCategorySelect();
+
+        // Low confidence: do NOT touch any field — the user enters everything manually
+        if(an.score < OCR_MIN_CONFIDENCE){
+          ocrRenderResult({ score: an.score, reasons: an.reasons });
+          return;
+        }
+
+        const { amt, dt, cat, note } = an;
+        let dateOutOfMonth = false;
+        if(amt.value != null){ ocrEl('f-amount').value = amt.value; ocrMarkFilled('f-amount'); }
+        if(dt){
+          const di = ocrEl('f-date'); di.value = isoDate(dt); ocrMarkFilled('f-date');
+          dateOutOfMonth = (di.min && di.value < di.min) || (di.max && di.value > di.max);
+        }
+        const sel = ocrEl('f-category');
+        if(cat.cat && [...sel.options].some(o => o.value === cat.cat)){ sel.value = cat.cat; if(cat.matched) ocrMarkFilled('f-category'); }
+        if(note){ ocrEl('f-note').value = note; ocrMarkFilled('f-note'); }
+
+        ['f-date','f-amount','f-category'].forEach(id => { if(typeof fErr === 'function') fErr(id, ''); });
+        ocrRenderResult({ score: an.score, amount: amt.value, date: dt, cat: cat.cat, catMatched: cat.matched, dateOutOfMonth, extraPages });
+      }
+
+      async function ocrHandleFile(file){
+        if(ocrBusy || !file || state.type !== 'expense') return;
+        const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+        if(!isPdf && !/^image\//.test(file.type)){ ocrSetProgress(true, 0, 'Unsupported file. Please upload an image (JPG/PNG/WEBP) or a PDF.'); return; }
+        if(file.size > 15 * 1024 * 1024){ ocrSetProgress(true, 0, 'File is too large (max 15 MB).'); return; }
+
+        ocrBusy = true;
+        const pickBtn = ocrEl('ocr-pick-btn'); if(pickBtn){ pickBtn.disabled = true; pickBtn.textContent = 'Scanning…'; }
+        ocrReset();
+        const setStatus = m => ocrSetProgress(true, null, m);
+        try{
+          ocrSetProgress(true, 0.02, 'Preparing document…');
+          let canvases = [], total = 1, pages = [];
+          if(isPdf){
+            const r = await ocrPdfPages(file, setStatus); canvases = r.canvases; total = r.total;
+            pages = canvases.map(c => c.toDataURL('image/jpeg', 0.85));
+            canvases = canvases.map(c => ocrPrepCanvas(c, c.width, c.height));
+          } else {
+            const { im, url } = await ocrLoadImage(file);
+            const prev = ocrPrepCanvas(im, im.naturalWidth, im.naturalHeight);
+            // preview = original, downscaled for memory
+            const pc = document.createElement('canvas'); const ps = Math.min(1, 1600 / Math.max(im.naturalWidth, im.naturalHeight));
+            pc.width = Math.round(im.naturalWidth * ps); pc.height = Math.round(im.naturalHeight * ps);
+            pc.getContext('2d').drawImage(im, 0, 0, pc.width, pc.height);
+            pages = [pc.toDataURL('image/jpeg', 0.9)];
+            URL.revokeObjectURL(url);
+            canvases = [prev];
+          }
+
+          setStatus('Loading OCR engine (first time may take a few seconds)…');
+          const worker = await ocrGetWorker();
+          const pageData = [];
+          for(let i = 0; i < canvases.length; i++){
+            ocrLogger = m => {
+              if(m.status === 'recognizing text'){
+                const base = i / canvases.length, span = 1 / canvases.length;
+                ocrSetProgress(true, 0.1 + 0.9 * (base + span * m.progress), `Reading text${canvases.length > 1 ? ' (page ' + (i+1) + ')' : ''}… ${Math.round(m.progress * 100)}%`);
+              }
+            };
+            const { data } = await worker.recognize(canvases[i], {}, { text: true, blocks: true });
+            pageData.push({ text: data.text || '', conf: data.confidence, words: ocrWordsOf(data) });
+          }
+          ocrLogger = () => {};
+
+          if(!ocrEl('f-amount')) return; // form was re-rendered while scanning
+          const an = ocrAnalyze(pageData);
+          ocrScan = { pages, text: an.text, fileName: file.name, score: an.score };
+          if(!ocrScan.text){
+            ocrSetProgress(true, 1, 'No readable text found. Try a clearer, well-lit photo, or enter the details manually.');
+            ocrRenderResult({ score: 0, reasons: ['No readable text was detected in this document.'] });
+            return;
+          }
+          ocrSetProgress(false, 1, '');
+          ocrApplyToForm(an, total > 3);
+        } catch(err){
+          ocrSetProgress(true, 0, '⚠ ' + (err && err.message ? err.message : 'Could not read this document.'));
+        } finally {
+          ocrBusy = false;
+          const b = ocrEl('ocr-pick-btn'); if(b){ b.disabled = false; b.textContent = 'Upload image or PDF'; }
+          const fi = ocrEl('ocr-file'); if(fi) fi.value = '';
+        }
+      }
+
+      function bindOcr(){
+        const box = ocrEl('ocr-box'); if(!box) return;
+        const fileInput = ocrEl('ocr-file');
+        ocrEl('ocr-pick-btn').onclick = () => fileInput.click();
+        fileInput.onchange = () => ocrHandleFile(fileInput.files[0]);
+        ['dragenter','dragover'].forEach(ev => box.addEventListener(ev, e => { e.preventDefault(); box.classList.add('drag'); }));
+        ['dragleave','drop'].forEach(ev => box.addEventListener(ev, e => { e.preventDefault(); box.classList.remove('drag'); }));
+        box.addEventListener('drop', e => { const f = e.dataTransfer && e.dataTransfer.files[0]; if(f) ocrHandleFile(f); });
+        // allow pasting a screenshot while the form is visible
+        if(!window.__ocrPasteBound){
+          window.__ocrPasteBound = true;
+          document.addEventListener('paste', e => {
+            if(!ocrEl('ocr-box') || ocrBusy || state.type !== 'expense') return;
+            const t = e.target && e.target.tagName;
+            if(t === 'INPUT' || t === 'TEXTAREA') return;
+            const item = [...(e.clipboardData ? e.clipboardData.items : [])].find(i => i.type.startsWith('image/'));
+            if(item) ocrHandleFile(item.getAsFile());
+          });
+        }
+      }
+
       function bindEntryForm(){
         const dateInput = document.getElementById('f-date');
         if(!dateInput) return;
@@ -1656,6 +2211,7 @@
         dateInput.max = toISO(maxDate);
         dateInput.value = toISO(maxDate);
         populateCategorySelect();
+        bindOcr();
 
         root.querySelectorAll('.type-btn').forEach(btn => {
           btn.onclick = () => {
@@ -1663,6 +2219,7 @@
             root.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('sel'));
             btn.classList.add('sel');
             populateCategorySelect();
+            ocrSyncVisibility();
           };
         });
 
@@ -1684,6 +2241,7 @@
           });
           document.getElementById('f-amount').value = '';
           document.getElementById('f-note').value = '';
+          ocrReset();
           save(); render();
         };
       }
@@ -1887,6 +2445,7 @@
 
       async function goToApp(){
         overlay.style.display = 'none';
+        document.body.classList.add('app-authed');
         load();
         showWelcomeGreeting();
       }
@@ -1921,6 +2480,8 @@
         const doLogout = async () => {
           await sb.auth.signOut();
           overlay.style.display = 'flex';
+          document.body.classList.remove('app-authed');
+          const np = document.getElementById('notif-panel'); if(np) np.classList.add('hidden');
           document.getElementById('login-email-input').value = '';
           document.getElementById('login-password-input').value = '';
           setErr('login-err');
