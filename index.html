@@ -205,6 +205,27 @@
     .dash-welcome.hidden { display: none; }
     .dash-welcome-title { font-size: 18px; font-weight: 700; }
     .dash-welcome-sub { font-size: 13px; opacity: 0.9; margin-top: 4px; }
+    .dash-welcome-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.45);
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, transform 0.15s;
+      flex-shrink: 0;
+    }
+    .dash-welcome-close:hover { background: rgba(255,255,255,0.30); transform: scale(1.1); }
+    .dash-welcome { position: relative; }
     .dash-welcome-badge {
       background: rgba(255, 255, 255, 0.18);
       backdrop-filter: blur(4px);
@@ -339,8 +360,6 @@
 
     .locked-note { padding:24px 0; text-align:center; color:var(--muted); font-size:13px; }
 
-    .forecast-controls { display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
-    .forecast-controls input[type=range] { flex:1; min-width:120px; }
     .forecast-out { display:flex; justify-content:space-between; padding:10px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); margin-bottom:14px; color:var(--ink); }
     .forecast-out .amt { font-size:20px; font-weight:600; }
 
@@ -474,6 +493,27 @@
     .dash-bot-input-row input { flex:1; border:1px solid var(--rule); background:var(--input-bg); color:var(--ink); border-radius:8px; padding:8px 10px; font-size:13px; font-family:'IBM Plex Sans',sans-serif; }
     .dash-bot-input-row button { background:var(--brand); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; cursor:pointer; }
     .dash-bot-input-row button:hover { background:var(--brand-dark); }
+    .dbw-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
+    .dbw-kpi { background:var(--paper-2); border:1px solid var(--rule); border-radius:10px; padding:10px 12px; }
+    .dbw-kpi span { display:block; font-size:11px; color:var(--muted); margin-bottom:2px; }
+    .dbw-kpi b { font-size:18px; }
+    .dbw-sub { font-size:11px; color:var(--muted); margin:-6px 0 10px; }
+    .dbw-scroll { overflow-x:auto; }
+    .dbw-legend { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12px; margin-bottom:8px; color:var(--ink); }
+    .dbw-legend i, .dbw-row i { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; }
+    .dbw-donut { display:flex; gap:20px; align-items:center; flex-wrap:wrap; }
+    .dbw-rows { flex:1; min-width:200px; display:flex; flex-direction:column; gap:6px; }
+    .dbw-row { display:flex; justify-content:space-between; gap:12px; font-size:13px; padding-bottom:4px; border-bottom:1px dashed var(--rule); }
+    .dbw-table { width:100%; border-collapse:collapse; font-size:13px; }
+    .dbw-table th { text-align:left; font-size:11px; color:var(--muted); font-weight:600; padding:6px 8px; border-bottom:1px solid var(--rule); }
+    .dbw-table td { padding:7px 8px; border-bottom:1px solid var(--rule); }
+    .dbw-insights { margin:0; padding-left:18px; font-size:13px; line-height:1.75; }
+    .auth-err-links { margin-top:6px; font-size:12px; }
+    .auth-err-links a { color:var(--brand); cursor:pointer; text-decoration:underline; margin:0 6px; }
+    .dash-bot-msg.bot.err { border-left:4px solid #C1432B; }
+    .dash-bot-examples { margin-top:6px; font-size:12px; color:var(--muted); }
+    .dash-bot-examples ul { margin:4px 0 0 16px; padding:0; }
+    .dash-bot-examples li { margin:2px 0; list-style:disc; }
     .dash-bot-hint { font-size:11px; color:var(--muted); padding:0 12px 8px; background:var(--card-bg); }
 
     .dash-bot-widgets { display:flex; flex-direction:column; gap:16px; margin-bottom:26px; }
@@ -551,6 +591,203 @@
 
     body, #ledger-root, .app-shell, .sidebar, .panel, .hero, .dashboard-panel, .set-section, .box, .rec-card, .notif-panel, .dash-bot-panel {
       transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    /* ===== USER MANUAL STYLES ===== */
+    .manual-intro { font-size:13px; color:var(--muted); margin-bottom:18px; line-height:1.6; }
+    .manual-toc { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
+    .manual-toc-btn {
+      padding:6px 13px; border-radius:20px; border:1px solid var(--rule);
+      background:var(--paper-2); color:var(--ink); font-size:12px; cursor:pointer;
+      font-family:'IBM Plex Sans',sans-serif; transition:all .15s; white-space:nowrap;
+    }
+    .manual-toc-btn:hover, .manual-toc-btn.active { background:var(--brand); color:#fff; border-color:var(--brand); }
+
+    .manual-chapter { display:none; }
+    .manual-chapter.active { display:block; }
+
+    .manual-chapter-title {
+      font-size:16px; font-weight:700; color:var(--ink);
+      margin-bottom:4px; display:flex; align-items:center; gap:8px;
+    }
+    .manual-chapter-desc { font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.55; }
+
+    .manual-steps { display:flex; flex-direction:column; gap:28px; }
+    .manual-step {
+      display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;
+      background:var(--card-bg); border:1px solid var(--rule); border-radius:12px;
+      padding:18px 20px; box-shadow:var(--card-shadow);
+    }
+    @media(max-width:700px){ .manual-step { grid-template-columns:1fr; } }
+    .manual-step-info { display:flex; flex-direction:column; gap:6px; }
+    .manual-step-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:24px; height:24px; border-radius:50%; background:var(--brand);
+      color:#fff; font-size:11px; font-weight:700; flex-shrink:0; margin-bottom:4px;
+    }
+    .manual-step-title { font-size:14px; font-weight:700; color:var(--ink); }
+    .manual-step-body { font-size:12.5px; color:var(--muted); line-height:1.65; }
+    .manual-step-tip {
+      margin-top:8px; padding:7px 10px; background:var(--paper-2);
+      border-left:3px solid var(--brand); border-radius:4px;
+      font-size:11.5px; color:var(--ink); line-height:1.5;
+    }
+
+    /* ---- Animated Screen ---- */
+    .manual-screen {
+      border-radius:10px; overflow:hidden; background:var(--paper);
+      border:1px solid var(--rule); box-shadow:0 4px 16px rgba(0,0,0,.1);
+      min-height:160px; position:relative; user-select:none;
+    }
+    .manual-screen-bar {
+      height:32px; background:var(--sidebar-bg); border-bottom:1px solid var(--rule);
+      display:flex; align-items:center; padding:0 10px; gap:6px;
+    }
+    .ms-dot { width:9px; height:9px; border-radius:50%; }
+    .ms-dot.r { background:#FF5F57; } .ms-dot.y { background:#FEBC2E; } .ms-dot.g { background:#28C840; }
+    .ms-url { flex:1; height:18px; background:var(--card-bg); border:1px solid var(--rule);
+      border-radius:4px; margin-left:8px; font-size:9px; color:var(--muted);
+      display:flex; align-items:center; padding:0 6px; font-family:'IBM Plex Mono',monospace; }
+    .ms-body { padding:12px; }
+
+    /* animated highlight pulse */
+    @keyframes manualPulse {
+      0%,100%{ box-shadow:0 0 0 0 rgba(28,95,168,0); }
+      50%{ box-shadow:0 0 0 5px rgba(28,95,168,0.28); }
+    }
+    @keyframes manualType {
+      from{ width:0; } to{ width:100%; }
+    }
+    @keyframes manualFadeIn {
+      from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); }
+    }
+    @keyframes manualSlideRight {
+      0%{ transform:translateX(-8px); opacity:0; } 100%{ transform:translateX(0); opacity:1; }
+    }
+    @keyframes manualBlink {
+      0%,100%{ opacity:1; } 50%{ opacity:0.2; }
+    }
+    @keyframes manualBarGrow {
+      from{ width:0%; } to{ width:var(--bar-w, 72%); }
+    }
+    @keyframes manualCheckIn {
+      0%{ transform:scale(0); opacity:0; } 70%{ transform:scale(1.2); } 100%{ transform:scale(1); opacity:1; }
+    }
+    @keyframes manualCursorBlink {
+      0%,100%{ opacity:1; } 50%{ opacity:0; }
+    }
+    @keyframes manualNotifDrop {
+      from{ opacity:0; transform:translateY(-10px); } to{ opacity:1; transform:translateY(0); }
+    }
+    @keyframes manualGoalFill {
+      from{ width:0% } to{ width:68%; }
+    }
+
+    .ms-anim-field {
+      background:var(--input-bg); border:1.5px solid var(--brand); border-radius:5px;
+      padding:5px 8px; font-size:11px; color:var(--ink); font-family:'IBM Plex Mono',monospace;
+      overflow:hidden; white-space:nowrap; animation:manualPulse 2s infinite;
+    }
+    .ms-anim-typing {
+      display:inline-block; overflow:hidden; white-space:nowrap;
+      animation:manualType 1.8s steps(20,end) infinite alternate;
+      border-right:2px solid var(--brand);
+    }
+    .ms-anim-btn {
+      display:inline-flex; align-items:center; padding:5px 10px;
+      background:var(--brand); color:#fff; border-radius:5px; font-size:11px; font-weight:600;
+      animation:manualPulse 2s 0.5s infinite;
+    }
+    .ms-anim-card {
+      background:var(--card-bg); border:1px solid var(--rule); border-radius:8px;
+      padding:10px 12px; margin-bottom:8px;
+      animation:manualFadeIn 0.6s ease both;
+    }
+    .ms-anim-card:nth-child(2){ animation-delay:0.3s; }
+    .ms-anim-card:nth-child(3){ animation-delay:0.6s; }
+    .ms-sidebar {
+      width:72px; background:var(--sidebar-bg); border-right:1px solid var(--rule);
+      padding:8px 0; display:flex; flex-direction:column; gap:2px;
+    }
+    .ms-side-item {
+      padding:6px 8px; font-size:9px; color:var(--side-text); border-radius:5px; margin:0 4px;
+      display:flex; align-items:center; gap:4px;
+    }
+    .ms-side-item.active { background:var(--brand); color:#fff; font-weight:700; }
+    .ms-app-frame { display:flex; height:160px; overflow:hidden; }
+    .ms-main { flex:1; padding:10px; overflow:hidden; }
+
+    .ms-bar { height:8px; border-radius:4px; background:var(--brand); animation:manualBarGrow 2s ease infinite alternate; }
+    .ms-bar-row { margin-bottom:6px; }
+    .ms-bar-label { font-size:9px; color:var(--muted); margin-bottom:2px; font-family:'IBM Plex Mono',monospace; }
+    .ms-green-bar { background:var(--income-c); }
+    .ms-red-bar { background:var(--expense-c); }
+    .ms-blue-bar { background:var(--profit-c); }
+
+    .ms-check { width:16px; height:16px; border-radius:50%; background:var(--green);
+      display:inline-flex; align-items:center; justify-content:center; color:#fff; font-size:9px;
+      animation:manualCheckIn 0.5s ease both; }
+
+    .ms-notif-badge {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:14px; height:14px; border-radius:50%; background:var(--rust); color:#fff;
+      font-size:8px; font-weight:700; animation:manualBlink 1.5s infinite;
+    }
+    .ms-otp-box {
+      display:flex; gap:4px; margin-top:6px;
+    }
+    .ms-otp-digit {
+      width:22px; height:26px; border:1.5px solid var(--brand); border-radius:4px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:13px; font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--brand);
+      animation:manualFadeIn 0.3s ease both;
+    }
+    .ms-otp-digit:nth-child(1){animation-delay:0.1s}
+    .ms-otp-digit:nth-child(2){animation-delay:0.25s}
+    .ms-otp-digit:nth-child(3){animation-delay:0.4s}
+    .ms-otp-digit:nth-child(4){animation-delay:0.55s}
+    .ms-otp-digit:nth-child(5){animation-delay:0.7s}
+    .ms-otp-digit:nth-child(6){animation-delay:0.85s}
+
+    .ms-tag { display:inline-flex; align-items:center; padding:3px 8px; border-radius:12px;
+      font-size:9px; font-weight:600; margin:2px; }
+    .ms-tag.income { background:rgba(31,122,77,.15); color:var(--income-c); }
+    .ms-tag.expense { background:rgba(193,67,43,.12); color:var(--expense-c); }
+
+    .ms-goal-track { height:10px; background:var(--rule); border-radius:5px; overflow:hidden; margin-top:4px; }
+    .ms-goal-fill { height:100%; border-radius:5px; background:linear-gradient(90deg,var(--brand),var(--green));
+      animation:manualGoalFill 2.5s ease infinite alternate; }
+
+    .ms-rec-badge { padding:2px 7px; border-radius:10px; font-size:9px; font-weight:600;
+      background:rgba(28,95,168,.12); color:var(--brand); margin-left:4px; }
+
+    .manual-nav { display:flex; align-items:center; justify-content:space-between; margin-top:20px; padding-top:16px; border-top:1px solid var(--rule); }
+    .manual-nav-btn {
+      padding:7px 16px; border-radius:7px; border:1px solid var(--rule);
+      background:var(--paper-2); color:var(--ink); font-size:12px; cursor:pointer;
+      font-family:'IBM Plex Sans',sans-serif; transition:all .15s;
+    }
+    .manual-nav-btn:hover { background:var(--brand); color:#fff; border-color:var(--brand); }
+    .manual-nav-btn:disabled { opacity:0.35; cursor:not-allowed; }
+    .manual-nav-btn:disabled:hover { background:var(--paper-2); color:var(--ink); border-color:var(--rule); }
+    .manual-progress { font-size:12px; color:var(--muted); }
+
+    .ms-welcome-banner {
+      background:linear-gradient(135deg,var(--brand),var(--brand-dark));
+      border-radius:8px; padding:8px 12px; color:#fff; margin-bottom:8px;
+      animation:manualFadeIn 0.7s ease both;
+    }
+    .ms-chart-col { display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:2px; }
+    .ms-chart-bar-v {
+      width:14px; border-radius:3px 3px 0 0;
+      animation:manualBarGrow 2s ease infinite alternate;
+      transform-origin:bottom;
+    }
+    .ms-chart-wrap { display:flex; gap:6px; align-items:flex-end; padding:8px 4px 0; }
+    .ms-support-avatar {
+      width:28px; height:28px; border-radius:50%; background:var(--brand);
+      display:flex; align-items:center; justify-content:center; color:#fff; font-size:12px;
+      flex-shrink:0;
     }
   </style>
 </head>
@@ -749,11 +986,28 @@
         <div class="page" id="page-dashboard">
           <!-- Aligned Welcome Message Banner -->
           <div class="dash-welcome" id="dash-welcome">
+            <button class="dash-welcome-close" id="dash-welcome-close" title="Dismiss greeting" aria-label="Close greeting">✕</button>
             <div class="dash-welcome-text-wrap">
               <div class="dash-welcome-title">👋 <span id="dash-welcome-text">Welcome back!</span></div>
-              <div class="dash-welcome-sub">Track your financial growth, manage income &amp; expenses, and plan goals.</div>
+              <div class="dash-welcome-quote" id="dash-welcome-quote" style="font-size:13px;opacity:0.92;margin-top:6px;font-style:italic;max-width:520px;line-height:1.5;"></div>
             </div>
-            <div class="dash-welcome-badge" id="dash-welcome-badge">🇮🇳 India · INR (₹) · FY Apr–Mar</div>
+            <div class="dash-welcome-badge" id="dash-welcome-badge" style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+              <svg width="64" height="80" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3))">
+                <!-- Simplified India map silhouette -->
+                <path d="M100,10 L130,18 L155,30 L170,50 L175,75 L165,95 L180,115 L185,140 L175,165 L165,180 L155,200 L140,220 L125,238 L110,248 L100,242 L90,248 L75,238 L60,220 L45,200 L35,180 L25,165 L15,140 L20,115 L35,95 L25,75 L30,50 L45,30 L70,18 Z" fill="#FF9933" opacity="0.9"/>
+                <path d="M100,10 L130,18 L155,30 L170,50 L175,75 L165,95 L180,115 L185,140 L175,165 L165,180 L155,200 L140,220 L125,238 L110,248 L100,242 L100,130 Z" fill="#138808" opacity="0.85"/>
+                <circle cx="100" cy="130" r="14" fill="white" opacity="0.95"/>
+                <circle cx="100" cy="130" r="10" fill="none" stroke="#000080" stroke-width="2.5" opacity="0.9"/>
+                <!-- Ashoka chakra spokes (simplified) -->
+                <g stroke="#000080" stroke-width="1" opacity="0.8">
+                  <line x1="100" y1="120" x2="100" y2="140"/>
+                  <line x1="91" y1="123" x2="109" y2="137"/>
+                  <line x1="91" y1="137" x2="109" y2="123"/>
+                  <line x1="90" y1="130" x2="110" y2="130"/>
+                </g>
+              </svg>
+              <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;opacity:0.95;">🇮🇳 INDIA</span>
+            </div>
           </div>
 
           <div class="panel dashboard-panel">
@@ -778,20 +1032,6 @@
 
           <div id="dash-bot-widgets" class="dash-bot-widgets"></div>
 
-          <div class="panel">
-            <h2>Report — forecast (customizable)</h2>
-            <div class="muted" style="margin-bottom:10px;">Project ahead based on your average monthly profit so far.</div>
-            <div class="forecast-controls">
-              <span class="muted">Months ahead:</span>
-              <input type="range" id="f-months" min="1" max="12" value="3">
-              <span class="num" id="f-months-val">3</span>
-            </div>
-            <div class="forecast-out">
-              <div><div class="muted">Projected profit (period)</div><div class="amt num" id="fc-period">₹0</div></div>
-              <div><div class="muted">Projected FY-end total</div><div class="amt num" id="fc-fy">₹0</div></div>
-            </div>
-          </div>
-
           <button class="dash-bot-fab" id="dash-bot-fab" title="Dashboard assistant">💬</button>
           <div class="dash-bot-panel hidden" id="dash-bot-panel">
             <div class="dash-bot-head">
@@ -799,7 +1039,7 @@
               <button id="dash-bot-close" title="Close">✕</button>
             </div>
             <div class="dash-bot-msgs" id="dash-bot-msgs"></div>
-            <div class="dash-bot-hint">Try: "full dashboard", "expense category by month", "insights", "FY 2024-25"</div>
+            <div class="dash-bot-hint">Examples: "full dashboard", "pie chart of expenses by category", "top 5 expenses last 3 months"</div>
             <div class="dash-bot-input-row">
               <input type="text" id="dash-bot-input" placeholder="Tell me how to build the dashboard…">
               <button id="dash-bot-send">Send</button>
@@ -1066,6 +1306,18 @@
               <button class="export-btn" id="notif-save-btn">Save notification settings</button><div class="set-msg" id="notif-msg"></div>
             </div>
           </div>
+
+          <!-- ===== USER MANUAL ===== -->
+          <div class="set-section">
+            <button type="button" class="set-item" data-target="sp-manual" aria-expanded="false">
+              <span class="si-ic">📖</span>
+              <span class="si-main"><span class="si-title">User Manual</span><span class="si-desc">Animated walkthrough of every feature — Registration to Settings</span></span>
+              <span class="si-chev">›</span>
+            </button>
+            <div class="set-body hidden" id="sp-manual">
+              <div id="manual-root"></div>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -1165,11 +1417,7 @@
       function updateCurrencyLabels(){
         const sym = state.currencySymbol;
         document.querySelectorAll('.cur-sym').forEach(el => el.textContent = sym);
-        const badge = document.getElementById('dash-welcome-badge');
-        if(badge){
-          const c = COUNTRIES_DATA.find(x => x.code === state.country) || { name: state.country, fyName: 'Custom FY' };
-          badge.textContent = `${c.name} · ${state.currency} (${sym.trim()}) · FY ${MONTH_NAMES[state.fyStartMonth]}`;
-        }
+        // India map badge is static — no override needed
       }
 
       function fyStartYearOf(d, startMonth = state.fyStartMonth){
@@ -1212,7 +1460,6 @@
       }
 
       const fy = () => fyMonths(fyStartYearOf(today, state.fyStartMonth), state.fyStartMonth);
-      let lastForecast = null;
 
       const monthKey = mo => `${mo.year}-${mo.month}`;
       function parseLocalDate(s){
@@ -1671,25 +1918,6 @@
         const monthsWithData = fObj.all.filter(mo => monthTotals(monthKey(mo)).txns.length > 0);
         if(!monthsWithData.length) return 0;
         return monthsWithData.reduce((s,mo)=>s+monthTotals(monthKey(mo)).profit,0) / monthsWithData.length;
-      }
-
-      function renderForecast(){
-        const monthsAhead = parseInt(document.getElementById('f-months').value, 10);
-        document.getElementById('f-months-val').textContent = monthsAhead;
-
-        const avg = getAvgMonthlyProfit();
-        const fObj = fy();
-        const monthsElapsed = fObj.all.filter(mo => monthTotals(monthKey(mo)).txns.length > 0).length;
-
-        const projectedPeriod = avg * monthsAhead;
-        const monthsRemainingInFY = 12 - monthsElapsed;
-        const actualSoFar = fObj.all.reduce((s,mo)=>s+monthTotals(monthKey(mo)).profit,0);
-        const projectedFY = actualSoFar + avg * monthsRemainingInFY;
-
-        document.getElementById('fc-period').textContent = fmtMoney(projectedPeriod);
-        document.getElementById('fc-fy').textContent = fmtMoney(projectedFY);
-
-        lastForecast = { avg, monthsAhead, projectedPeriod, projectedFY };
       }
 
       function populateCategorySelect(){
@@ -2246,17 +2474,706 @@
         };
       }
 
+      /* =====================  DASHBOARD ASSISTANT  ===================== */
+      const DB_PALETTE = ['#3E8CDE','#C1432B','#2E9E6B','#D99A1B','#8E5BD0','#17A2B8','#E0699A','#7F8C8D','#A0522D','#5C7AEA'];
+      const DB_MON_NAMES = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+      const DB_MON_RE = '(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)';
+      let dashBotSpecs = [];
+      let dashBotSeq = 0;
+      const dbEsc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+      const dbMonIdx = w => DB_MON_NAMES.indexOf(String(w).slice(0, 3).toLowerCase());
+      const dbShortMo = mo => `${MONTH_NAMES[mo.month]} '${String(mo.year).slice(2)}`;
+
+      /* ---------- period parsing ---------- */
+      function dbPeriodLabel(months, fyLabel){
+        if(!months.length) return fyLabel || '';
+        const a = months[0], b = months[months.length - 1];
+        const span = months.length === 1 ? `${MONTH_NAMES[a.month]} ${a.year}` : `${MONTH_NAMES[a.month]} ${a.year} – ${MONTH_NAMES[b.month]} ${b.year}`;
+        return fyLabel ? `${fyLabel} (${span})` : span;
+      }
+
+      function dbResolvePeriod(q){
+        const curStart = fyStartYearOf(today, state.fyStartMonth);
+        const upToNow = arr => arr.filter(mo => !isFutureMonth(mo));
+        const nowMo = { year: today.getFullYear(), month: today.getMonth() };
+        let m;
+
+        // relative periods
+        if(/\b(this|current)\s+month\b/.test(q)) return { months: [nowMo], label: dbPeriodLabel([nowMo]), explicit: true };
+        if(/\b(last|previous|prior)\s+month\b/.test(q)){
+          const d = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+          const mo = { year: d.getFullYear(), month: d.getMonth() };
+          return { months: [mo], label: dbPeriodLabel([mo]), explicit: true };
+        }
+        const words = { three: 3, six: 6, nine: 9, twelve: 12, two: 2, four: 4, five: 5 };
+        m = q.match(/\b(?:last|past|previous)\s+(\d{1,2}|two|three|four|five|six|nine|twelve)\s+months?\b/);
+        if(m){
+          const n = Math.min(24, Math.max(1, words[m[1]] || parseInt(m[1], 10)));
+          const arr = [];
+          for(let i = n - 1; i >= 0; i--){ const d = new Date(today.getFullYear(), today.getMonth() - i, 1); arr.push({ year: d.getFullYear(), month: d.getMonth() }); }
+          return { months: arr, label: `Last ${n} month${n > 1 ? 's' : ''}: ${dbPeriodLabel(arr)}`, explicit: true };
+        }
+
+        // financial year
+        let fyStart = null, explicitFY = false;
+        if((m = q.match(/(?:fy|f\.y\.|financial year)\s*'?(\d{4})\s*[-–\/]\s*'?(\d{2,4})/))){ fyStart = +m[1]; explicitFY = true; }
+        else if((m = q.match(/(?:fy|f\.y\.|financial year)\s*'?(\d{4})\b/))){ fyStart = +m[1]; explicitFY = true; }
+        else if((m = q.match(/\b(20\d{2})\s*[-–\/]\s*(\d{2,4})\b/))){ fyStart = +m[1]; explicitFY = true; }
+        else if(/\b(last|previous|prior)\s+(fy|financial year|year)\b/.test(q)){ fyStart = curStart - 1; explicitFY = true; }
+        else if(/\b(this|current)\s+(fy|financial year|year)\b|\bytd\b|\byear to date\b/.test(q)){ fyStart = curStart; explicitFY = true; }
+
+        // calendar year (e.g. "in 2025") when no FY given
+        if(fyStart === null && (m = q.match(/\b(20\d{2})\b/))){
+          const y = +m[1];
+          const arr = upToNow(Array.from({ length: 12 }, (_, i) => ({ year: y, month: i })));
+          if(arr.length) return { months: arr, label: `Calendar ${y}: ${dbPeriodLabel(arr)}`, explicit: true };
+        }
+
+        const build = (startYear) => {
+          const f = fyMonths(startYear, state.fyStartMonth);
+          return { all: f.all, label: f.fyLabel, start: startYear };
+        };
+        let fyObj = build(fyStart === null ? curStart : fyStart);
+
+        // month names → single month or range inside the FY
+        const range = q.match(new RegExp('\\b' + DB_MON_RE + '\\b\\s*(?:to|till|until|through|and|-|–)\\s*' + DB_MON_RE + '\\b'));
+        const single = q.match(new RegExp('(?:\\b(?:in|for|of|during|on)\\s+)' + DB_MON_RE + '\\b')) || q.match(new RegExp('\\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\\b'));
+        const pickMonths = (obj) => {
+          if(range){
+            const a = dbMonIdx(range[1]), b = dbMonIdx(range[2]);
+            const ia = obj.all.findIndex(x => x.month === a), ib = obj.all.findIndex(x => x.month === b);
+            if(ia >= 0 && ib >= 0) return obj.all.slice(Math.min(ia, ib), Math.max(ia, ib) + 1);
+          } else if(single){
+            const a = dbMonIdx(single[1]);
+            const hit = obj.all.filter(x => x.month === a);
+            if(hit.length) return hit;
+          }
+          return null;
+        };
+        let picked = pickMonths(fyObj);
+        if(picked){
+          if(!explicitFY && picked.every(isFutureMonth)){ fyObj = build(curStart - 1); picked = pickMonths(fyObj); }
+          return { months: picked, label: dbPeriodLabel(picked, fyObj.label), explicit: true };
+        }
+
+        const all = fyObj.start === curStart ? upToNow(fyObj.all) : fyObj.all;
+        const suffix = fyObj.start === curStart ? ' · year to date' : '';
+        return { months: all.length ? all : fyObj.all.slice(0, 1), label: `${fyObj.label}${suffix}`, explicit: explicitFY };
+      }
+
+      /* ---------- filters ---------- */
+      function dbDetectType(q){
+        const e = /\b(expense|expenses|expenditure|spend|spending|spent|cost|costs|outgo)\b/.test(q);
+        const i = /\b(income|incomes|earning|earnings|revenue|salary|received)\b/.test(q);
+        if(e && !i) return 'expense';
+        if(i && !e) return 'income';
+        return null;
+      }
+      function dbDetectCategory(q){
+        const inc = state.categories.income || [], exp = state.categories.expense || [];
+        const all = [...new Set([...inc, ...exp])].filter(c => c && c.toLowerCase() !== 'other').sort((a, b) => b.length - a.length);
+        for(const c of all){
+          const re = new RegExp('(^|[^a-z0-9])' + c.toLowerCase().replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&') + '([^a-z0-9]|$)');
+          if(re.test(q)){
+            const type = exp.includes(c) && !inc.includes(c) ? 'expense' : inc.includes(c) && !exp.includes(c) ? 'income' : null;
+            return { name: c, type };
+          }
+        }
+        return null;
+      }
+
+      /* ---------- data helpers ---------- */
+      function dbTxns(months, type, cat){
+        const keys = new Set(months.map(monthKey));
+        return state.transactions.filter(t => keys.has(t.key) && (!type || t.type === type) && (!cat || t.category === cat));
+      }
+      function dbAgg(months){
+        let inc = 0, exp = 0, n = 0, active = 0;
+        months.forEach(mo => { const t = monthTotals(monthKey(mo)); inc += t.income; exp += t.expense; n += t.txns.length; if(t.txns.length) active++; });
+        return { inc, exp, profit: inc - exp, n, active, rate: inc > 0 ? ((inc - exp) / inc) * 100 : null, avgExp: active ? exp / active : 0, avgInc: active ? inc / active : 0 };
+      }
+      function dbByCategory(months, type){
+        const map = {};
+        dbTxns(months, type).forEach(t => { map[t.category || 'Uncategorised'] = (map[t.category || 'Uncategorised'] || 0) + t.amount; });
+        return Object.entries(map).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
+      }
+      function dbColorize(items, maxItems = 8){
+        let list = items.slice();
+        if(list.length > maxItems){
+          const rest = list.slice(maxItems - 1).reduce((s, x) => s + x.value, 0);
+          list = list.slice(0, maxItems - 1).concat([{ name: 'Others', value: rest }]);
+        }
+        return list.map((x, i) => Object.assign({}, x, { color: DB_PALETTE[i % DB_PALETTE.length] }));
+      }
+
+      /* ---------- SVG builders ---------- */
+      function dbAxis(max, W, H, mL, mR, mT, mB){
+        const ph = H - mT - mB; let g = '';
+        for(let i = 0; i <= 4; i++){
+          const v = max - (max / 4) * i, y = mT + (ph / 4) * i;
+          g += `<line x1="${mL}" x2="${W - mR}" y1="${y}" y2="${y}" stroke="var(--rule)"/>`;
+          g += `<text x="${mL - 8}" y="${y + 4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${fmtShort(v)}</text>`;
+        }
+        return g;
+      }
+      function dbBarSVG(labels, series, stacked){
+        const n = labels.length, per = stacked ? 1 : series.length;
+        const W = Math.max(520, n * (stacked ? 64 : 40 + per * 16) + 80), H = 290, mL = 58, mR = 12, mT = 14, mB = 44;
+        const pw = W - mL - mR, ph = H - mT - mB, gw = pw / n;
+        let hi = 0, lo = 0;
+        labels.forEach((_, i) => {
+          if(stacked) hi = Math.max(hi, series.reduce((s, x) => s + Math.max(0, x.values[i]), 0));
+          else series.forEach(s => { hi = Math.max(hi, s.values[i]); lo = Math.min(lo, s.values[i]); });
+        });
+        if(hi === 0 && lo === 0) hi = 1;
+        const range = hi - lo, scale = ph / range, zeroY = mT + hi * scale;
+        let grid = '';
+        for(let i = 0; i <= 4; i++){
+          const v = hi - (range / 4) * i, y = mT + (ph / 4) * i;
+          grid += `<line x1="${mL}" x2="${W - mR}" y1="${y}" y2="${y}" stroke="var(--rule)"/><text x="${mL - 8}" y="${y + 4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${fmtShort(v)}</text>`;
+        }
+        let bars = '', xl = '';
+        labels.forEach((lb, i) => {
+          const cx = mL + i * gw + gw / 2;
+          if(stacked){
+            const bw = Math.min(34, gw * 0.6); let acc = 0;
+            series.forEach(s => {
+              const v = s.values[i]; if(v <= 0) return;
+              bars += `<rect x="${cx - bw / 2}" y="${zeroY - (acc + v) * scale}" width="${bw}" height="${v * scale}" fill="${s.color}"><title>${dbEsc(s.name)} — ${dbEsc(lb)}: ${fmtMoney(v)}</title></rect>`;
+              acc += v;
+            });
+          } else {
+            const bw = Math.min(24, gw / (per + 1));
+            series.forEach((s, k) => {
+              const v = s.values[i], h = Math.max(Math.abs(v) * scale, v !== 0 ? 1 : 0);
+              const x = cx - (per * bw) / 2 + k * bw, y = v >= 0 ? zeroY - h : zeroY;
+              bars += `<rect x="${x}" y="${y}" width="${bw - 2}" height="${h}" fill="${s.color}" rx="2"><title>${dbEsc(s.name)} — ${dbEsc(lb)}: ${fmtMoney(v)}</title></rect>`;
+            });
+          }
+          xl += `<text x="${cx}" y="${H - mB + 18}" text-anchor="middle" font-size="11" fill="var(--ink)" font-family="IBM Plex Mono, monospace">${dbEsc(lb)}</text>`;
+        });
+        return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:${W}px">${grid}<line x1="${mL}" x2="${W - mR}" y1="${zeroY}" y2="${zeroY}" stroke="var(--ink)" stroke-width="1.3"/>${bars}${xl}</svg>`;
+      }
+      function dbMultiLineSVG(labels, series){
+        const n = labels.length, W = Math.max(520, n * 70 + 80), H = 280, mL = 58, mR = 18, mT = 14, mB = 44;
+        const pw = W - mL - mR, ph = H - mT - mB;
+        const all = series.flatMap(s => s.values);
+        const hi = Math.max(0, ...all), lo = Math.min(0, ...all), range = (hi - lo) || 1;
+        const X = i => mL + (n === 1 ? pw / 2 : (pw / (n - 1)) * i), Y = v => mT + ((hi - v) / range) * ph;
+        let grid = '';
+        for(let i = 0; i <= 4; i++){
+          const v = hi - (range / 4) * i, y = mT + (ph / 4) * i;
+          grid += `<line x1="${mL}" x2="${W - mR}" y1="${y}" y2="${y}" stroke="var(--rule)"/><text x="${mL - 8}" y="${y + 4}" text-anchor="end" font-size="10" fill="var(--muted)" font-family="IBM Plex Mono, monospace">${fmtShort(v)}</text>`;
+        }
+        let lines = '';
+        series.forEach(s => {
+          const pts = s.values.map((v, i) => `${X(i)},${Y(v)}`).join(' ');
+          if(series.length === 1) lines += `<polygon points="${X(0)},${Y(0)} ${pts} ${X(n - 1)},${Y(0)}" fill="${s.color}" opacity="0.12"/>`;
+          lines += `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="2.4" stroke-linejoin="round"/>`;
+          lines += s.values.map((v, i) => `<circle cx="${X(i)}" cy="${Y(v)}" r="3.5" fill="${s.color}"><title>${dbEsc(s.name)} — ${dbEsc(labels[i])}: ${fmtMoney(v)}</title></circle>`).join('');
+        });
+        const xl = labels.map((lb, i) => `<text x="${X(i)}" y="${H - mB + 18}" text-anchor="middle" font-size="11" fill="var(--ink)" font-family="IBM Plex Mono, monospace">${dbEsc(lb)}</text>`).join('');
+        return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="min-width:${W}px">${grid}<line x1="${mL}" x2="${W - mR}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--ink)" stroke-width="1.2"/>${lines}${xl}</svg>`;
+      }
+      function dbDonutSVG(items){
+        const total = items.reduce((s, x) => s + x.value, 0) || 1;
+        const cx = 90, cy = 90, R = 80, r = 50;
+        let a0 = -Math.PI / 2, paths = '';
+        const pt = (rad, a) => `${(cx + rad * Math.cos(a)).toFixed(2)} ${(cy + rad * Math.sin(a)).toFixed(2)}`;
+        items.forEach(it => {
+          const frac = it.value / total;
+          const tip = `<title>${dbEsc(it.name)}: ${fmtMoney(it.value)} (${(frac * 100).toFixed(1)}%)</title>`;
+          if(frac >= 0.9999){
+            paths += `<circle cx="${cx}" cy="${cy}" r="${(R + r) / 2}" fill="none" stroke="${it.color}" stroke-width="${R - r}">${tip}</circle>`;
+            return;
+          }
+          const a1 = a0 + frac * Math.PI * 2, large = (a1 - a0) > Math.PI ? 1 : 0;
+          paths += `<path d="M ${pt(R, a0)} A ${R} ${R} 0 ${large} 1 ${pt(R, a1)} L ${pt(r, a1)} A ${r} ${r} 0 ${large} 0 ${pt(r, a0)} Z" fill="${it.color}" stroke="var(--card-bg)" stroke-width="1.5">${tip}</path>`;
+          a0 = a1;
+        });
+        return `<svg viewBox="0 0 180 180" width="180" height="180" style="flex:none">${paths}<text x="90" y="86" text-anchor="middle" font-size="10" fill="var(--muted)">Total</text><text x="90" y="104" text-anchor="middle" font-size="14" font-weight="600" fill="var(--ink)" font-family="IBM Plex Mono, monospace">${fmtShort(total)}</text></svg>`;
+      }
+      const dbLegend = items => `<div class="dbw-legend">${items.map(x => `<span><i style="background:${x.color}"></i>${dbEsc(x.name)}</span>`).join('')}</div>`;
+      const dbEmpty = msg => `<div class="dbw-empty">${dbEsc(msg || 'No transactions found for this selection.')}</div>`;
+
+      /* ---------- widget renderers ---------- */
+      function dbInsights(spec){
+        const months = spec.months, a = dbAgg(months), out = [];
+        if(!a.n) return ['No transactions found in this period yet.'];
+        out.push(`Income <b>${fmtMoney(a.inc)}</b> vs expenses <b>${fmtMoney(a.exp)}</b> → ${a.profit >= 0 ? `net saving of <b>${fmtMoney(a.profit)}</b>` : `a shortfall of <b>${fmtMoney(-a.profit)}</b>`}.`);
+        if(a.rate != null) out.push(a.rate >= 20 ? `Savings rate is <b>${a.rate.toFixed(0)}%</b> — healthy.` : a.rate >= 0 ? `Savings rate is <b>${a.rate.toFixed(0)}%</b> — below the usual 20% target.` : `You spent <b>${Math.abs(a.rate).toFixed(0)}%</b> more than you earned.`);
+        const cats = dbByCategory(months, 'expense');
+        if(cats.length && a.exp > 0){
+          out.push(`Biggest expense category: <b>${dbEsc(cats[0].name)}</b> — ${fmtMoney(cats[0].value)} (${((cats[0].value / a.exp) * 100).toFixed(0)}% of spending).`);
+          if(cats[1]) out.push(`Next: <b>${dbEsc(cats[1].name)}</b> at ${fmtMoney(cats[1].value)}.`);
+        }
+        const per = months.map(mo => ({ mo, t: monthTotals(monthKey(mo)) })).filter(x => x.t.txns.length);
+        if(per.length > 1){
+          const hiM = per.reduce((p, c) => c.t.expense > p.t.expense ? c : p), loM = per.reduce((p, c) => c.t.expense < p.t.expense ? c : p);
+          out.push(`Highest spending month: <b>${dbShortMo(hiM.mo)}</b> (${fmtMoney(hiM.t.expense)}); lowest: <b>${dbShortMo(loM.mo)}</b> (${fmtMoney(loM.t.expense)}).`);
+          const last = per[per.length - 1], prev = per[per.length - 2];
+          if(prev.t.expense > 0){
+            const ch = ((last.t.expense - prev.t.expense) / prev.t.expense) * 100;
+            out.push(`${dbShortMo(last.mo)} expenses ${ch >= 0 ? 'rose' : 'fell'} <b>${Math.abs(ch).toFixed(0)}%</b> compared with ${dbShortMo(prev.mo)}.`);
+          }
+        }
+        const big = dbTxns(months, 'expense').sort((x, y) => y.amount - x.amount)[0];
+        if(big) out.push(`Largest single expense: <b>${fmtMoney(big.amount)}</b> on ${dbEsc(big.category)}${big.note ? ' (' + dbEsc(big.note) + ')' : ''}, ${dbEsc(big.date)}.`);
+        if(a.active) out.push(`Average monthly spend: <b>${fmtMoney(a.avgExp)}</b> across ${a.active} active month${a.active > 1 ? 's' : ''}.`);
+        return out;
+      }
+
+      /* ---------- series builders ---------- */
+      const DB_MEASURE = { income: { name: 'Income', color: '#1F7A4D' }, expense: { name: 'Expenditure', color: '#C1432B' }, profit: { name: 'Profit', color: '#1C5FA8' } };
+      const dbTypeName = t => t === 'income' ? 'Income' : 'Expense';
+      const dbSum = (arr, f) => arr.reduce((s, x) => s + f(x), 0);
+
+      function dbSeriesFor(spec){
+        const months = spec.months;
+        if(spec.category){
+          return [{ name: spec.category, color: spec.type === 'income' ? '#1F7A4D' : '#C1432B', values: months.map(mo => dbSum(dbTxns([mo], spec.type, spec.category), t => t.amount)) }];
+        }
+        return spec.measures.map(k => {
+          let run = 0;
+          return { name: DB_MEASURE[k].name, color: DB_MEASURE[k].color, values: months.map(mo => {
+            const t = monthTotals(monthKey(mo));
+            const v = k === 'income' ? t.income : k === 'expense' ? t.expense : t.profit;
+            if(spec.cumulative){ run += v; return run; }
+            return v;
+          }) };
+        });
+      }
+      function dbCatMonthSeries(months, type){
+        const cats = dbColorize(dbByCategory(months, type));
+        const top = new Set(cats.filter(c => c.name !== 'Others').map(c => c.name));
+        const series = cats.map(c => ({ name: c.name, color: c.color, values: months.map(mo =>
+          dbSum(dbTxns([mo], type).filter(t => c.name === 'Others' ? !top.has(t.category || 'Uncategorised') : (t.category || 'Uncategorised') === c.name), t => t.amount)) }));
+        return { cats, series };
+      }
+
+      /* ---------- widget renderers ---------- */
+      const dbTable = (head, rows, rightFrom = 1) => `<div class="dbw-scroll"><table class="dbw-table"><thead><tr>${head.map((h, i) => `<th${i >= rightFrom ? ' style="text-align:right"' : ''}>${dbEsc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td${i >= rightFrom ? ' class="num" style="text-align:right"' : ''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+      const dbSeriesLegend = series => series.length > 1 ? `<div class="dbw-legend">${series.map(s => `<span><i style="background:${s.color}"></i>${dbEsc(s.name)}</span>`).join('')}</div>` : '';
+
+      function dbWidgetBody(spec){
+        const months = spec.months, labels = months.map(dbShortMo);
+        switch(spec.kind){
+          case 'kpi': {
+            const a = dbAgg(months);
+            const k = (l, v, c) => `<div class="dbw-kpi"><span>${l}</span><b class="num"${c ? ` style="color:${c}"` : ''}>${v}</b></div>`;
+            return `<div class="dbw-kpis">${k('Income', fmtMoney(a.inc), 'var(--income-c)')}${k('Expenses', fmtMoney(a.exp), 'var(--expense-c)')}${k('Profit', fmtMoney(a.profit), a.profit >= 0 ? 'var(--income-c)' : 'var(--expense-c)')}${k('Savings rate', a.rate == null ? '—' : a.rate.toFixed(0) + '%')}${k('Avg monthly spend', fmtMoney(a.avgExp))}${k('Transactions', a.n)}</div>`;
+          }
+          case 'insights':
+            return `<ul class="dbw-insights">${dbInsights(spec).map(x => `<li>${x}</li>`).join('')}</ul>`;
+          case 'donut': {
+            let items;
+            if(spec.by === 'month') items = months.map(mo => ({ name: dbShortMo(mo), value: monthTotals(monthKey(mo))[spec.type] })).filter(x => x.value > 0);
+            else items = dbByCategory(months, spec.type).filter(x => x.value > 0);
+            items = dbColorize(items);
+            const total = dbSum(items, x => x.value);
+            const rows = items.map(x => `<div class="dbw-row"><span><i style="background:${x.color}"></i>${dbEsc(x.name)}</span><span class="num">${fmtMoney(x.value)} · ${((x.value / total) * 100).toFixed(0)}%</span></div>`).join('');
+            return `<div class="dbw-donut">${dbDonutSVG(items)}<div class="dbw-rows">${rows}</div></div>`;
+          }
+          case 'catBar': {
+            const items = dbColorize(dbByCategory(months, spec.type).filter(x => x.value > 0), 10);
+            const lab = items.map(x => x.name.length > 11 ? x.name.slice(0, 10) + '…' : x.name);
+            return `<div class="dbw-scroll">${dbBarSVG(lab, [{ name: dbTypeName(spec.type), color: DB_MEASURE[spec.type].color, values: items.map(x => x.value) }], false)}</div>`;
+          }
+          case 'catTable': {
+            const items = dbByCategory(months, spec.type).filter(x => x.value > 0);
+            const total = dbSum(items, x => x.value);
+            const cnt = name => dbTxns(months, spec.type, name).length;
+            return dbTable(['Category', 'Amount', 'Share', 'Entries'], items.map(x => [dbEsc(x.name), fmtMoney(x.value), ((x.value / total) * 100).toFixed(0) + '%', cnt(x.name)]).concat([['<b>Total</b>', '<b>' + fmtMoney(total) + '</b>', '100%', dbSum(items, x => cnt(x.name))]]));
+          }
+          case 'monthBar': {
+            const series = dbSeriesFor(spec);
+            return `${dbSeriesLegend(series)}<div class="dbw-scroll">${dbBarSVG(labels, series, false)}</div>`;
+          }
+          case 'monthLine': {
+            const series = dbSeriesFor(spec);
+            return `${dbSeriesLegend(series)}${spec.cumulative ? '<div class="dbw-sub">Running total over the period</div>' : ''}<div class="dbw-scroll">${dbMultiLineSVG(labels, series)}</div>`;
+          }
+          case 'monthTable': {
+            const series = dbSeriesFor(spec);
+            const rows = months.map((mo, i) => [dbShortMo(mo)].concat(series.map(s => fmtMoney(s.values[i]))));
+            if(!spec.cumulative) rows.push(['<b>Total</b>'].concat(series.map(s => '<b>' + fmtMoney(dbSum(s.values, v => v)) + '</b>')));
+            return dbTable(['Month'].concat(series.map(s => s.name)), rows);
+          }
+          case 'catMonthBar': {
+            const { cats, series } = dbCatMonthSeries(months, spec.type);
+            return `${dbLegend(cats)}<div class="dbw-scroll">${dbBarSVG(labels, series, true)}</div>`;
+          }
+          case 'catMonthLine': {
+            const { series } = dbCatMonthSeries(months, spec.type);
+            return `${dbSeriesLegend(series)}<div class="dbw-scroll">${dbMultiLineSVG(labels, series)}</div>`;
+          }
+          case 'matrixTable': {
+            const cats = dbByCategory(months, spec.type).filter(x => x.value > 0).map(x => x.name);
+            const cell = (c, mo) => dbSum(dbTxns([mo], spec.type, c), t => t.amount);
+            const rows = cats.map(c => [dbEsc(c)].concat(months.map(mo => { const v = cell(c, mo); return v ? fmtMoney(v) : '—'; })).concat(['<b>' + fmtMoney(dbSum(months, mo => cell(c, mo))) + '</b>']));
+            return dbTable(['Category'].concat(labels).concat(['Total']), rows);
+          }
+          case 'rowsTable': {
+            let rows = dbTxns(months, spec.type, spec.category);
+            rows = spec.rowsMode === 'top' ? rows.sort((a, b) => b.amount - a.amount) : rows.sort((a, b) => String(b.date).localeCompare(String(a.date)) || b.id - a.id);
+            rows = rows.slice(0, spec.topN);
+            return dbTable(['Date', 'Category', 'Note', 'Amount'], rows.map(t => [dbEsc(t.date), dbEsc(t.category), dbEsc(t.note || '—'), `<span style="color:${t.type === 'income' ? 'var(--income-c)' : 'var(--expense-c)'}">${t.type === 'income' ? '+' : '−'}${fmtMoney(t.amount)}</span>`]), 3);
+          }
+        }
+        return dbEmpty();
+      }
+
+      function dbTitle(s){
+        const T = dbTypeName(s.type);
+        switch(s.kind){
+          case 'kpi': return 'Summary';
+          case 'insights': return 'Insights';
+          case 'donut': return `${T} by ${s.by}`;
+          case 'catBar': return `${T} by category`;
+          case 'catTable': return `${T} by category (table)`;
+          case 'catMonthBar': return `${T} category by month`;
+          case 'catMonthLine': return `${T} category trend`;
+          case 'matrixTable': return `${T} category by month (table)`;
+          case 'rowsTable': return s.rowsMode === 'top' ? `Top ${s.topN} ${s.type === 'income' ? 'income entries' : s.type === 'expense' ? 'expenses' : 'transactions'}${s.category ? ' · ' + s.category : ''}` : `Latest ${s.topN} ${s.type ? s.type + ' ' : ''}transactions${s.category ? ' · ' + s.category : ''}`;
+          default: {
+            const names = s.category ? [s.category] : s.measures.map(k => DB_MEASURE[k].name);
+            const base = s.cumulative ? `Cumulative ${names.join(' vs ').toLowerCase()}` : `${names.join(' vs ')} by month`;
+            return s.kind === 'monthTable' ? base + ' (table)' : base;
+          }
+        }
+      }
+
+      function renderDashBotWidgets(){
+        const box = document.getElementById('dash-bot-widgets');
+        if(!box) return;
+        box.innerHTML = dashBotSpecs.map(spec => {
+          let body;
+          try { body = dbWidgetBody(spec); } catch(err){ console.error('dash widget failed', err); body = dbEmpty('This widget could not be drawn.'); }
+          return `<div class="dash-bot-widget" data-wid="${spec.id}"><button class="dbw-close" data-wclose="${spec.id}" title="Remove">✕</button><h3>${dbEsc(dbTitle(spec))}</h3><div class="dbw-sub">${dbEsc(spec.label)}</div>${body}</div>`;
+        }).join('');
+      }
+
+      /* ---------- does the data support this widget? ---------- */
+      function dbSpecCheck(spec){
+        const m = spec.months, lbl = spec.label;
+        const none = what => `There are no ${what} for ${lbl}.`;
+        switch(spec.kind){
+          case 'kpi': case 'insights':
+            return dbAgg(m).n ? null : none('transactions');
+          case 'rowsTable': {
+            const n = dbTxns(m, spec.type, spec.category).length;
+            return n ? null : none(`${spec.category ? spec.category + ' ' : ''}${spec.type ? spec.type + ' ' : ''}transactions`);
+          }
+          case 'donut': {
+            if(spec.by === 'month'){
+              const n = m.filter(mo => monthTotals(monthKey(mo))[spec.type] > 0).length;
+              if(!n) return none(`${spec.type} transactions`);
+              return n < 2 ? `Only one month has ${spec.type} data for ${lbl}, so a pie would be a single slice.` : null;
+            }
+            const items = dbByCategory(m, spec.type).filter(x => x.value > 0);
+            if(!items.length) return none(`${spec.type} transactions`);
+            return items.length < 2 ? `Only one ${spec.type} category (${items[0].name}) has data for ${lbl}, so a pie would be a single slice.` : null;
+          }
+          case 'catBar': case 'catTable': case 'catMonthBar': case 'catMonthLine': case 'matrixTable':
+            return dbByCategory(m, spec.type).some(x => x.value > 0) ? null : none(`${spec.type} transactions`);
+          default: {
+            const series = dbSeriesFor(spec);
+            const ok = series.some(s => s.values.some(v => v !== 0));
+            return ok ? null : none(spec.category ? `${spec.category} transactions` : 'transactions');
+          }
+        }
+      }
+
+      /* ---------- understanding the request ---------- */
+      const DB_WNAME = { donut: 'pie/donut chart', bar: 'bar chart', line: 'line chart', table: 'table', kpi: 'summary card', insights: 'insights panel' };
+      const DB_STOP = new Set(['expense','expenses','income','incomes','each','every','per','by','the','a','an','of','for','my','all','monthly','month','wise','top','which','what','spending','spend','total','overall','and','or','with','show','me','give','create','make','build','pie','bar','line','donut','chart','table','this','that','these','those','any','each','one','your','their','new','same','other','different']);
+      const DB_UNSUPPORTED = /\b(scatter|heat\s*map|gauge|radar|spider|funnel|tree\s*map|bubble|histogram|waterfall|candlestick|sankey|geo\s*map|world map|box\s*plot|speedometer|gantt)\b/;
+      const DB_OUT_OF_SCOPE = /\b(region|country|customer|client|vendor|supplier|product|employee|department|branch|location|city|account|stock|inventory|sales|revenue growth|invoice|tax)\b/;
+      const DB_OTHER_GROUPING = /\b(daily|per day|by day|day[- ]wise|weekly|per week|by week|week[- ]wise|quarterly|quarter|hourly)\b/;
+      const DB_DATA_WORDS = /\b(income|incomes|earning|earnings|revenue|salary|expense|expenses|expenditure|spend|spending|spent|cost|costs|profit|profits|saving|savings|net|surplus|balance|categor(y|ies)|month|monthly|transactions?|entries|payments?|purchases?|bills?|top|biggest|largest|highest|latest|recent|total|totals|summary|insights?|dashboard|overview|report|everything)\b/;
+
+      function dbDescribe(shape, c){
+        const typ = c.types.length === 2 ? 'income and expense' : c.types[0];
+        switch(shape){
+          case 'category': return `${typ} by category`;
+          case 'catMonth': return `${typ} category by month`;
+          case 'rows': return c.rowsMode === 'top' ? `the top ${c.topN} ${c.types[0] === 'income' && c.typeWord ? 'income entries' : 'expenses'}` : `the latest ${c.topN} transactions`;
+          case 'totals': return 'overall totals';
+          default: return c.cat ? `${c.cat.name} by month` : `${c.measures.join(' vs ')} by month`;
+        }
+      }
+
+      function dbMake(widget, shape, c){
+        const base = { months: c.period.months, label: c.period.label };
+        const nice = dbDescribe(shape, c);
+        const fail = (reason, hint) => ({ error: `I can’t create a ${DB_WNAME[widget]} for ${nice}. ${reason}${hint ? ' ' + hint : ''}` });
+        const mk = (kind, extra) => Object.assign({ kind }, base, extra);
+        const perType = (kind, extra) => c.types.map(t => mk(kind, Object.assign({ type: t }, extra)));
+        const mser = () => ({ measures: c.measures, category: c.cat ? c.cat.name : null, type: c.cat ? (c.cat.type || 'expense') : null, cumulative: c.cumulative });
+
+        if(widget === 'insights') return { specs: [mk('insights')] };
+        if(widget === 'kpi'){
+          return shape === 'totals' ? { specs: [mk('kpi')] } : fail('Summary cards only show overall totals, not a breakdown.', 'A table, bar or pie chart fits this data.');
+        }
+        if(widget === 'donut'){
+          if(shape === 'category') return { specs: perType('donut', { by: 'category' }) };
+          if(shape === 'month'){
+            if(c.cat) return fail('A single category is just one slice.', 'A bar or line chart can show it month by month.');
+            if(c.measures.length !== 1 || c.measures[0] === 'profit') return fail('A pie splits one positive measure into slices, but this compares several measures or includes profit.', 'A grouped bar or line chart fits this data.');
+            return { specs: [mk('donut', { by: 'month', type: c.measures[0] })] };
+          }
+          if(shape === 'catMonth') return fail('A pie shows one split at a time, not categories across months.', 'A stacked bar or line chart fits this data.');
+          if(shape === 'rows') return fail('A pie shows how a total is split, so it cannot plot individual transactions.', 'A table fits this data.');
+          return fail('A pie needs several parts to split.', 'A summary card fits this data.');
+        }
+        if(widget === 'bar'){
+          if(shape === 'category') return { specs: perType('catBar') };
+          if(shape === 'month') return { specs: [mk('monthBar', mser())] };
+          if(shape === 'catMonth') return { specs: perType('catMonthBar') };
+          if(shape === 'rows') return fail('A bar chart compares groups, while individual transactions are best read as a list.', 'A table fits this data.');
+          return fail('There is only one value (a total), so there is nothing to compare.', 'A summary card fits this data.');
+        }
+        if(widget === 'line'){
+          if(shape === 'month' || shape === 'catMonth'){
+            if(c.period.months.length < 2) return fail('A line chart needs at least two months, but the selected period is a single month.', 'Choose a longer period, or use a bar chart or table.');
+            return shape === 'month' ? { specs: [mk('monthLine', mser())] } : { specs: perType('catMonthLine') };
+          }
+          if(shape === 'category') return fail('A line chart needs a time axis, but category totals have no order.', 'A bar or pie chart fits this data.');
+          if(shape === 'rows') return fail('A line chart plots values over time, not a list of individual transactions.', 'A table fits this data.');
+          return fail('There is only one value (a total), so there is no line to draw.', 'A summary card fits this data.');
+        }
+        // table
+        if(shape === 'rows') return { specs: [mk('rowsTable', { type: c.rowsType, category: c.cat ? c.cat.name : null, rowsMode: c.rowsMode, topN: c.topN })] };
+        if(shape === 'category') return { specs: perType('catTable') };
+        if(shape === 'catMonth') return { specs: perType('matrixTable') };
+        return { specs: [mk('monthTable', mser())] };
+      }
+
+      function dbBest(shape, c){
+        if(shape === 'totals') return 'kpi';
+        if(shape === 'rows') return 'table';
+        if(shape === 'category') return c.nCats < 2 ? 'table' : c.nCats > 7 ? 'bar' : 'donut';
+        if(shape === 'catMonth') return 'bar';
+        // month series
+        if(c.period.months.length < 2) return 'bar';
+        if(c.cumulative || c.trendWords || c.period.months.length > 12) return 'line';
+        if(!c.cat && c.measures.length === 1 && c.measures[0] === 'profit') return 'line';
+        return 'bar';
+      }
+
+      function dbFull(period){
+        const base = { months: period.months, label: period.label };
+        return [
+          Object.assign({ kind: 'kpi' }, base),
+          Object.assign({ kind: 'monthBar', measures: ['income', 'expense', 'profit'], category: null, type: null, cumulative: false }, base),
+          Object.assign({ kind: 'donut', by: 'category', type: 'expense' }, base),
+          Object.assign({ kind: 'catMonthBar', type: 'expense' }, base),
+          Object.assign({ kind: 'insights' }, base)
+        ];
+      }
+
+      function dbBuild(raw){
+        const q = ' ' + raw.toLowerCase().replace(/[’]/g, "'").trim() + ' ';
+
+        const un = q.match(DB_UNSUPPORTED);
+        if(un) return { error: `I can’t build a ${un[1].replace(/\s+/g, ' ')} widget. I can create bar, stacked bar, line and pie/donut charts, tables, summary cards and insights from your income and expense data.` };
+        if(DB_OTHER_GROUPING.test(q)) return { error: 'I can only group your data by month or by category, so daily, weekly or quarterly views are not available.' };
+        const oos = q.match(DB_OUT_OF_SCOPE);
+        if(oos) return { error: `Your transactions only hold a date, type (income or expense), category, amount and note, so I don’t have “${oos[1]}” data to build that from.` };
+
+        const period = dbResolvePeriod(q);
+        const cat = dbDetectCategory(q);
+
+        // a category the user names that doesn't exist
+        const um = q.match(/\b([a-z][a-z&\/-]{2,24})\s+categor(?:y|ies)\b/);
+        if(um && !DB_STOP.has(um[1]) && !cat){
+          const known = [...new Set([...(state.categories.income || []), ...(state.categories.expense || [])])];
+          return { error: `I couldn’t find a category called “${um[1]}”. Your categories are: ${known.map(dbEsc).join(', ')}.` };
+        }
+
+        const hasI = /\b(income|incomes|earning|earnings|revenue|salary|received)\b/.test(q);
+        const hasE = /\b(expense|expenses|expenditure|spend|spending|spent|cost|costs|outgo)\b/.test(q);
+        const hasP = /\b(profit|profits|saving|savings|net|surplus)\b/.test(q);
+        const compare = /\b(vs|versus|compare|comparison|against)\b/.test(q) || (hasI && hasE);
+
+        // explicit widget types
+        const explicit = [];
+        if(/\b(pie|donut|doughnut)\b/.test(q)) explicit.push('donut');
+        if(/\b(bar|column|stacked)\b/.test(q)) explicit.push('bar');
+        if(/\bline\b/.test(q)) explicit.push('line');
+        if(/\b(table|tabular|grid|list)\b/.test(q)) explicit.push('table');
+        if(/\b(kpi|kpis|cards?|scorecard)\b/.test(q)) explicit.push('kpi');
+        if(/\b(insights?|analy[sz]e|analysis|advice|tips|highlights?|observations?|findings)\b/.test(q)) explicit.push('insights');
+
+        if(!explicit.length && !DB_DATA_WORDS.test(q) && !cat && !period.explicit){
+          return { error: 'I couldn’t match that to your data. I can chart your income and expense transactions by month or category, for example “pie chart of expenses by category” or “top 5 expenses last 3 months”.' };
+        }
+
+        // dimension of the data (ignore period phrases such as "last 3 months")
+        const qd = q.replace(/\b(last|past|previous|prior|this|current)\s+(\d{1,2}\s+|two\s+|three\s+|four\s+|five\s+|six\s+|nine\s+|twelve\s+)?months?\b/g, ' ');
+        const topNm = q.match(/\b(?:top|biggest|largest|highest|latest|recent|last)\s+(\d{1,2})\b/);
+        const topN = topNm ? Math.min(25, Math.max(1, parseInt(topNm[1], 10))) : null;
+        const topCat = /\b(top|biggest|largest|highest|major)\s+(\d+\s+)?(spending\s+|expense\s+|income\s+)?categor/.test(qd);
+        const wantsRows = !topCat && (/\b(top|biggest|largest|highest|major|latest|recent)\b/.test(qd) || /\b(list|each|every|all)\s+(of\s+)?(my\s+|the\s+)?(transactions?|entries|payments)\b/.test(qd));
+        const hasCat = /\bcategor(y|ies)\b|\bcategory[- ]?wise\b|\b(breakdown|split|distribution|proportion|share)\b/.test(qd);
+        const trendWords = /\b(trend|trends|over time|timeline|progress)\b/.test(qd);
+        const cumulative = /\b(cumulative|running)\b/.test(qd);
+        const hasMonth = /\b(month|monthly|months|month[- ]?wise)\b/.test(qd) || trendWords || cumulative;
+        const wantsTotals = /\b(summary|total|totals|how much|snapshot|savings rate|stats|statistics)\b/.test(qd);
+
+        let shape = null;
+        if(wantsRows) shape = 'rows';
+        else if(hasCat && hasMonth) shape = cat ? 'month' : 'catMonth';
+        else if(cat) shape = 'month';
+        else if(hasCat) shape = 'category';
+        else if(hasMonth || compare) shape = 'month';
+        if(!shape && explicit.length){
+          const e = explicit.find(x => x !== 'insights');
+          if(e === 'donut') shape = 'category';
+          else if(e === 'bar' || e === 'line') shape = 'month';
+          else if(e === 'table') shape = 'rows';
+          else if(e === 'kpi') shape = 'totals';
+        }
+        if(!shape && !explicit.length){
+          if(wantsTotals) shape = 'totals';
+          else if(hasP && !hasI && !hasE) shape = 'month';
+          else if(hasI || hasE) shape = 'category';
+        }
+
+        // measures / types
+        let measures = [];
+        if(hasI) measures.push('income');
+        if(hasE) measures.push('expense');
+        if(hasP) measures.push('profit');
+        if((compare && measures.length < 2) || !measures.length) measures = ['income', 'expense', 'profit'];
+        let types = hasI && hasE ? ['income', 'expense'] : hasI ? ['income'] : ['expense'];
+        if(cat && cat.type) types = [cat.type];
+        const rowsMode = /\b(top|biggest|largest|highest|major)\b/.test(qd) ? 'top' : 'recent';
+        const rowsType = cat && cat.type ? cat.type : (hasI && !hasE) ? 'income' : (hasE && !hasI) ? 'expense' : (rowsMode === 'top' ? 'expense' : null);
+        const ctx = { period, cat, measures, types, topN: topN || (rowsMode === 'top' ? 5 : 10), rowsMode, rowsType, cumulative, trendWords, typeWord: hasI && !hasE, nCats: 0 };
+
+        // full dashboard
+        const fullWords = /\b(full|complete|entire|whole|overall|everything|all[- ]in[- ]one)\b/.test(q) && /\b(dashboard|report|overview)\b/.test(q);
+        if(fullWords || (!shape && !explicit.length && (/\b(dashboard|overview|report|everything)\b/.test(q) || period.explicit))){
+          const specs = [], skipped = [];
+          dbFull(period).forEach(s => { const bad = dbSpecCheck(s); if(bad) skipped.push(`“${dbTitle(s)}” was skipped. ${bad}`); else specs.push(s); });
+          if(!specs.length) return { error: `There are no transactions for ${period.label}, so there is nothing to put on a dashboard.` };
+          return { specs, replace: true, errors: skipped };
+        }
+        if(!shape && !explicit.length) return { error: 'I couldn’t tell which data you want. Try naming what to show (income, expenses, profit, a category) and, if you like, a chart type.' };
+
+        if(shape === 'category' && hasP && !hasI && !hasE) return { error: 'Profit is not recorded per category, so I can’t split it that way. Only income or expenses can be broken down by category.' };
+
+        if(shape === 'category' || shape === 'catMonth') ctx.nCats = dbByCategory(period.months, types[0]).filter(x => x.value > 0).length;
+
+        // build widgets
+        let widgets = explicit.filter(w => w !== 'insights');
+        const wantInsights = explicit.includes('insights');
+        if(!widgets.length && !(wantInsights && !shape)) widgets = [dbBest(shape, ctx)];
+        if(!shape) widgets = [];
+
+        const specs = [], errors = [];
+        widgets.forEach(w => {
+          const r = dbMake(w, shape, ctx);
+          if(r.error){ errors.push(r.error); return; }
+          r.specs.forEach(s => {
+            const bad = dbSpecCheck(s);
+            if(bad) errors.push(`I couldn’t create “${dbTitle(s)}”. ${bad}`);
+            else specs.push(s);
+          });
+        });
+        if(wantInsights){
+          const s = dbMake('insights', shape || 'totals', ctx).specs[0], bad = dbSpecCheck(s);
+          if(bad) errors.push(`I couldn’t create “Insights”. ${bad}`); else specs.push(s);
+        }
+        if(!specs.length) return { error: errors.join('<br>') || 'I couldn’t build that from your data.' };
+        return { specs, errors, replace: false };
+      }
+
+      /* ---------- chat UI ---------- */
+      function dbAddMsg(role, html, isErr){
+        const box = document.getElementById('dash-bot-msgs'); if(!box) return null;
+        const el = document.createElement('div');
+        el.className = 'dash-bot-msg ' + role + (isErr ? ' err' : ''); el.innerHTML = html;
+        box.appendChild(el); box.scrollTop = box.scrollHeight;
+        return el;
+      }
+      const DB_EXAMPLES_HTML = '<div class="dash-bot-examples">Examples you can type:<ul><li>full dashboard</li><li>pie chart of expenses by category</li><li>expense category by month for FY 2024-25</li><li>top 5 expenses last 3 months</li><li>Groceries by month</li></ul></div>';
+
+      function dashBotRespond(text){
+        const q = text.toLowerCase();
+        if(/\b(clear|reset|remove|delete|empty|wipe)\b.*\b(dashboard|widgets?|charts?|all|everything)\b|^\s*(clear|reset)\s*$/.test(q)){
+          dashBotSpecs = []; renderDashBotWidgets();
+          return { text: 'Cleared the assistant widgets. The main chart above is untouched.' };
+        }
+        if(/^\s*(help|examples?|what can you do\??)\s*$/.test(q)){
+          return { text: 'Ask for any data from your income and expense transactions, with or without a chart type. If you name a chart that doesn’t suit the data, I’ll tell you why; if you don’t, I’ll pick the best one.' + DB_EXAMPLES_HTML };
+        }
+        if(!state.transactions.length){
+          return { error: true, text: 'There are no transactions yet, so there is nothing to build a widget from. Add some income or expense entries first.' };
+        }
+        const res = dbBuild(text);
+        if(res.error) return { error: true, text: res.error };
+
+        if(res.replace) dashBotSpecs = [];
+        const created = res.specs.map(s => Object.assign({ id: ++dashBotSeq }, s));
+        dashBotSpecs = res.replace ? created : created.slice().reverse().concat(dashBotSpecs);
+        renderDashBotWidgets();
+        const box = document.getElementById('dash-bot-widgets');
+        if(box && box.scrollIntoView) setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        const names = created.map(dbTitle);
+        let html = `${res.replace ? 'Built your dashboard' : 'Created'}: <b>${names.map(dbEsc).join(', ')}</b><br>Period: ${dbEsc(created[0].label)}.`;
+        if(res.errors && res.errors.length) html += `<br><br><b>${res.replace ? 'Skipped' : 'Not created'}:</b><br>${res.errors.join('<br>')}`;
+        return { text: html };
+      }
+
+      function initDashBot(){
+        const fab = document.getElementById('dash-bot-fab'), panel = document.getElementById('dash-bot-panel');
+        const input = document.getElementById('dash-bot-input'), send = document.getElementById('dash-bot-send');
+        const close = document.getElementById('dash-bot-close'), msgs = document.getElementById('dash-bot-msgs');
+        if(!fab || !panel || !input || !send || !msgs || fab.dataset.bound) return;
+        fab.dataset.bound = '1';
+
+        const open = () => {
+          panel.classList.remove('hidden'); fab.classList.add('hidden');
+          if(!msgs.children.length) dbAddMsg('bot', 'Hi! Describe the data you want to see and I’ll build it as a widget on your dashboard. Name a chart type if you like, or leave it out and I’ll choose the best one.' + DB_EXAMPLES_HTML);
+          setTimeout(() => input.focus(), 50);
+        };
+        const shut = () => { panel.classList.add('hidden'); fab.classList.remove('hidden'); };
+        fab.addEventListener('click', open);
+        close.addEventListener('click', shut);
+
+        const submit = () => {
+          const text = input.value.trim();
+          if(!text) return;
+          dbAddMsg('user', dbEsc(text));
+          input.value = '';
+          let r;
+          try { r = dashBotRespond(text); }
+          catch(err){ console.error('dashboard assistant error', err); r = { error: true, text: 'Sorry, something went wrong while building that. Please try rephrasing.' }; }
+          dbAddMsg('bot', r.text, r.error);
+        };
+        send.addEventListener('click', submit);
+        input.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); submit(); } });
+
+        const wbox = document.getElementById('dash-bot-widgets');
+        if(wbox) wbox.addEventListener('click', e => {
+          const x = e.target.closest('[data-wclose]'); if(!x) return;
+          dashBotSpecs = dashBotSpecs.filter(s => String(s.id) !== x.dataset.wclose);
+          renderDashBotWidgets();
+        });
+      }
+      initDashBot();
+
       function render(){
         updateCurrencyLabels();
         renderRail();
         renderEntryAndList();
         bindEntryForm();
         renderBarChart();
-        renderForecast();
+        try { renderDashBotWidgets(); } catch(e){ console.error(e); }
       }
 
-      document.getElementById('f-months') && document.getElementById('f-months').addEventListener('input', renderForecast);
-      root.addEventListener('input', (e) => { if(e.target.id === 'f-months') renderForecast(); });
       root.addEventListener('change', (e) => {
         if(e.target.id === 'fy-select'){
           state.txnFYStart = parseInt(e.target.value, 10);
@@ -2419,13 +3336,32 @@
         b.textContent = busy ? busyLabel : normalLabel;
       }
 
+      const SAVINGS_QUOTES = [
+        "Do not save what is left after spending; instead spend what is left after saving. — Warren Buffett",
+        "A penny saved is a penny earned. — Benjamin Franklin",
+        "The habit of saving is itself an education; it fosters every virtue, teaches self-denial, cultivates the sense of order. — T.T. Munger",
+        "Financial freedom is available to those who learn about it and work for it. — Robert Kiyosaki",
+        "Beware of little expenses; a small leak will sink a great ship. — Benjamin Franklin",
+        "It is not the man who has too little, but the man who craves more, that is poor. — Seneca",
+        "Never spend your money before you have it. — Thomas Jefferson",
+        "The art is not in making money, but in keeping it. — Proverb",
+        "Save money and money will save you. — Jamaican Proverb",
+        "Wealth is not about having a lot of money; it's about having a lot of options. — Chris Rock",
+        "The secret to wealth is simple: find a way to do more for others than anyone else does. — Tony Robbins",
+        "An investment in knowledge pays the best interest. — Benjamin Franklin",
+        "Money is a terrible master but an excellent servant. — P.T. Barnum",
+        "Don't tell me where your priorities are. Show me where you spend your money and I'll tell you. — James W. Frick",
+        "Savings represent much more than mere money value. They are the proof that the saver is worth something in himself. — Napoleon Hill"
+      ];
+
       async function showWelcomeGreeting(){
         let name = '';
         try {
           const { data } = await sb.auth.getUser();
           const meta = data && data.user && data.user.user_metadata;
-          const full = meta ? [meta.first_name, meta.last_name].filter(Boolean).join(' ') : '';
-          name = full || (meta && meta.first_name) || '';
+          const firstName = (meta && meta.first_name) || '';
+          const lastName = (meta && meta.last_name) || '';
+          name = [firstName, lastName].filter(Boolean).join(' ');
           if(meta && meta.country && !localStorage.getItem('ledger-user-prefs')){
             state.country = meta.country;
             state.currency = meta.currency || 'INR';
@@ -2437,8 +3373,41 @@
 
         const banner = document.getElementById('dash-welcome');
         if(banner){
-          document.getElementById('dash-welcome-text').textContent = name ? `Welcome back, ${name}!` : 'Welcome back!';
-          banner.classList.remove('hidden');
+          // Respect user's dismissed preference (stored per session)
+          const dismissed = sessionStorage.getItem('dash-welcome-dismissed');
+          if(dismissed){
+            banner.classList.add('hidden');
+          } else {
+            document.getElementById('dash-welcome-text').textContent = name ? `Welcome back, ${name}!` : 'Welcome back!';
+            const quoteEl = document.getElementById('dash-welcome-quote');
+            if(quoteEl){
+              const randomQuote = SAVINGS_QUOTES[Math.floor(Math.random() * SAVINGS_QUOTES.length)];
+              quoteEl.textContent = `"${randomQuote}"`;
+            }
+            banner.classList.remove('hidden');
+
+            // Wire up close button
+            const closeBtn = document.getElementById('dash-welcome-close');
+            if(closeBtn && !closeBtn.dataset.bound){
+              closeBtn.dataset.bound = '1';
+              closeBtn.addEventListener('click', () => {
+                banner.style.transition = 'opacity 0.3s ease, transform 0.3s ease, max-height 0.4s ease, margin-bottom 0.4s ease, padding 0.4s ease';
+                banner.style.opacity = '0';
+                banner.style.transform = 'translateY(-6px)';
+                banner.style.maxHeight = banner.offsetHeight + 'px';
+                setTimeout(() => {
+                  banner.style.maxHeight = '0';
+                  banner.style.marginBottom = '0';
+                  banner.style.padding = '0';
+                  setTimeout(() => {
+                    banner.classList.add('hidden');
+                    banner.style.transition = '';
+                  }, 400);
+                }, 250);
+                sessionStorage.setItem('dash-welcome-dismissed', '1');
+              });
+            }
+          }
         }
         updateCurrencyLabels();
       }
@@ -2515,7 +3484,7 @@
           setErr('signup-err');
 
           setBusy('signup-btn', true, 'Creating account…', 'Create account');
-          const { error } = await sb.auth.signUp({
+          const { data: signUpData, error } = await sb.auth.signUp({
             email, password: pw,
             options: {
               data: {
@@ -2531,6 +3500,22 @@
           });
           setBusy('signup-btn', false, 'Creating account…', 'Create account');
 
+          const alreadyRegistered = (error && /already\s*(registered|exists|been registered)|user_already_exists/i.test((error.message || '') + ' ' + (error.code || '')))
+            || (!error && signUpData && signUpData.user && Array.isArray(signUpData.user.identities) && signUpData.user.identities.length === 0);
+          if(alreadyRegistered){
+            const errEl = document.getElementById('signup-err');
+            errEl.innerHTML = 'This email is already registered. Please <a id="dup-login-link">log in</a> or <a id="dup-reset-link">reset your password</a> if you have forgotten it.';
+            errEl.classList.add('auth-err-links');
+            document.getElementById('dup-login-link').onclick = () => {
+              document.getElementById('login-email-input').value = email;
+              setErr('signup-err'); errEl.classList.remove('auth-err-links'); showScreen('login');
+            };
+            document.getElementById('dup-reset-link').onclick = () => {
+              const fe = document.getElementById('forgot-email-input'); if(fe) fe.value = email;
+              setErr('signup-err'); errEl.classList.remove('auth-err-links'); showScreen('forgotEmail');
+            };
+            return;
+          }
           if(error){ setErr('signup-err', error.message); return; }
 
           state.country = cObj.code;
@@ -3055,6 +4040,732 @@
         };
       })();
     })();
+  </script>
+
+  <!-- ===== USER MANUAL ENGINE ===== -->
+  <script>
+  (function initUserManual(){
+    const root = document.getElementById('manual-root');
+    if(!root) return;
+
+    /* ─── Chapter definitions ─── */
+    const CHAPTERS = [
+      {
+        id:'registration',
+        icon:'📝',
+        title:'Registration',
+        desc:'Create your Personal Ledger account — enter your name, email, country, currency, and a secure password. A one-time code verifies your email before you can log in.',
+        steps:[
+          {
+            num:1, title:'Open the Sign-Up form',
+            body:'Click <strong>"New here? Create an account"</strong> on the login screen. Fill in your <em>First name</em> and <em>Last name</em> — these appear on your dashboard greeting.',
+            tip:'Both first and last name are required. They form your full display name.',
+            screen: `<div class="ms-body" style="padding:14px 16px;">
+              <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:12px;">Create your account</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div>
+                  <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">First name</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">Rahul</span></div>
+                </div>
+                <div>
+                  <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Last name</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">Sharma</span></div>
+                </div>
+              </div>
+              <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Email</div>
+              <div class="ms-anim-field" style="margin-bottom:8px;"><span class="ms-anim-typing">rahul@example.com</span></div>
+              <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Country</div>
+              <div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:10px;color:var(--ink);margin-bottom:8px;">🇮🇳 India (+91)</div>
+            </div>`
+          },
+          {
+            num:2, title:'Choose Country & Currency',
+            body:'Select your country from the dropdown. The <em>Currency</em> and <em>Financial Year</em> fields auto-fill — India defaults to <strong>INR (₹)</strong> with an April–March FY.',
+            tip:'You can change country, currency, and FY later from Settings → Country, Currency & FY.',
+            screen: `<div class="ms-body" style="padding:12px 16px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div>
+                  <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Currency (Auto)</div>
+                  <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:11px;font-weight:700;color:var(--brand);">INR (₹)</div>
+                </div>
+                <div>
+                  <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Financial Year (Auto)</div>
+                  <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:10px;font-weight:700;color:var(--brand);">April – March</div>
+                </div>
+              </div>
+              <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Phone Number</div>
+              <div style="display:flex;gap:6px;margin-bottom:10px;">
+                <div style="width:52px;background:var(--paper-2);border:1px solid var(--rule);border-radius:5px;padding:5px 6px;font-size:10px;font-weight:700;text-align:center;">+91</div>
+                <div class="ms-anim-field" style="flex:1;"><span class="ms-anim-typing">98765 43210</span></div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <div style="flex:1;">
+                  <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Password</div>
+                  <div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:13px;letter-spacing:3px;color:var(--muted);">••••••</div>
+                </div>
+                <div style="flex:1;">
+                  <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Confirm password</div>
+                  <div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:13px;letter-spacing:3px;color:var(--muted);">••••••</div>
+                </div>
+              </div>
+            </div>`
+          },
+          {
+            num:3, title:'Verify your email (OTP)',
+            body:'After clicking <strong>"Create account"</strong>, a 6-digit code is sent to your email. Enter it on the verify screen within 10 minutes to activate your account.',
+            tip:'Didn\'t receive the code? Click "Resend code". Check your spam/junk folder.',
+            screen: `<div class="ms-body" style="padding:18px 16px;text-align:center;">
+              <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px;">Verify your email</div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:14px;">Enter the 6-digit code sent to rahul@example.com</div>
+              <div class="ms-otp-box" style="justify-content:center;">
+                <div class="ms-otp-digit">4</div>
+                <div class="ms-otp-digit">8</div>
+                <div class="ms-otp-digit">2</div>
+                <div class="ms-otp-digit">9</div>
+                <div class="ms-otp-digit">1</div>
+                <div class="ms-otp-digit">7</div>
+              </div>
+              <div style="margin-top:14px;" class="ms-anim-btn" style="justify-content:center;width:fit-content;margin:14px auto 0;">✓ Verify</div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'login',
+        icon:'🔑',
+        title:'Login',
+        desc:'Sign in with your registered email and password. Forgot your password? Use the reset flow to get a new one via email OTP.',
+        steps:[
+          {
+            num:1, title:'Sign in to your ledger',
+            body:'Enter your registered <strong>email</strong> and <strong>password</strong> then click <em>"Sign in"</em>. You\'ll land directly on your Dashboard.',
+            tip:'Your session stays active until you click Logout from the sidebar.',
+            screen: `<div class="ms-body" style="padding:18px 16px;">
+              <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;">Welcome back</div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:14px;">Sign in to your ledger.</div>
+              <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Email</div>
+              <div class="ms-anim-field" style="margin-bottom:8px;"><span class="ms-anim-typing">rahul@example.com</span></div>
+              <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Password</div>
+              <div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:13px;letter-spacing:4px;color:var(--muted);margin-bottom:12px;">••••••••</div>
+              <div class="ms-anim-btn">🔐 Sign in</div>
+            </div>`
+          },
+          {
+            num:2, title:'Forgot password — reset via OTP',
+            body:'Click <strong>"Forgot password?"</strong>, enter your email, and receive a 6-digit reset code. Enter the code, then set a new password.',
+            tip:'The reset code expires in 10 minutes. Use "Resend code" if needed.',
+            screen: `<div class="ms-body" style="padding:14px 16px;">
+              <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;">Reset your password</div>
+              <div style="font-size:10px;color:var(--muted);margin-bottom:12px;">Enter your account email — we'll send a 6-digit code.</div>
+              <div style="font-size:9px;color:var(--muted);margin-bottom:3px;">Email</div>
+              <div class="ms-anim-field" style="margin-bottom:10px;"><span class="ms-anim-typing">rahul@example.com</span></div>
+              <div class="ms-anim-btn" style="margin-bottom:10px;">📨 Send code</div>
+              <div style="margin-top:6px;">
+                <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">Enter the code you received</div>
+                <div class="ms-otp-box">
+                  <div class="ms-otp-digit">7</div><div class="ms-otp-digit">3</div><div class="ms-otp-digit">1</div>
+                  <div class="ms-otp-digit">4</div><div class="ms-otp-digit">9</div><div class="ms-otp-digit">2</div>
+                </div>
+              </div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'dashboard',
+        icon:'▤',
+        title:'Dashboard',
+        desc:'Your financial overview — greeting banner with a daily savings quote, month-by-month bar chart, and AI-assisted widgets. Everything updates in real time as you add transactions.',
+        steps:[
+          {
+            num:1, title:'Greeting banner & savings quote',
+            body:'After login, a personalised banner greets you with your full name and a random savings quote that changes every session. Close it with the <strong>✕</strong> button at any time.',
+            tip:'The quote pool has 15 unique savings quotes — a new one appears on each session.',
+            screen: `<div class="ms-app-frame">
+              <div class="ms-sidebar">
+                <div class="ms-side-item active">▤<span>Dash</span></div>
+                <div class="ms-side-item">₹<span>Txn</span></div>
+                <div class="ms-side-item">◎<span>Goals</span></div>
+                <div class="ms-side-item">⚙<span>Set</span></div>
+              </div>
+              <div class="ms-main">
+                <div class="ms-welcome-banner">
+                  <div style="font-size:11px;font-weight:700;">👋 Welcome back, Rahul Sharma!</div>
+                  <div style="font-size:9px;opacity:0.9;margin-top:4px;font-style:italic;">"Do not save what is left after spending..."</div>
+                </div>
+                <div style="font-size:9px;color:var(--muted);margin-bottom:6px;">Dashboard — income, expenditure & profit</div>
+                <div class="ms-chart-wrap">
+                  <div class="ms-chart-col"><div class="ms-chart-bar-v ms-green-bar" style="--bar-w:65%;height:40px;"></div><div style="font-size:8px;color:var(--muted);">Apr</div></div>
+                  <div class="ms-chart-col"><div class="ms-chart-bar-v ms-green-bar" style="--bar-w:80%;height:52px;animation-delay:0.2s"></div><div style="font-size:8px;color:var(--muted);">May</div></div>
+                  <div class="ms-chart-col"><div class="ms-chart-bar-v ms-red-bar" style="--bar-w:50%;height:30px;animation-delay:0.4s"></div><div style="font-size:8px;color:var(--muted);">Jun</div></div>
+                  <div class="ms-chart-col"><div class="ms-chart-bar-v ms-blue-bar" style="--bar-w:70%;height:44px;animation-delay:0.6s"></div><div style="font-size:8px;color:var(--muted);">Jul</div></div>
+                  <div class="ms-chart-col"><div class="ms-chart-bar-v ms-green-bar" style="--bar-w:90%;height:58px;animation-delay:0.8s"></div><div style="font-size:8px;color:var(--muted);">Aug</div></div>
+                </div>
+              </div>
+            </div>`
+          },
+          {
+            num:2, title:'Financial Year chart & summary cards',
+            body:'Use the <em>Financial Year</em>, <em>From</em> and <em>To</em> filters to drill into any period. The three summary cards show <strong>Total Income</strong>, <strong>Total Expenditure</strong>, and <strong>Overall Net Profit</strong> for that range.',
+            tip:'The chart updates instantly — no page reload needed when you change the filters.',
+            screen: `<div class="ms-body" style="padding:10px 12px;">
+              <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+                <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:5px;padding:4px 8px;font-size:9px;color:var(--brand);font-family:'IBM Plex Mono',monospace;">FY 2024-25</div>
+                <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:5px;padding:4px 8px;font-size:9px;color:var(--ink);">From: Apr</div>
+                <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:5px;padding:4px 8px;font-size:9px;color:var(--ink);">To: Nov</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+                <div style="background:rgba(31,122,77,.1);border-radius:6px;padding:6px 8px;">
+                  <div style="font-size:8px;color:var(--muted);">Total Income</div>
+                  <div style="font-size:11px;font-weight:700;color:var(--income-c);font-family:'IBM Plex Mono',monospace;">₹4,28,000</div>
+                </div>
+                <div style="background:rgba(193,67,43,.08);border-radius:6px;padding:6px 8px;">
+                  <div style="font-size:8px;color:var(--muted);">Total Expense</div>
+                  <div style="font-size:11px;font-weight:700;color:var(--expense-c);font-family:'IBM Plex Mono',monospace;">₹2,91,500</div>
+                </div>
+                <div style="background:rgba(28,95,168,.08);border-radius:6px;padding:6px 8px;">
+                  <div style="font-size:8px;color:var(--muted);">Net Profit</div>
+                  <div style="font-size:11px;font-weight:700;color:var(--profit-c);font-family:'IBM Plex Mono',monospace;">₹1,36,500</div>
+                </div>
+              </div>
+              <div class="ms-bar-row"><div class="ms-bar-label">Income</div><div class="ms-bar ms-green-bar" style="--bar-w:82%"></div></div>
+              <div class="ms-bar-row"><div class="ms-bar-label">Expense</div><div class="ms-bar ms-red-bar" style="--bar-w:56%"></div></div>
+              <div class="ms-bar-row"><div class="ms-bar-label">Profit</div><div class="ms-bar ms-blue-bar" style="--bar-w:32%"></div></div>
+            </div>`
+          },
+          {
+            num:3, title:'Dashboard Assistant (💬 chat bot)',
+            body:'Tap the <strong>💬 button</strong> (bottom-right of the Dashboard) to open the assistant. Type natural-language requests like <em>"pie chart of expenses by category"</em> or <em>"top 5 expenses last 3 months"</em>.',
+            tip:'Type "full dashboard" to instantly build a complete overview of your current FY.',
+            screen: `<div class="ms-body" style="padding:10px 12px;">
+              <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:10px;padding:10px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--rule);padding-bottom:6px;margin-bottom:8px;">
+                  <span style="font-size:11px;font-weight:600;">Dashboard Assistant</span>
+                  <span style="font-size:10px;color:var(--muted);">✕</span>
+                </div>
+                <div style="font-size:10px;background:var(--card-bg);border-radius:6px;padding:6px 8px;margin-bottom:6px;color:var(--muted);">
+                  Hi! Describe the data you want to see and I'll build it as a widget.
+                </div>
+                <div style="font-size:10px;background:var(--brand);color:#fff;border-radius:6px;padding:5px 8px;margin-bottom:6px;text-align:right;" class="ms-anim-card">
+                  pie chart of expenses by category
+                </div>
+                <div style="font-size:10px;background:var(--card-bg);border-radius:6px;padding:6px 8px;color:var(--ink);" class="ms-anim-card">
+                  ✅ Created: <b>Expenses by Category</b>
+                </div>
+                <div style="display:flex;gap:6px;margin-top:8px;">
+                  <div style="flex:1;background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:9px;color:var(--muted);">top 5 expenses...</div>
+                  <div class="ms-anim-btn" style="font-size:10px;">Send</div>
+                </div>
+              </div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'transactions',
+        icon:'₹',
+        title:'Transactions',
+        desc:'Add income or expense entries month by month. Scan receipts with the OCR scanner, browse entries by month tab, and export to CSV at any time.',
+        steps:[
+          {
+            num:1, title:'Select a month & add an entry',
+            body:'Click any month tab on the rail to switch months. Choose <strong>Income</strong> or <strong>Expense</strong>, fill in the date, amount, category, and an optional note, then click <strong>"Add entry"</strong>.',
+            tip:'Future months are locked 🔒 — you can only add entries up to today.',
+            screen: `<div class="ms-body" style="padding:8px 10px;">
+              <div style="display:flex;gap:4px;overflow:hidden;border-bottom:1px solid var(--rule);margin-bottom:8px;padding-bottom:6px;">
+                <div style="padding:4px 8px;font-size:9px;color:var(--muted);border-bottom:2px solid transparent;">Apr</div>
+                <div style="padding:4px 8px;font-size:9px;color:var(--muted);">May</div>
+                <div style="padding:4px 8px;font-size:9px;font-weight:700;color:var(--ink);border-bottom:2px solid var(--brand);">Oct •</div>
+                <div style="padding:4px 8px;font-size:9px;color:var(--muted);opacity:.5;">Nov 🔒</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div>
+                  <div style="display:flex;gap:4px;margin-bottom:8px;">
+                    <div style="flex:1;background:var(--income-c);color:#fff;border-radius:4px;padding:4px;font-size:9px;text-align:center;font-weight:700;">Income</div>
+                    <div style="flex:1;border:1px solid var(--rule);border-radius:4px;padding:4px;font-size:9px;text-align:center;color:var(--muted);">Expense</div>
+                  </div>
+                  <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">Amount (₹)</div>
+                  <div class="ms-anim-field" style="margin-bottom:5px;"><span class="ms-anim-typing">45,000</span></div>
+                  <div style="font-size:9px;color:var(--muted);margin-bottom:2px;">Category</div>
+                  <div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:4px 6px;font-size:9px;color:var(--ink);">Salary</div>
+                </div>
+                <div>
+                  <div style="background:rgba(31,122,77,.1);border-radius:6px;padding:7px 8px;margin-bottom:6px;" class="ms-anim-card">
+                    <div style="font-size:9px;font-weight:600;color:var(--income-c);">Salary · ₹45,000</div>
+                    <div style="font-size:8px;color:var(--muted);">01 Oct 2024</div>
+                  </div>
+                  <div style="background:rgba(193,67,43,.08);border-radius:6px;padding:7px 8px;" class="ms-anim-card">
+                    <div style="font-size:9px;font-weight:600;color:var(--expense-c);">Rent · ₹12,000</div>
+                    <div style="font-size:8px;color:var(--muted);">02 Oct 2024</div>
+                  </div>
+                </div>
+              </div>
+            </div>`
+          },
+          {
+            num:2, title:'Scan receipts with OCR',
+            body:'Switch to <strong>Expense</strong> mode to reveal the 📷 OCR scanner. Upload a photo or PDF of a receipt — the app auto-fills date, amount, and category. Review and click "Add entry" to save.',
+            tip:'OCR works best with clear, well-lit photos. You can always correct any field before saving.',
+            screen: `<div class="ms-body" style="padding:10px 12px;">
+              <div style="border:1.5px dashed var(--brand);border-radius:8px;padding:10px;background:var(--paper-2);">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:11px;font-weight:600;">📷 Scan receipt / bill</span>
+                  <div style="margin-left:auto;" class="ms-anim-btn" style="font-size:10px;">Upload image</div>
+                </div>
+                <div style="font-size:9px;color:var(--muted);margin-bottom:8px;">Auto-fills date, amount, category & note as Expense.</div>
+                <div style="height:5px;background:var(--rule);border-radius:3px;overflow:hidden;margin-bottom:5px;">
+                  <div class="ms-bar" style="--bar-w:100%;height:100%;"></div>
+                </div>
+                <div style="font-size:9px;color:var(--muted);margin-bottom:8px;">✅ Receipt scanned successfully</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                  <div>
+                    <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Date (auto-filled)</div>
+                    <div style="background:var(--input-bg);border:1.5px solid var(--brand);border-radius:4px;padding:4px 6px;font-size:9px;color:var(--ink);">15 Oct 2024</div>
+                  </div>
+                  <div>
+                    <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Amount (auto-filled)</div>
+                    <div style="background:var(--input-bg);border:1.5px solid var(--brand);border-radius:4px;padding:4px 6px;font-size:9px;color:var(--ink);">₹ 2,340</div>
+                  </div>
+                </div>
+              </div>
+            </div>`
+          },
+          {
+            num:3, title:'Export to CSV',
+            body:'Click the <strong>"Export CSV"</strong> button, pick a date range, and choose <em>Income only</em>, <em>Expense only</em>, or <em>Combined</em>. The file downloads instantly.',
+            tip:'The Combined export includes a summary row at the bottom with totals and net profit.',
+            screen: `<div class="ms-body" style="padding:10px 12px;">
+              <div style="background:var(--card-bg);border:1px solid var(--rule);border-radius:10px;padding:12px;box-shadow:0 4px 14px rgba(0,0,0,.12);">
+                <div style="font-size:12px;font-weight:700;color:var(--ink);margin-bottom:4px;">Download report</div>
+                <div style="font-size:9px;color:var(--muted);margin-bottom:10px;">Choose the date range, then what to include:</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+                  <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">From date</div><div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:4px;padding:4px 6px;font-size:9px;font-family:'IBM Plex Mono',monospace;">2024-04-01</div></div>
+                  <div><div style="font-size:8px;color:var(--muted);margin-bottom:2px;">To date</div><div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:4px;padding:4px 6px;font-size:9px;font-family:'IBM Plex Mono',monospace;">2024-10-31</div></div>
+                </div>
+                <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:6px;padding:7px 10px;margin-bottom:5px;font-size:10px;cursor:pointer;">Only Income</div>
+                <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:6px;padding:7px 10px;margin-bottom:5px;font-size:10px;">Only Expenditure</div>
+                <div style="background:var(--brand);color:#fff;border-radius:6px;padding:7px 10px;font-size:10px;font-weight:600;" class="ms-anim-btn">⬇ Combined — Income, Expenditure & Profit</div>
+              </div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'goals',
+        icon:'◎',
+        title:'Goal Planner',
+        desc:'Set a savings target and timeframe. The planner calculates your required monthly savings, projected growth with your assumed return rate, and shows how close you are to the goal.',
+        steps:[
+          {
+            num:1, title:'Set your savings target',
+            body:'Enter a <strong>target amount</strong>, number of <strong>months</strong>, any <strong>existing savings</strong>, and an <strong>annual return %</strong>. Click <em>"Calculate my plan"</em> to see the breakdown.',
+            tip:'All numbers are calculated directly from your transaction entries — no estimates or AI.',
+            screen: `<div class="ms-body" style="padding:10px 12px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">Goal planner</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Target amount (₹)</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">10,00,000</span></div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Months to reach it</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">24</span></div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Existing savings (₹)</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">1,50,000</span></div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Annual return (%)</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">8</span></div>
+                </div>
+              </div>
+              <div class="ms-anim-btn" style="display:flex;justify-content:center;">◎ Calculate my plan</div>
+            </div>`
+          },
+          {
+            num:2, title:'Review your goal progress',
+            body:'After calculating, the planner shows your <strong>required monthly saving</strong>, projected FY balance, and a status badge — green if on track, yellow/red if adjustments are needed.',
+            tip:'Update the return % or months to model different scenarios without losing your entries.',
+            screen: `<div class="ms-body" style="padding:10px 12px;">
+              <div style="display:inline-block;padding:4px 10px;border-radius:10px;font-size:9px;font-weight:700;background:#DCE9DE;color:#1F4A2C;margin-bottom:10px;">✅ On Track</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+                <div style="background:var(--card-bg);border:1px solid var(--rule);border-radius:6px;padding:7px 9px;">
+                  <div style="font-size:8px;color:var(--muted);">Required / month</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--brand);font-family:'IBM Plex Mono',monospace;">₹35,650</div>
+                </div>
+                <div style="background:var(--card-bg);border:1px solid var(--rule);border-radius:6px;padding:7px 9px;">
+                  <div style="font-size:8px;color:var(--muted);">Avg monthly savings</div>
+                  <div style="font-size:12px;font-weight:700;color:var(--income-c);font-family:'IBM Plex Mono',monospace;">₹38,200</div>
+                </div>
+              </div>
+              <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">Progress toward goal</div>
+              <div class="ms-goal-track"><div class="ms-goal-fill"></div></div>
+              <div style="font-size:8px;color:var(--muted);margin-top:3px;text-align:right;">68% complete</div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'settings-profile',
+        icon:'👤',
+        title:'Settings — Profile',
+        desc:'Update your display name (first and last). This reflects immediately on the dashboard greeting. Your login email is shown read-only here — use "Change email" to update it.',
+        steps:[
+          {
+            num:1, title:'Edit your profile name',
+            body:'Go to <strong>Settings → Profile</strong>. Update your <em>First name</em> and/or <em>Last name</em> and click <strong>"Save profile"</strong>. The dashboard greeting updates instantly.',
+            tip:'Your login email shown here is read-only. To change it, use the "Change email" section below.',
+            screen: `<div class="ms-body" style="padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">👤 Profile</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">First name</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">Rahul</span></div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Last name</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">Sharma</span></div>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Email (login — read only)</div>
+                <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:10px;color:var(--muted);">rahul@example.com</div>
+              </div>
+              <div style="margin-top:10px;display:flex;align-items:center;gap:8px;">
+                <div class="ms-anim-btn">💾 Save profile</div>
+                <div style="font-size:9px;color:var(--income-c);" class="ms-check">✓</div>
+                <span style="font-size:9px;color:var(--income-c);">Profile saved.</span>
+              </div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'settings-fy',
+        icon:'🌐',
+        title:'Settings — Country & FY',
+        desc:'Change your country, currency code & symbol, and the financial year starting month. Updates apply across all charts, labels, and exports immediately.',
+        steps:[
+          {
+            num:1, title:'Update country, currency & FY',
+            body:'Go to <strong>Settings → Country, Currency & Financial Year</strong>. Selecting a country auto-fills its currency and FY. You can override the currency code and symbol manually.',
+            tip:'Changing the FY start month re-groups all your existing transactions to the new cycle automatically.',
+            screen: `<div class="ms-body" style="padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">🌐 Country, Currency & Financial Year</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Country</div>
+                  <div style="background:var(--input-bg);border:1.5px solid var(--brand);border-radius:5px;padding:5px 8px;font-size:10px;color:var(--ink);animation:manualPulse 2s infinite;">🇮🇳 India</div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Currency Code & Symbol</div>
+                  <div style="display:flex;gap:4px;">
+                    <div style="flex:1;background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 6px;font-size:10px;font-weight:700;color:var(--brand);">INR</div>
+                    <div style="width:36px;background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 6px;font-size:12px;font-weight:700;text-align:center;color:var(--brand);">₹</div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Financial Year Starting Month</div>
+                <div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:9px;color:var(--ink);">April (Apr – Mar, e.g. India, UK, Japan, NZ)</div>
+              </div>
+              <div style="margin-top:10px;"><div class="ms-anim-btn">💾 Save FY & Currency</div></div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'settings-categories',
+        icon:'🏷️',
+        title:'Settings — Categories',
+        desc:'Manage your Income and Expense categories. Add custom ones to match your lifestyle — they appear instantly in all transaction dropdowns and report filters.',
+        steps:[
+          {
+            num:1, title:'Add & remove categories',
+            body:'Go to <strong>Settings → Income & Expense Categories</strong>. Type a new category name and click <strong>"+ Add"</strong>. Click the <em>✕</em> on any tag to remove it (core categories are protected).',
+            tip:'"Salary" and "Other" for income, and "Rent" and "Other" for expenses cannot be deleted.',
+            screen: `<div class="ms-body" style="padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">🏷️ Income & Expense Categories</div>
+              <div style="font-size:9px;font-weight:600;color:var(--income-c);margin-bottom:5px;">Income</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">
+                <span class="ms-tag income">Salary</span>
+                <span class="ms-tag income">Freelance</span>
+                <span class="ms-tag income" style="animation:manualCheckIn 0.5s ease both;">Business ✕</span>
+                <span class="ms-tag income">Other</span>
+              </div>
+              <div style="font-size:9px;font-weight:600;color:var(--expense-c);margin-bottom:5px;">Expense</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">
+                <span class="ms-tag expense">Rent</span>
+                <span class="ms-tag expense">Groceries ✕</span>
+                <span class="ms-tag expense">EMI/Loan ✕</span>
+                <span class="ms-tag expense">Other</span>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <div class="ms-anim-field" style="flex:1;"><span class="ms-anim-typing">Medical</span></div>
+                <div class="ms-anim-btn">+ Add</div>
+              </div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'settings-email',
+        icon:'✉️',
+        title:'Settings — Change Email',
+        desc:'Update your login email securely. An OTP is sent to both your new and current email addresses. Enter the code(s) to confirm the change.',
+        steps:[
+          {
+            num:1, title:'Request & verify email change',
+            body:'Go to <strong>Settings → Change email</strong>. Enter the new email and click <em>"Send OTP"</em>. Enter the 6-digit code from your new inbox (and current if prompted), then click <strong>"Verify & change email"</strong>.',
+            tip:'Both inboxes may receive a code — enter whichever arrives. The change completes when the new email is confirmed.',
+            screen: `<div class="ms-body" style="padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">✉️ Change email</div>
+              <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">New email address</div>
+              <div class="ms-anim-field" style="margin-bottom:8px;"><span class="ms-anim-typing">rahul.new@example.com</span></div>
+              <div class="ms-anim-btn" style="margin-bottom:10px;">📨 Send OTP</div>
+              <div style="background:var(--paper-2);border-left:3px solid var(--brand);border-radius:4px;padding:6px 8px;font-size:9px;color:var(--ink);margin-bottom:8px;">
+                Enter the code from the email sent to your <b>new</b> address.
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Code (new email)</div>
+                  <div class="ms-otp-box"><div class="ms-otp-digit">5</div><div class="ms-otp-digit">2</div><div class="ms-otp-digit">8</div><div class="ms-otp-digit">1</div><div class="ms-otp-digit">7</div><div class="ms-otp-digit">3</div></div>
+                </div>
+              </div>
+              <div class="ms-anim-btn">✓ Verify & change email</div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'settings-password',
+        icon:'🔒',
+        title:'Settings — Change Password',
+        desc:'Change your login password securely. You\'ll need to enter a new password twice and verify via a one-time OTP sent to your registered email.',
+        steps:[
+          {
+            num:1, title:'Set & confirm a new password',
+            body:'Go to <strong>Settings → Change password</strong>. Enter a new password (min 6 characters) and confirm it. Click <em>"Send OTP"</em>, then enter the code from your email and click <strong>"Verify & update password"</strong>.',
+            tip:'Re-authentication is required — the OTP is sent to your current login email for security.',
+            screen: `<div class="ms-body" style="padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">🔒 Change password</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">New password</div>
+                  <div style="background:var(--input-bg);border:1.5px solid var(--brand);border-radius:5px;padding:5px 8px;font-size:13px;letter-spacing:4px;color:var(--muted);animation:manualPulse 2s infinite;">••••••••</div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Confirm new password</div>
+                  <div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 8px;font-size:13px;letter-spacing:4px;color:var(--muted);">••••••••</div>
+                </div>
+              </div>
+              <div class="ms-anim-btn" style="margin-bottom:10px;">📨 Send OTP</div>
+              <div>
+                <div style="font-size:8px;color:var(--muted);margin-bottom:4px;">OTP sent to your email</div>
+                <div class="ms-otp-box">
+                  <div class="ms-otp-digit">9</div><div class="ms-otp-digit">1</div><div class="ms-otp-digit">4</div>
+                  <div class="ms-otp-digit">6</div><div class="ms-otp-digit">3</div><div class="ms-otp-digit">7</div>
+                </div>
+              </div>
+              <div style="margin-top:10px;"><div class="ms-anim-btn">✓ Verify & update password</div></div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'settings-support',
+        icon:'💬',
+        title:'Settings — Support',
+        desc:'Send a support request directly to the team. Fill in your name, email, topic, subject, and a message — it reaches the support inbox instantly.',
+        steps:[
+          {
+            num:1, title:'Submit a support request',
+            body:'Go to <strong>Settings → Customer support</strong>. Your name and email are pre-filled from your profile. Choose a <em>Topic</em>, add a <em>Subject</em> and detailed <em>Message</em>, then click <strong>"Submit to support"</strong>.',
+            tip:'Use "Feature request" as the topic to suggest improvements to the app.',
+            screen: `<div class="ms-body" style="padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">💬 Customer support</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Your name</div>
+                  <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:5px;padding:4px 7px;font-size:10px;color:var(--ink);">Rahul Sharma</div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Your email</div>
+                  <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:5px;padding:4px 7px;font-size:9px;color:var(--muted);">rahul@example.com</div>
+                </div>
+              </div>
+              <div style="margin-bottom:6px;">
+                <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Topic</div>
+                <div style="background:var(--input-bg);border:1.5px solid var(--brand);border-radius:5px;padding:4px 7px;font-size:10px;color:var(--ink);animation:manualPulse 2s infinite;">Feature request</div>
+              </div>
+              <div style="margin-bottom:6px;">
+                <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Message</div>
+                <div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:5px 7px;font-size:9px;color:var(--muted);min-height:28px;">Would love an option to attach receipts...</div>
+              </div>
+              <div class="ms-anim-btn">📤 Submit to support</div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'settings-recurring',
+        icon:'🔁',
+        title:'Settings — Recurring Expenses',
+        desc:'Set up EMIs, subscriptions, and insurance once. The app auto-adds them each cycle and sends notifications before they are due.',
+        steps:[
+          {
+            num:1, title:'Add a recurring expense',
+            body:'Go to <strong>Settings → Recurring expenses</strong>. Enter the title, amount, first due date, frequency (weekly/monthly/quarterly/yearly), and a start–end range. Toggle <em>"Auto-add"</em> on to post automatically.',
+            tip:'With Auto-add ON, the expense appears in your Transactions on each due date without any action from you.',
+            screen: `<div class="ms-body" style="padding:10px 12px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px;">🔁 Recurring expenses</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Recurring name</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">Home loan EMI</span></div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Amount (₹)</div>
+                  <div class="ms-anim-field"><span class="ms-anim-typing">18,500</span></div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Frequency</div>
+                  <div style="background:var(--input-bg);border:1.5px solid var(--brand);border-radius:5px;padding:4px 7px;font-size:9px;color:var(--brand);animation:manualPulse 2s infinite;">Monthly</div>
+                </div>
+                <div>
+                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Due date</div>
+                  <div style="background:var(--input-bg);border:1px solid var(--rule);border-radius:5px;padding:4px 7px;font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--ink);">2024-11-05</div>
+                </div>
+              </div>
+              <div style="background:var(--card-bg);border:1px solid var(--rule);border-radius:6px;padding:7px 9px;margin-top:4px;" class="ms-anim-card">
+                <div style="font-size:9px;font-weight:600;color:var(--ink);">Home loan EMI<span class="ms-rec-badge">Auto-added</span></div>
+                <div style="font-size:8px;color:var(--muted);">Monthly · Next due: 2024-11-05 · ₹18,500</div>
+              </div>
+            </div>`
+          }
+        ]
+      },
+      {
+        id:'settings-notif',
+        icon:'🔔',
+        title:'Settings — Notifications',
+        desc:'Control how and when you\'re reminded about upcoming recurring expenses — in-app bell alerts and email reminders, with a configurable lead time.',
+        steps:[
+          {
+            num:1, title:'Configure notification preferences',
+            body:'Go to <strong>Settings → Notifications</strong>. Toggle <em>In-app notifications</em> to show the bell badge, toggle <em>Email reminders</em> to receive an email, and set how many days in advance you want to be reminded.',
+            tip:'Setting 3–7 days lead time gives you enough runway to ensure funds are available before the due date.',
+            screen: `<div class="ms-body" style="padding:12px 14px;">
+              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:12px;">🔔 Notifications</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                <div style="width:34px;height:18px;background:var(--brand);border-radius:10px;position:relative;flex-shrink:0;">
+                  <div style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;right:2px;top:2px;"></div>
+                </div>
+                <div style="font-size:10px;color:var(--ink);">In-app notifications (bell icon at top right)</div>
+                <div style="margin-left:auto;position:relative;">
+                  <span style="font-size:16px;">🔔</span>
+                  <div class="ms-notif-badge" style="position:absolute;top:-2px;right:-2px;">3</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                <div style="width:34px;height:18px;background:var(--brand);border-radius:10px;position:relative;flex-shrink:0;">
+                  <div style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;right:2px;top:2px;"></div>
+                </div>
+                <div style="font-size:10px;color:var(--ink);">Email reminders to my login email</div>
+              </div>
+              <div>
+                <div style="font-size:8px;color:var(--muted);margin-bottom:3px;">Remind me this many days before the due date</div>
+                <div class="ms-anim-field" style="width:60px;"><span class="ms-anim-typing">7</span></div>
+              </div>
+              <div style="margin-top:10px;"><div class="ms-anim-btn">💾 Save notification settings</div></div>
+            </div>`
+          }
+        ]
+      }
+    ];
+
+    let activeChapter = 0;
+
+    function buildManual(){
+      /* TOC */
+      const tocHtml = CHAPTERS.map((c,i) =>
+        `<button class="manual-toc-btn${i===0?' active':''}" data-ch="${i}">${c.icon} ${c.title}</button>`
+      ).join('');
+
+      /* Chapters */
+      const chapHtml = CHAPTERS.map((c,ci) => `
+        <div class="manual-chapter${ci===0?' active':''}" id="mchap-${ci}">
+          <div class="manual-chapter-title">${c.icon} ${c.title}</div>
+          <div class="manual-chapter-desc">${c.desc}</div>
+          <div class="manual-steps">
+            ${c.steps.map(s => `
+              <div class="manual-step">
+                <div class="manual-step-info">
+                  <div class="manual-step-num">${s.num}</div>
+                  <div class="manual-step-title">${s.title}</div>
+                  <div class="manual-step-body">${s.body}</div>
+                  <div class="manual-step-tip">💡 ${s.tip}</div>
+                </div>
+                <div class="manual-screen">
+                  <div class="manual-screen-bar">
+                    <div class="ms-dot r"></div><div class="ms-dot y"></div><div class="ms-dot g"></div>
+                    <div class="ms-url">personal-ledger.app</div>
+                  </div>
+                  ${s.screen}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="manual-nav">
+            <button class="manual-nav-btn" id="mprev-${ci}" ${ci===0?'disabled':''}>← Previous</button>
+            <span class="manual-progress">${ci+1} / ${CHAPTERS.length}</span>
+            <button class="manual-nav-btn" id="mnext-${ci}" ${ci===CHAPTERS.length-1?'disabled':''}>Next →</button>
+          </div>
+        </div>
+      `).join('');
+
+      root.innerHTML = `
+        <p class="manual-intro">This guide walks you through every feature of Personal Ledger — from creating your account to configuring notifications. Each section has annotated, animated screen previews so you always know exactly where to look.</p>
+        <div class="manual-toc">${tocHtml}</div>
+        <div id="manual-chapters">${chapHtml}</div>
+      `;
+
+      /* Wire TOC buttons */
+      root.querySelectorAll('.manual-toc-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const ci = parseInt(btn.dataset.ch, 10);
+          switchChapter(ci);
+        });
+      });
+
+      /* Wire prev/next */
+      CHAPTERS.forEach((_,ci) => {
+        const prev = document.getElementById(`mprev-${ci}`);
+        const next = document.getElementById(`mnext-${ci}`);
+        if(prev) prev.addEventListener('click', () => switchChapter(ci - 1));
+        if(next) next.addEventListener('click', () => switchChapter(ci + 1));
+      });
+    }
+
+    function switchChapter(ci){
+      if(ci < 0 || ci >= CHAPTERS.length) return;
+      document.querySelectorAll('.manual-chapter').forEach((el,i) => el.classList.toggle('active', i===ci));
+      document.querySelectorAll('.manual-toc-btn').forEach((el,i) => el.classList.toggle('active', i===ci));
+      activeChapter = ci;
+      /* Scroll chapter into view smoothly */
+      const chapEl = document.getElementById(`mchap-${ci}`);
+      if(chapEl) chapEl.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+
+    /* Build when the manual accordion is opened */
+    const manualBtn = document.querySelector('.set-item[data-target="sp-manual"]');
+    if(manualBtn){
+      manualBtn.addEventListener('click', () => {
+        if(!root.innerHTML.trim()) buildManual();
+      });
+    }
+  })();
   </script>
 </body>
 </html>
