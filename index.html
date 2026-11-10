@@ -546,6 +546,42 @@
     .goal-inputs input { width:100%; padding:7px 8px; border:1px solid var(--rule); background:var(--input-bg); color:var(--ink); font-size:13px; border-radius:4px; font-family:'IBM Plex Mono',monospace; }
     .goal-inputs .full { grid-column:1/-1; }
 
+    /* ---- Goal planner: feasibility layers + AI investment ideas ---- */
+    .goal-inputs select { width:100%; padding:7px 8px; border:1px solid var(--rule); background:var(--input-bg); color:var(--ink); font-size:13px; border-radius:4px; font-family:'IBM Plex Sans',sans-serif; }
+    .gp-section { margin-top:18px; padding-top:14px; border-top:1px solid var(--rule); }
+    .gp-section h3 { margin:0 0 4px; font-size:15px; color:var(--ink); }
+    .gp-sub { font-size:11px; color:var(--muted); margin-bottom:12px; }
+    .gp-layers { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin:10px 0 12px; }
+    .gp-layer { border:1px solid var(--rule); border-radius:8px; padding:8px 10px; font-size:12px; color:var(--muted); opacity:.55; background:var(--card-bg); }
+    .gp-layer b { display:block; font-size:12px; color:var(--ink); margin-bottom:2px; }
+    .gp-layer.active { opacity:1; border-width:2px; color:var(--ink); }
+    .gp-layer.l-possible.active { border-color:var(--green); }
+    .gp-layer.l-optimize.active { border-color:#D4A017; }
+    .gp-layer.l-hard.active { border-color:#E07B1F; }
+    .gp-layer.l-not.active { border-color:var(--rust); }
+    .gp-alt { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px; margin-bottom:6px; }
+    .gp-alt > div { background:var(--paper-2); border-radius:8px; padding:8px 10px; font-size:12px; color:var(--ink); }
+    .gp-alt .k { color:var(--muted); font-size:11px; }
+    .gp-alt .v { font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:14px; margin-top:2px; }
+    .gp-tier { margin:14px 0 4px; display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; color:var(--ink); }
+    .gp-dot { width:10px; height:10px; border-radius:50%; display:inline-block; }
+    .gp-dot.low { background:var(--green); } .gp-dot.medium { background:#D4A017; } .gp-dot.high { background:var(--rust); }
+    .gp-tier-note { font-size:12px; color:var(--muted); margin:0 0 8px; border-left:3px solid var(--rule); padding-left:8px; }
+    .gp-card { border:1px solid var(--rule); border-radius:8px; padding:10px 12px; margin-bottom:8px; background:var(--card-bg); color:var(--ink); font-size:12.5px; }
+    .gp-card.low { border-left:4px solid var(--green); } .gp-card.medium { border-left:4px solid #D4A017; } .gp-card.high { border-left:4px solid var(--rust); }
+    .gp-card .nm { font-weight:600; font-size:13.5px; }
+    .gp-card .ty { color:var(--muted); font-size:11px; margin-left:6px; }
+    .gp-chips { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; }
+    .gp-chip { background:var(--paper-2); border-radius:12px; padding:2px 9px; font-size:11px; font-family:'IBM Plex Mono',monospace; color:var(--ink); }
+    .gp-chip.warn { background:rgba(224,123,31,.18); color:#B35F10; }
+    [data-theme="dark"] .gp-chip.warn { color:#FDBA74; }
+    .gp-card .rk { color:var(--muted); font-size:11.5px; margin-top:4px; }
+    .gp-disclaimer { font-size:11.5px; color:var(--muted); background:var(--paper-2); border-radius:8px; padding:10px 12px; margin-top:12px; }
+    .gp-sources { font-size:11px; color:var(--muted); margin-top:8px; word-break:break-word; }
+    .gp-sources a { color:var(--brand); margin-right:8px; }
+    .gp-err { border-left:3px solid var(--rust); padding:10px 12px; font-size:13px; color:var(--ink); background:var(--card-bg); }
+    .gp-loading { font-size:13px; color:var(--muted); padding:10px 0; }
+
     .status-badge { display:inline-block; padding:6px 14px; border-radius:14px; font-size:13px; font-weight:600; margin-bottom:14px; }
     .status-green { background:#DCE9DE; color:#1F4A2C; }
     .status-yellow { background:#F3E7C9; color:#7A5B12; }
@@ -1117,15 +1153,27 @@
         <div class="page hidden" id="page-goals">
           <div class="panel">
             <h2>Goal planner</h2>
-            <div class="muted" style="margin-bottom:12px;">Set a target amount and a timeframe. Everything below is calculated directly from your entries — no AI involved in the numbers.</div>
+            <div class="muted" style="margin-bottom:12px;">Set a target amount and a timeframe. All figures are calculated directly from your entries — the AI is used only to list publicly available investment options for your country.</div>
             <div class="goal-inputs">
               <div><label>Forecast / target amount (<span class="cur-sym">₹</span>)</label><input type="number" id="goal-target" placeholder="e.g. 1000000" min="0"></div>
               <div><label>Months to reach it</label><input type="number" id="goal-months" placeholder="e.g. 24" min="1" max="360"></div>
               <div><label>Existing savings / investments (<span class="cur-sym">₹</span>)</label><input type="number" id="goal-existing" placeholder="0" min="0"></div>
               <div><label>Assumed annual return for overall projection (%)</label><input type="number" id="goal-return" placeholder="8" min="0" max="20" step="0.5"></div>
+              <div class="full"><label>Investment risk level to show</label>
+                <select id="goal-risk">
+                  <option value="all">All (Low, Medium, High)</option>
+                  <option value="low">Low risk only</option>
+                  <option value="medium">Medium risk only</option>
+                  <option value="high">High risk only</option>
+                </select></div>
               <div class="full add-btn" id="goal-calc-btn">Calculate my plan</div>
             </div>
             <div id="goal-output"></div>
+            <div class="gp-section hidden" id="goal-invest">
+              <h3>Investment ideas for this goal</h3>
+              <div class="gp-sub">Best-performing public options for <b id="gp-country-label"></b>, ranked by published recent performance · AI-assisted · public information only</div>
+              <div id="goal-invest-out"></div>
+            </div>
           </div>
         </div>
 
@@ -3675,6 +3723,7 @@
             <div><div class="muted">Current average monthly profit</div><div class="amt num">${fmtMoney(plan.avg)}</div></div>
           </div>
           ${plan.monthsNeeded ? `<div class="suggestion"><div class="head">Timeline Projection</div>At your current pace of ${fmtMoney(plan.avg)}/month, you would reach your target of ${fmtMoney(plan.target)} in approximately <strong>${plan.monthsNeeded} months</strong>.</div>` : ''}
+          ${goalFeasibilityHTML(plan)}
         `;
       }
 
@@ -3691,7 +3740,178 @@
         ])) return;
         const plan = computeGoalPlan(target, months, existingSavings, annualReturnPct);
         renderGoalPlan(plan);
+        lastGoalPlan = plan;
+        showGoalInvestPanel();
+        runGoalInvestments(plan);
       });
+
+      // ---- Goal Planner: feasibility layers (derived only from the existing calculation) ----
+      let lastGoalPlan = null;
+      const gpCache = new Map();
+      function gpEsc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+      function goalFeasibilityHTML(plan){
+        const cls = plan.status.cls;
+        const active = cls === 'status-green' ? 'possible' : cls === 'status-yellow' ? 'optimize' : cls === 'status-orange' ? 'hard' : 'not';
+        const layer = (key, title, text) => `<div class="gp-layer l-${key} ${active === key ? 'active' : ''}"><b>${title}</b>${text}</div>`;
+        const extra = plan.additionalNeeded > 0 ? fmtMoney(plan.additionalNeeded) : fmtMoney(0);
+        const alt = `
+          <div class="gp-alt">
+            <div><div class="k">Reachable amount in ${plan.months} month(s) with your current surplus</div><div class="v">${fmtMoney(plan.recommendedProjected)}</div></div>
+            <div><div class="k">Extra monthly saving needed beyond current surplus</div><div class="v">${extra}</div></div>
+            <div><div class="k">Months needed at current pace</div><div class="v">${plan.monthsNeeded ? plan.monthsNeeded : 'Not reachable (no surplus)'}</div></div>
+          </div>`;
+        return `
+          <div class="gp-section">
+            <h3>Feasibility of this goal</h3>
+            <div class="gp-layers">
+              ${layer('possible','Possible','Current pace already reaches the target.')}
+              ${layer('optimize','Possible with optimization','Within 5% of the target; small adjustments needed.')}
+              ${layer('hard','Challenging','Reaches 70%–95% of the target at current surplus.')}
+              ${layer('not','Not possible at current surplus','Reaches under 70% of the target in this time.')}
+            </div>
+            ${active === 'possible' ? '' : alt}
+          </div>`;
+      }
+
+      // ---- Goal Planner: Gemini-powered investment ideas ----
+      const GP_RISK_NOTES = {
+        low: 'Lower chance of losing capital, but returns may not beat inflation. Check lock-in periods and early-withdrawal terms.',
+        medium: 'Values can rise and fall in the short term and losses are possible, especially if you exit early.',
+        high: 'Can lose a large part of the invested money. Suitable only if you can accept big swings and have a long horizon.'
+      };
+      const GP_RISK_LABEL = { low: 'Low risk', medium: 'Medium risk', high: 'High risk' };
+
+      function gpCountry(){
+        return (COUNTRIES_DATA.find(c => c.code === state.country) || { name: state.country, currency: state.currency });
+      }
+      function showGoalInvestPanel(){
+        document.getElementById('goal-invest').classList.remove('hidden');
+        document.getElementById('gp-country-label').textContent = gpCountry().name + ' (' + state.currency + ')';
+      }
+
+      function buildGoalPrompt(plan, risk){
+        const c = gpCountry();
+        const tiers = risk === 'all' ? ['low','medium','high'] : [risk];
+        return {
+          country: c.name,
+          currency: c.currency,
+          target: plan.target,
+          months: plan.months,
+          existingSavings: plan.existingSavings,
+          requiredMonthly: Math.round(plan.requiredMonthly),
+          avgMonthlySurplus: Math.round(plan.avg),
+          feasibility: plan.status.label,
+          risk,
+          tiers
+        };
+      }
+
+      function gpParseJSON(text){
+        const t = String(text || '').replace(/```json|```/gi, '').trim();
+        const a = t.indexOf('{'), b = t.lastIndexOf('}');
+        if(a < 0 || b <= a) throw new Error('The model did not return structured data.');
+        return JSON.parse(t.slice(a, b + 1));
+      }
+
+      async function gpGenerate(prompt){
+        const { data: { session }, error: sessionError } = await sb.auth.getSession();
+        if(sessionError) throw sessionError;
+        if(!session){
+          const error = new Error('Please sign in again to get investment ideas.');
+          error.status = 401;
+          throw error;
+        }
+        const response = await fetch('/api/goal-investments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify(prompt)
+        });
+        const result = await response.json().catch(() => ({}));
+        if(!response.ok){
+          const error = new Error(result.error || 'Investment ideas are temporarily unavailable.');
+          error.status = response.status;
+          throw error;
+        }
+        return result;
+      }
+
+      function gpInstrumentHTML(ins, tier, plan, rank){
+        const mn = typeof ins.returnMinPct === 'number' ? ins.returnMinPct : null;
+        const mx = typeof ins.returnMaxPct === 'number' ? ins.returnMaxPct : null;
+        let ret = 'Return: not publicly available';
+        if(mn != null && mx != null) ret = mn === mx ? `Return: ${mn}% p.a.` : `Return: ${mn}% – ${mx}% p.a.`;
+        else if(mx != null) ret = `Return: up to ${mx}% p.a.`;
+        else if(mn != null) ret = `Return: ${mn}% p.a.`;
+        const top = mx != null ? mx : mn;
+        const below = top != null && top < plan.annualReturnPct;
+        if(ins.performancePeriod && ret.indexOf('not publicly') < 0) ret += ' (' + ins.performancePeriod + ')';
+        const lock = typeof ins.lockInMonths === 'number' && ins.lockInMonths > 0 ? `<span class="gp-chip">Lock-in: ${ins.lockInMonths} mo</span>` : '';
+        return `
+          <div class="gp-card ${tier}">
+            <div><span class="gp-chip">#${rank}</span> <span class="nm">${gpEsc(ins.name)}</span><span class="ty">${gpEsc(ins.type)}</span></div>
+            <div class="gp-chips">
+              <span class="gp-chip">${gpEsc(ret)}</span>${lock}
+              ${below ? `<span class="gp-chip warn">Below your assumed ${plan.annualReturnPct}% return</span>` : ''}
+            </div>
+            <div>${gpEsc(ins.whyItFits)}</div>
+            <div class="rk"><b>Return basis:</b> ${gpEsc(ins.returnBasis)}</div>
+            <div class="rk"><b>Risk:</b> ${gpEsc(ins.riskNote)}</div>
+          </div>`;
+      }
+
+      function gpRenderResult(result, prompt, plan, meta){
+        const tiersObj = (result && result.tiers) || {};
+        let html = '';
+        prompt.tiers.forEach(t => {
+          const tier = tiersObj[t] || {};
+          const list = Array.isArray(tier.instruments) ? tier.instruments : [];
+          html += `<div class="gp-tier"><span class="gp-dot ${t}"></span>${GP_RISK_LABEL[t]}</div>`;
+          html += `<div class="gp-tier-note">${gpEsc(GP_RISK_NOTES[t])}</div>`;
+          html += list.length ? list.slice(0, 3).map((i, n) => gpInstrumentHTML(i, t, plan, n + 1)).join('') : `<div class="gp-card ${t}">No suitable public option found for this goal and time frame.${tier.emptyReason ? ' ' + gpEsc(tier.emptyReason) : ''}</div>`;
+        });
+        const src = (meta.sources || []).slice(0, 6).map(s => `<a href="${gpEsc(s.uri)}" target="_blank" rel="noopener noreferrer">${gpEsc(s.title || 'source')}</a>`).join('');
+        html += `<div class="gp-sources">${meta.grounded ? 'Verified with Google Search' : '⚠ Not verified with live search (search grounding unavailable) — please confirm details with the provider.'}${result.asOf ? ' · Information as of ' + gpEsc(result.asOf) : ''} · Model: ${gpEsc(meta.model)}${src ? '<br>Sources: ' + src : ''}</div>`;
+        html += `<div class="gp-disclaimer"><b>Important:</b> Rankings reflect published past performance, not a forecast. This is general information from public sources, not financial advice. Returns shown are published or historical ranges and are not guaranteed; past performance does not predict future results. Confirm rates, eligibility and tax treatment with the official provider or regulator in ${gpEsc(gpCountry().name)} before investing.</div>`;
+        return html;
+      }
+
+      function gpFriendlyError(e){
+        if(e.name === 'AbortError') return 'The request timed out. Please try again.';
+        if(e.status === 401) return 'Your session has expired. Sign in again and retry.';
+        if(e.status === 429) return 'Investment ideas are temporarily rate-limited. Please wait a moment and try again.';
+        if(e.status === 503) return 'Investment ideas are not configured yet. Please contact support.';
+        return e.message || 'Something went wrong while contacting Gemini.';
+      }
+
+      let gpRunId = 0;
+      async function runGoalInvestments(plan){
+        const out = document.getElementById('goal-invest-out');
+        const risk = document.getElementById('goal-risk').value;
+        const cacheKey = [state.country, plan.target, plan.months, plan.existingSavings, plan.annualReturnPct, risk].join('|');
+        if(gpCache.has(cacheKey)){ out.innerHTML = gpCache.get(cacheKey); return; }
+        const runId = ++gpRunId;
+        const prompt = buildGoalPrompt(plan, risk);
+        out.innerHTML = '<div class="gp-loading">Finding the best-performing public options in ' + gpEsc(gpCountry().name) + '…</div>';
+        try {
+          const gen = await gpGenerate(prompt);
+          const cand = gen.data.candidates && gen.data.candidates[0];
+          const text = cand && cand.content && cand.content.parts ? cand.content.parts.map(p => p.text || '').join('') : '';
+          if(!text) throw new Error('Gemini returned an empty response. Please try again.');
+          const result = gpParseJSON(text);
+          const chunks = (cand.groundingMetadata && cand.groundingMetadata.groundingChunks) || [];
+          const seen = new Set();
+          const sources = chunks.map(c => c.web).filter(w => w && /^https?:\/\//i.test(w.uri || '') && !seen.has(w.uri) && seen.add(w.uri));
+          const html = gpRenderResult(result, prompt, plan, { grounded: gen.grounded && chunks.length > 0, sources, model: gen.model });
+          gpCache.set(cacheKey, html);
+          if(runId === gpRunId) out.innerHTML = html;
+        } catch(e){
+          if(runId === gpRunId) out.innerHTML = '<div class="gp-err">' + gpEsc(gpFriendlyError(e)) + '</div>';
+        }
+      }
 
       // ---- Settings: Profile, FY & Currency, Categories, Support, Recurring, Notifications ----
       (function initSettings(){
