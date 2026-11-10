@@ -363,9 +363,6 @@
     .forecast-out { display:flex; justify-content:space-between; padding:10px 0; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); margin-bottom:14px; color:var(--ink); }
     .forecast-out .amt { font-size:20px; font-weight:600; }
 
-    .suggestion { border-left:3px solid var(--gold); padding:10px 12px; margin-bottom:10px; background:var(--card-bg); color:var(--ink); font-size:13px; }
-    .suggestion .head { font-weight:600; margin-bottom:3px; }
-
     .export-btn { font-family:'IBM Plex Mono',monospace; font-size:12px; border:1px solid var(--brand); background:transparent; color:var(--brand); padding:6px 12px; cursor:pointer; border-radius:6px; }
     .export-btn:hover { background:var(--brand); color:#fff; }
     .hero-actions { display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
@@ -541,26 +538,6 @@
     .export-modal-btn.primary:hover { background:var(--brand-dark); }
     .export-modal-cancel { text-align:center; font-size:12px; color:var(--muted); cursor:pointer; margin-top:6px; text-decoration:underline; }
 
-    .goal-inputs { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-    .goal-inputs label { font-size:11px; color:var(--muted); display:block; margin-bottom:3px; }
-    .goal-inputs input { width:100%; padding:7px 8px; border:1px solid var(--rule); background:var(--input-bg); color:var(--ink); font-size:13px; border-radius:4px; font-family:'IBM Plex Mono',monospace; }
-    .goal-inputs .full { grid-column:1/-1; }
-
-    .status-badge { display:inline-block; padding:6px 14px; border-radius:14px; font-size:13px; font-weight:600; margin-bottom:14px; }
-    .status-green { background:#DCE9DE; color:#1F4A2C; }
-    .status-yellow { background:#F3E7C9; color:#7A5B12; }
-    .status-orange { background:#F1DAC7; color:#8A4A1E; }
-    .status-red { background:#F0D3CE; color:#8C3A2E; }
-    [data-theme="dark"] .status-green { background:rgba(34,197,94,.18); color:#4ADE80; }
-    [data-theme="dark"] .status-yellow { background:rgba(234,179,8,.18); color:#FACC15; }
-    [data-theme="dark"] .status-orange { background:rgba(249,115,22,.18); color:#FB923C; }
-    [data-theme="dark"] .status-red { background:rgba(248,113,113,.18); color:#F87171; }
-
-    .rtable { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px; color:var(--ink); }
-    .rtable th { text-align:left; border-bottom:1px solid var(--rule); padding:6px 8px; font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--ink); }
-    .rtable td { padding:6px 8px; border-bottom:1px solid var(--rule); color:var(--ink); }
-    .rtable td.num, .rtable th.num { text-align:right; font-family:'IBM Plex Mono',monospace; }
-
     .app-shell { display:flex; align-items:stretch; min-height:100vh; }
     .sidebar {
       width:210px; flex:0 0 210px; background:var(--sidebar-bg); color:var(--ink);
@@ -679,10 +656,6 @@
     @keyframes manualNotifDrop {
       from{ opacity:0; transform:translateY(-10px); } to{ opacity:1; transform:translateY(0); }
     }
-    @keyframes manualGoalFill {
-      from{ width:0% } to{ width:68%; }
-    }
-
     .ms-anim-field {
       background:var(--input-bg); border:1.5px solid var(--brand); border-radius:5px;
       padding:5px 8px; font-size:11px; color:var(--ink); font-family:'IBM Plex Mono',monospace;
@@ -753,10 +726,6 @@
       font-size:9px; font-weight:600; margin:2px; }
     .ms-tag.income { background:rgba(31,122,77,.15); color:var(--income-c); }
     .ms-tag.expense { background:rgba(193,67,43,.12); color:var(--expense-c); }
-
-    .ms-goal-track { height:10px; background:var(--rule); border-radius:5px; overflow:hidden; margin-top:4px; }
-    .ms-goal-fill { height:100%; border-radius:5px; background:linear-gradient(90deg,var(--brand),var(--green));
-      animation:manualGoalFill 2.5s ease infinite alternate; }
 
     .ms-rec-badge { padding:2px 7px; border-radius:10px; font-size:9px; font-weight:600;
       background:rgba(28,95,168,.12); color:var(--brand); margin-left:4px; }
@@ -954,9 +923,6 @@
         <div class="side-item" data-page="transactions">
           <span class="side-ic cur-sym">₹</span><span>Transactions</span>
         </div>
-        <div class="side-item" data-page="goals">
-          <span class="side-ic">◎</span><span>Goal planner</span>
-        </div>
         <div class="side-item" data-page="settings">
           <span class="side-ic">⚙</span><span>Settings</span>
         </div>
@@ -1110,22 +1076,6 @@
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- ===== GOAL PLANNER PAGE ===== -->
-        <div class="page hidden" id="page-goals">
-          <div class="panel">
-            <h2>Goal planner</h2>
-            <div class="muted" style="margin-bottom:12px;">Set a target amount and a timeframe. Everything below is calculated directly from your entries — no AI involved in the numbers.</div>
-            <div class="goal-inputs">
-              <div><label>Forecast / target amount (<span class="cur-sym">₹</span>)</label><input type="number" id="goal-target" placeholder="e.g. 1000000" min="0"></div>
-              <div><label>Months to reach it</label><input type="number" id="goal-months" placeholder="e.g. 24" min="1" max="360"></div>
-              <div><label>Existing savings / investments (<span class="cur-sym">₹</span>)</label><input type="number" id="goal-existing" placeholder="0" min="0"></div>
-              <div><label>Assumed annual return for overall projection (%)</label><input type="number" id="goal-return" placeholder="8" min="0" max="20" step="0.5"></div>
-              <div class="full add-btn" id="goal-calc-btn">Calculate my plan</div>
-            </div>
-            <div id="goal-output"></div>
           </div>
         </div>
 
@@ -3278,7 +3228,7 @@
 
       // ---- Sidebar Navigation ----
       (function initSidebarNav(){
-        const pages = { dashboard: 'page-dashboard', transactions: 'page-transactions', goals: 'page-goals', settings: 'page-settings' };
+        const pages = { dashboard: 'page-dashboard', transactions: 'page-transactions', settings: 'page-settings' };
         const navItems = document.querySelectorAll('.sidebar .side-item[data-page]');
         function showPage(name){
           Object.entries(pages).forEach(([key, pageId]) => {
@@ -3634,64 +3584,6 @@
       }
 
       initAuthGate();
-
-      // ---- Goal Planner Engine ----
-      const ESSENTIAL_CATS = ['Rent','EMI/Loan','Healthcare','Utilities'];
-      function computeGoalPlan(target, months, existingSavings, annualReturnPct){
-        const avg = getAvgMonthlyProfit();
-        const r = (annualReturnPct/100)/12;
-        const growthFactor = r > 0 ? (Math.pow(1+r, months)-1)/r : months;
-        const existingFV = existingSavings * Math.pow(1+r, months);
-        const currentProjected = existingSavings + avg * months;
-        const gap = target - currentProjected;
-
-        const requiredMonthly = growthFactor > 0 ? (target - existingFV) / growthFactor : (target - existingSavings) / months;
-        const additionalNeeded = requiredMonthly - avg;
-
-        const availableMonthlyInvestment = Math.max(0, avg);
-        const recommendedProjected = existingFV + availableMonthlyInvestment * growthFactor;
-
-        let status;
-        const ratio = target > 0 ? recommendedProjected / target : 1;
-        if(currentProjected >= target) status = { label:'On Track', cls:'status-green', emoji:'🟢' };
-        else if(ratio >= 0.95) status = { label:'Achievable With Optimization', cls:'status-yellow', emoji:'🟡' };
-        else if(ratio >= 0.70) status = { label:'Challenging', cls:'status-orange', emoji:'🟠' };
-        else status = { label:'Requires Additional Surplus', cls:'status-red', emoji:'🔴' };
-
-        const monthsNeeded = avg > 0 ? Math.ceil((target - existingSavings) / avg) : null;
-        return { target, months, existingSavings, annualReturnPct, avg, currentProjected, gap, requiredMonthly, additionalNeeded, availableMonthlyInvestment, recommendedProjected, status, monthsNeeded };
-      }
-
-      function renderGoalPlan(plan){
-        const out = document.getElementById('goal-output');
-        out.innerHTML = `
-          <div class="status-badge ${plan.status.cls}">${plan.status.emoji} ${plan.status.label}</div>
-          <div class="forecast-out">
-            <div><div class="muted">Target amount</div><div class="amt num">${fmtMoney(plan.target)}</div></div>
-            <div><div class="muted">Projected at current pace</div><div class="amt num">${fmtMoney(plan.currentProjected)}</div></div>
-          </div>
-          <div class="forecast-out">
-            <div><div class="muted">Required monthly savings</div><div class="amt num">${fmtMoney(plan.requiredMonthly)}</div></div>
-            <div><div class="muted">Current average monthly profit</div><div class="amt num">${fmtMoney(plan.avg)}</div></div>
-          </div>
-          ${plan.monthsNeeded ? `<div class="suggestion"><div class="head">Timeline Projection</div>At your current pace of ${fmtMoney(plan.avg)}/month, you would reach your target of ${fmtMoney(plan.target)} in approximately <strong>${plan.monthsNeeded} months</strong>.</div>` : ''}
-        `;
-      }
-
-      document.getElementById('goal-calc-btn').addEventListener('click', () => {
-        const target = parseFloat(document.getElementById('goal-target').value);
-        const months = parseInt(document.getElementById('goal-months').value, 10);
-        const existingSavings = parseFloat(document.getElementById('goal-existing').value) || 0;
-        const returnRaw = document.getElementById('goal-return').value;
-        const annualReturnPct = returnRaw === '' ? 8 : parseFloat(returnRaw);
-        document.getElementById('goal-output').innerHTML = '';
-        if(!checkFields([
-          ['goal-target', !document.getElementById('goal-target').value ? 'Target amount is required.' : (target > 0 ? '' : 'Enter an amount greater than 0.')],
-          ['goal-months', !document.getElementById('goal-months').value ? 'Number of months is required.' : (months > 0 ? '' : 'Enter at least 1 month.')]
-        ])) return;
-        const plan = computeGoalPlan(target, months, existingSavings, annualReturnPct);
-        renderGoalPlan(plan);
-      });
 
       // ---- Settings: Profile, FY & Currency, Categories, Support, Recurring, Notifications ----
       (function initSettings(){
@@ -4185,7 +4077,6 @@
               <div class="ms-sidebar">
                 <div class="ms-side-item active">▤<span>Dash</span></div>
                 <div class="ms-side-item">₹<span>Txn</span></div>
-                <div class="ms-side-item">◎<span>Goals</span></div>
                 <div class="ms-side-item">⚙<span>Set</span></div>
               </div>
               <div class="ms-main">
@@ -4346,62 +4237,6 @@
                 <div style="background:var(--paper-2);border:1px solid var(--rule);border-radius:6px;padding:7px 10px;margin-bottom:5px;font-size:10px;">Only Expenditure</div>
                 <div style="background:var(--brand);color:#fff;border-radius:6px;padding:7px 10px;font-size:10px;font-weight:600;" class="ms-anim-btn">⬇ Combined — Income, Expenditure & Profit</div>
               </div>
-            </div>`
-          }
-        ]
-      },
-      {
-        id:'goals',
-        icon:'◎',
-        title:'Goal Planner',
-        desc:'Set a savings target and timeframe. The planner calculates your required monthly savings, projected growth with your assumed return rate, and shows how close you are to the goal.',
-        steps:[
-          {
-            num:1, title:'Set your savings target',
-            body:'Enter a <strong>target amount</strong>, number of <strong>months</strong>, any <strong>existing savings</strong>, and an <strong>annual return %</strong>. Click <em>"Calculate my plan"</em> to see the breakdown.',
-            tip:'All numbers are calculated directly from your transaction entries — no estimates or AI.',
-            screen: `<div class="ms-body" style="padding:10px 12px;">
-              <div style="font-size:11px;font-weight:700;color:var(--ink);margin-bottom:10px;">Goal planner</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-                <div>
-                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Target amount (₹)</div>
-                  <div class="ms-anim-field"><span class="ms-anim-typing">10,00,000</span></div>
-                </div>
-                <div>
-                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Months to reach it</div>
-                  <div class="ms-anim-field"><span class="ms-anim-typing">24</span></div>
-                </div>
-                <div>
-                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Existing savings (₹)</div>
-                  <div class="ms-anim-field"><span class="ms-anim-typing">1,50,000</span></div>
-                </div>
-                <div>
-                  <div style="font-size:8px;color:var(--muted);margin-bottom:2px;">Annual return (%)</div>
-                  <div class="ms-anim-field"><span class="ms-anim-typing">8</span></div>
-                </div>
-              </div>
-              <div class="ms-anim-btn" style="display:flex;justify-content:center;">◎ Calculate my plan</div>
-            </div>`
-          },
-          {
-            num:2, title:'Review your goal progress',
-            body:'After calculating, the planner shows your <strong>required monthly saving</strong>, projected FY balance, and a status badge — green if on track, yellow/red if adjustments are needed.',
-            tip:'Update the return % or months to model different scenarios without losing your entries.',
-            screen: `<div class="ms-body" style="padding:10px 12px;">
-              <div style="display:inline-block;padding:4px 10px;border-radius:10px;font-size:9px;font-weight:700;background:#DCE9DE;color:#1F4A2C;margin-bottom:10px;">✅ On Track</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
-                <div style="background:var(--card-bg);border:1px solid var(--rule);border-radius:6px;padding:7px 9px;">
-                  <div style="font-size:8px;color:var(--muted);">Required / month</div>
-                  <div style="font-size:12px;font-weight:700;color:var(--brand);font-family:'IBM Plex Mono',monospace;">₹35,650</div>
-                </div>
-                <div style="background:var(--card-bg);border:1px solid var(--rule);border-radius:6px;padding:7px 9px;">
-                  <div style="font-size:8px;color:var(--muted);">Avg monthly savings</div>
-                  <div style="font-size:12px;font-weight:700;color:var(--income-c);font-family:'IBM Plex Mono',monospace;">₹38,200</div>
-                </div>
-              </div>
-              <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">Progress toward goal</div>
-              <div class="ms-goal-track"><div class="ms-goal-fill"></div></div>
-              <div style="font-size:8px;color:var(--muted);margin-top:3px;text-align:right;">68% complete</div>
             </div>`
           }
         ]
