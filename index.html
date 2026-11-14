@@ -3909,7 +3909,7 @@
           }
           if(!data || data.ok !== true){
             const err = new Error((data && data.message) || 'The AI service returned an error.');
-            err.status = data && data.status; throw err;
+            err.status = data && data.status; err.source = data && data.source; throw err;
           }
           return data.data;
         } finally { clearTimeout(timer); }
@@ -3987,7 +3987,8 @@
         if(e.name === 'AbortError') return 'The request timed out. Please try again.';
         if(e.status === 429) return 'Gemini free-tier limit reached on every model tried. Wait a minute and try again. If it keeps happening, this key\'s project may have no free quota for these models: create a new key in a new project at aistudio.google.com. Gemini says: ' + String(e.message || '').slice(0, 250);
         if(e.status === 400 && /API key/i.test(e.message)) return 'The Gemini API key stored in Supabase looks invalid. Update the GEMINI_API_KEY secret and try again.';
-        if(e.status === 401 || e.status === 403) return 'Gemini rejected the key or this model is not allowed for it. Check the GEMINI_API_KEY secret in Supabase and the model name in GEMINI_CONFIG.';
+        if(e.source === 'auth') return 'Your sign-in could not be verified by the AI service. Log out, log back in and try again.';
+        if(e.status === 401 || e.status === 403) return 'Google (Gemini) rejected the request — HTTP ' + e.status + '. Google says: ' + String(e.message || '').slice(0, 350);
         if(e.status === 404) return 'No available Gemini model was found. Check which Flash models your key can use at aistudio.google.com and update the model name in GEMINI_CONFIG.';
         return e.message || 'Something went wrong while contacting Gemini.';
       }
