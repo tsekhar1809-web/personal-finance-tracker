@@ -1436,10 +1436,8 @@
         currencySymbol: '₹',
         fyStartMonth: 3 // April
       };
-      try {
-        const rawPrefs = localStorage.getItem('ledger-user-prefs');
-        if(rawPrefs) Object.assign(prefs, JSON.parse(rawPrefs));
-      } catch(e){}
+      // NOTE: prefs, categories and all records are loaded per signed-in user inside load()
+      // (storage keys are namespaced by user id) — never from a shared, un-namespaced key.
 
       let state = {
         transactions: [],
@@ -1456,11 +1454,6 @@
         notifSettings: { inApp: true, email: true, leadDays: 7 }
       };
       state.txnFYStart = fyStartYearOf(today, state.fyStartMonth);
-
-      try {
-        const rawCats = localStorage.getItem('ledger-categories');
-        if(rawCats) state.categories = JSON.parse(rawCats);
-      } catch(e){}
 
       function updateCurrencyLabels(){
         const sym = state.currencySymbol;
@@ -1521,36 +1514,88 @@
       };
       const monthLabel = mo => `${MONTH_NAMES[mo.month]} ${mo.year}`;
 
-      async function load(){
+      // ---- Per-user storage ----
+      // Every record key is suffixed with the signed-in user's id, so one account can never see
+      // another account's data on the same browser. storageUid is '' while signed out (nothing is
+      // read or written then).
+      let storageUid = '';
+      const USER_KEYS = ['ledger-transactions','ledger-recurring','ledger-notifications','ledger-notif-settings','ledger-categories','ledger-user-prefs'];
+      const skey = base => storageUid ? base + ':' + storageUid : null;
+      function lsGet(base){ const k = skey(base); if(!k) return null; try { return localStorage.getItem(k); } catch(e){ return null; } }
+      function lsSet(base, val){ const k = skey(base); if(!k) return; try { localStorage.setItem(k, JSON.stringify(val)); } catch(e){ console.error('storage save failed', e); } }
+
+      // Back to a clean, empty state (new/other user starts with no records).
+      function resetUserState(){
+        state.transactions = [];
+        state.recurring = [];
+        state.notifications = [];
+        state.notifSettings = { inApp: true, email: true, leadDays: 7 };
+        state.categories = JSON.parse(JSON.stringify(DEFAULT_CATS));
+        state.country = 'IN'; state.currency = 'INR'; state.currencySymbol = '₹'; state.fyStartMonth = 3;
+        state.type = 'income';
+        state.editingTxnId = null;
+        state.selected = `${today.getFullYear()}-${today.getMonth()}`;
+        state.txnFYStart = fyStartYearOf(today, state.fyStartMonth);
+      }
+
+      // One-time: data saved by older versions lived under shared keys. Hand it to the first
+      // established account (older than 1 hour — never a brand-new sign-up) and remove the shared
+      // copy so it can't leak to anyone else.
+      function claimLegacyData(user){
         try {
-          const raw = localStorage.getItem('ledger-transactions');
-          if(raw) state.transactions = JSON.parse(raw);
+          const age = Date.now() - new Date(user.created_at || Date.now()).getTime();
+          const hasLegacy = USER_KEYS.some(k => localStorage.getItem(k) !== null);
+          const hasOwn = USER_KEYS.some(k => localStorage.getItem(k + ':' + user.id) !== null);
+          if(!hasLegacy || hasOwn || age < 60*60*1000) return;
+          USER_KEYS.forEach(k => {
+            const v = localStorage.getItem(k);
+            if(v !== null){ localStorage.setItem(k + ':' + user.id, v); localStorage.removeItem(k); }
+          });
         } catch(e){}
-        try { const r = localStorage.getItem('ledger-recurring'); if(r) state.recurring = JSON.parse(r); } catch(e){}
-        try { const n = localStorage.getItem('ledger-notifications'); if(n) state.notifications = JSON.parse(n); } catch(e){}
-        try { const ns = localStorage.getItem('ledger-notif-settings'); if(ns) state.notifSettings = Object.assign(state.notifSettings, JSON.parse(ns)); } catch(e){}
+      }
+
+      async function load(){
+        let user = null;
+        try { const { data } = await sb.auth.getSession(); user = data && data.session && data.session.user; } catch(e){}
+        storageUid = user ? user.id : '';
+        resetUserState();
+        if(user){
+          claimLegacyData(user);
+          try { const raw = lsGet('ledger-transactions'); if(raw) state.transactions = JSON.parse(raw); } catch(e){}
+          try { const r = lsGet('ledger-recurring'); if(r) state.recurring = JSON.parse(r); } catch(e){}
+          try { const n = lsGet('ledger-notifications'); if(n) state.notifications = JSON.parse(n); } catch(e){}
+          try { const ns = lsGet('ledger-notif-settings'); if(ns) state.notifSettings = Object.assign(state.notifSettings, JSON.parse(ns)); } catch(e){}
+          try { const c = lsGet('ledger-categories'); if(c) state.categories = JSON.parse(c); } catch(e){}
+          try {
+            const p = lsGet('ledger-user-prefs');
+            if(p){ Object.assign(state, JSON.parse(p)); }
+            else if(user.user_metadata && user.user_metadata.country){
+              const m = user.user_metadata;
+              state.country = m.country; state.currency = m.currency || 'INR';
+              state.currencySymbol = m.currencySymbol || '₹';
+              state.fyStartMonth = typeof m.fyStartMonth === 'number' ? m.fyStartMonth : 3;
+              saveUserPrefs();
+            }
+          } catch(e){}
+          state.txnFYStart = fyStartYearOf(today, state.fyStartMonth);
+        }
         updateCurrencyLabels();
         await processRecurring();
         if(window.renderNotifBell) window.renderNotifBell();
         render();
       }
-      async function save(){
-        try { localStorage.setItem('ledger-transactions', JSON.stringify(state.transactions)); }
-        catch(e){ console.error('storage save failed', e); }
-      }
-      function saveRecurring(){ try { localStorage.setItem('ledger-recurring', JSON.stringify(state.recurring)); } catch(e){} }
-      function saveNotifications(){ try { localStorage.setItem('ledger-notifications', JSON.stringify(state.notifications)); } catch(e){} }
-      function saveNotifSettings(){ try { localStorage.setItem('ledger-notif-settings', JSON.stringify(state.notifSettings)); } catch(e){} }
-      function saveCategories(){ try { localStorage.setItem('ledger-categories', JSON.stringify(state.categories)); } catch(e){} }
+      async function save(){ lsSet('ledger-transactions', state.transactions); }
+      function saveRecurring(){ lsSet('ledger-recurring', state.recurring); }
+      function saveNotifications(){ lsSet('ledger-notifications', state.notifications); }
+      function saveNotifSettings(){ lsSet('ledger-notif-settings', state.notifSettings); }
+      function saveCategories(){ lsSet('ledger-categories', state.categories); }
       function saveUserPrefs(){
-        try {
-          localStorage.setItem('ledger-user-prefs', JSON.stringify({
-            country: state.country,
-            currency: state.currency,
-            currencySymbol: state.currencySymbol,
-            fyStartMonth: state.fyStartMonth
-          }));
-        } catch(e){}
+        lsSet('ledger-user-prefs', {
+          country: state.country,
+          currency: state.currency,
+          currencySymbol: state.currencySymbol,
+          fyStartMonth: state.fyStartMonth
+        });
       }
 
       function stepDate(d, frequency){
@@ -3410,7 +3455,7 @@
           const firstName = (meta && meta.first_name) || '';
           const lastName = (meta && meta.last_name) || '';
           name = [firstName, lastName].filter(Boolean).join(' ');
-          if(meta && meta.country && !localStorage.getItem('ledger-user-prefs')){
+          if(meta && meta.country && !lsGet('ledger-user-prefs')){
             state.country = meta.country;
             state.currency = meta.currency || 'INR';
             state.currencySymbol = meta.currencySymbol || '₹';
@@ -3463,7 +3508,7 @@
       async function goToApp(){
         overlay.style.display = 'none';
         document.body.classList.add('app-authed');
-        load();
+        await load();
         showWelcomeGreeting();
       }
 
@@ -3496,6 +3541,8 @@
 
         const doLogout = async () => {
           await sb.auth.signOut();
+          storageUid = '';
+          resetUserState();
           overlay.style.display = 'flex';
           document.body.classList.remove('app-authed');
           const np = document.getElementById('notif-panel'); if(np) np.classList.add('hidden');
