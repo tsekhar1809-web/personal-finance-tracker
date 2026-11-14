@@ -3793,11 +3793,11 @@
       });
 
       // ---- Goal Planner: feasibility layers (derived only from the existing calculation) ----
-      // Gemini settings are kept in code, not in the UI.
-      // NOTE: anything in a browser page can be read by visitors. For production, move the call to a server (e.g. a Supabase Edge Function).
+      // The Gemini API key lives ONLY in Supabase (Edge Function secret GEMINI_API_KEY) — never in this page.
+      // The browser calls the Edge Function below, which adds the key on the server and forwards the request.
+      const GEMINI_FUNCTION = 'gemini-proxy';   // name of the deployed Supabase Edge Function
       const GEMINI_CONFIG = {
-        apiKey: '',                       // <-- paste your Google AI Studio key here
-        model: 'gemini-3.1-flash-lite'    // preferred model; fallbacks are tried automatically
+        model: 'gemini-3.1-flash-lite'          // preferred model; fallbacks are tried automatically
       };
       let lastGoalPlan = null;
       const gpCache = new Map();
@@ -3886,28 +3886,32 @@
         return JSON.parse(t.slice(a, b + 1));
       }
 
-      async function gpCallGemini(key, model, prompt, grounded){
-        const ctrl = new AbortController();
-        const timer = setTimeout(() => ctrl.abort(), 60000);
+      // Calls the Supabase Edge Function (signed-in user's session is attached automatically).
+      // The function returns { ok:true, data } on success or { ok:false, status, message } for upstream errors.
+      async function gpCallGemini(_unusedKey, model, prompt, grounded){
+        let timer;
+        const timeout = new Promise((_, reject) => {
+          timer = setTimeout(() => { const e = new Error('timeout'); e.name = 'AbortError'; reject(e); }, 90000);
+        });
         try {
-          const body = {
-            systemInstruction: { parts: [{ text: prompt.system }] },
-            contents: [{ role: 'user', parts: [{ text: prompt.user }] }],
-            generationConfig: { temperature: 0.2, maxOutputTokens: 8192 }
-          };
-          if(grounded) body.tools = [{ google_search: {} }];
-          const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-            body: JSON.stringify(body),
-            signal: ctrl.signal
+          const call = sb.functions.invoke(GEMINI_FUNCTION, {
+            body: { model, system: prompt.system, user: prompt.user, grounded: !!grounded }
           });
-          const data = await res.json().catch(() => ({}));
-          if(!res.ok){
-            const err = new Error((data.error && data.error.message) || ('Request failed (' + res.status + ')'));
-            err.status = res.status; throw err;
+          const { data, error } = await Promise.race([call, timeout]);
+          if(error){
+            // gateway-level problem (function missing, not signed in, network) — no .status on purpose,
+            // so the model-fallback loop does not mistake it for a retired model.
+            const st = error.context && error.context.status;
+            let m = error.message || 'Could not reach the AI service.';
+            if(st === 404) m = 'The AI service is not deployed yet. Deploy the Supabase Edge Function named "' + GEMINI_FUNCTION + '" and try again.';
+            else if(st === 401) m = 'Please sign in again and retry.';
+            throw new Error(m);
           }
-          return data;
+          if(!data || data.ok !== true){
+            const err = new Error((data && data.message) || 'The AI service returned an error.');
+            err.status = data && data.status; throw err;
+          }
+          return data.data;
         } finally { clearTimeout(timer); }
       }
 
@@ -3982,9 +3986,9 @@
       function gpFriendlyError(e){
         if(e.name === 'AbortError') return 'The request timed out. Please try again.';
         if(e.status === 429) return 'Gemini free-tier limit reached on every model tried. Wait a minute and try again. If it keeps happening, this key\'s project may have no free quota for these models: create a new key in a new project at aistudio.google.com. Gemini says: ' + String(e.message || '').slice(0, 250);
-        if(e.status === 400 && /API key/i.test(e.message)) return 'The Gemini API key looks invalid. Check it and try again.';
-        if(e.status === 401 || e.status === 403) return 'Gemini rejected the key or this model is not allowed for it. Check the key and model name.';
-        if(e.status === 404) return 'No available Gemini model was found. Open aistudio.google.com, check which Flash models your key can use, and type that name in the model field.';
+        if(e.status === 400 && /API key/i.test(e.message)) return 'The Gemini API key stored in Supabase looks invalid. Update the GEMINI_API_KEY secret and try again.';
+        if(e.status === 401 || e.status === 403) return 'Gemini rejected the key or this model is not allowed for it. Check the GEMINI_API_KEY secret in Supabase and the model name in GEMINI_CONFIG.';
+        if(e.status === 404) return 'No available Gemini model was found. Check which Flash models your key can use at aistudio.google.com and update the model name in GEMINI_CONFIG.';
         return e.message || 'Something went wrong while contacting Gemini.';
       }
 
@@ -3992,15 +3996,13 @@
       async function runGoalInvestments(plan){
         const out = document.getElementById('goal-invest-out');
         const risk = document.getElementById('goal-risk').value;
-        const key = (GEMINI_CONFIG.apiKey || '').trim();
-        if(!key){ out.innerHTML = '<div class="gp-err">Investment suggestions are not configured yet. Add the Gemini API key in <code>GEMINI_CONFIG</code> inside the page code.</div>'; return; }
         const cacheKey = [state.country, plan.target, plan.months, plan.existingSavings, plan.annualReturnPct, risk].join('|');
         if(gpCache.has(cacheKey)){ out.innerHTML = gpCache.get(cacheKey); return; }
         const runId = ++gpRunId;
         const prompt = buildGoalPrompt(plan, risk);
         out.innerHTML = '<div class="gp-loading">Finding the best-performing public options in ' + gpEsc(gpCountry().name) + '…</div>';
         try {
-          const gen = await gpGenerate(key, GEMINI_CONFIG.model, prompt);
+          const gen = await gpGenerate(null, GEMINI_CONFIG.model, prompt);
           const cand = gen.data.candidates && gen.data.candidates[0];
           const text = cand && cand.content && cand.content.parts ? cand.content.parts.map(p => p.text || '').join('') : '';
           if(!text) throw new Error('Gemini returned an empty response. Please try again.');
